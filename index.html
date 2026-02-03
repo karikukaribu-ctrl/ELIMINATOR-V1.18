@@ -1,0 +1,2012 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ELIMINATOR</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --fg:#0e1320;
+      --muted:#566074;
+      --line:#d7dbe6;
+      --panel:#ffffffcc;
+      --panelSolid:#ffffff;
+      --shadow: 0 10px 30px rgba(15,20,35,.10);
+      --accent:#1f6fff; /* light theme accent */
+      --accent2:#19c37d; /* dark theme accent (used as alt) */
+      --danger:#e14141;
+      --ok:#1a7f37;
+      --glass: blur(10px);
+      --ring: 0 0 0 3px rgba(31,111,255,.18);
+      --barBg:#e9ecf5;
+      --barFill:#1f6fff;
+      --chip:#eef2ff;
+      --note:#fff7cc;
+      --noteEdge:#f2d98a;
+      --focusDim: rgba(0,0,0,.28);
+      --radius: 20px;
+      --radius2: 28px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    [data-theme="dark"]{
+      --bg:#0c0f16;
+      --fg:#e9edf6;
+      --muted:#a8b0bd;
+      --line:#242a36;
+      --panel:#121826cc;
+      --panelSolid:#101522;
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --accent:#19c37d;     /* dark theme accent */
+      --accent2:#ff9f1a;
+      --ring: 0 0 0 3px rgba(25,195,125,.18);
+      --barBg:#1a2030;
+      --barFill:#19c37d;
+      --chip:#0f1522;
+      --note:#1b2130;
+      --noteEdge:#2b3550;
+      --focusDim: rgba(0,0,0,.48);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background: radial-gradient(1200px 800px at 15% 0%, rgba(31,111,255,.10), transparent 55%),
+                  radial-gradient(1100px 700px at 90% 30%, rgba(25,195,125,.08), transparent 55%),
+                  var(--bg);
+      color: var(--fg);
+      overflow-x:hidden;
+    }
+    [data-theme="dark"] body{
+      background: radial-gradient(1200px 800px at 15% 0%, rgba(25,195,125,.10), transparent 55%),
+                  radial-gradient(1100px 700px at 90% 30%, rgba(255,159,26,.07), transparent 55%),
+                  var(--bg);
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 16px 40px;
+    }
+
+    /* Top row */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      padding: 10px 0;
+      background: linear-gradient(to bottom, var(--bg), rgba(0,0,0,0));
+      backdrop-filter: blur(4px);
+    }
+    .leftControls,.rightControls{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: var(--panel);
+      color: var(--fg);
+      border-radius: 999px;
+      padding: 10px 12px;
+      cursor:pointer;
+      box-shadow: var(--shadow);
+      backdrop-filter: var(--glass);
+      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    .btn:active{ transform: scale(.98); }
+    .btn:focus{ outline:none; box-shadow: var(--shadow), var(--ring); }
+    .btn.ghost{
+      box-shadow:none;
+      background: transparent;
+      border-color: transparent;
+    }
+    .btn.primary{
+      border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
+      background: color-mix(in oklab, var(--accent) 14%, var(--panelSolid));
+    }
+    .btn.danger{
+      border-color: color-mix(in oklab, var(--danger) 55%, var(--line));
+      background: color-mix(in oklab, var(--danger) 12%, var(--panelSolid));
+    }
+    .btn.small{ padding: 8px 10px; font-size: 13px; }
+    .btn.icon{ padding: 10px 12px; }
+
+    .seg{
+      display:flex;
+      border:1px solid var(--line);
+      background: var(--panel);
+      border-radius: 999px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      backdrop-filter: var(--glass);
+    }
+    .seg button{
+      border:0;
+      background: transparent;
+      color: var(--muted);
+      padding: 10px 12px;
+      cursor:pointer;
+      font-weight: 650;
+    }
+    .seg button.active{
+      color: var(--fg);
+      background: color-mix(in oklab, var(--accent) 16%, transparent);
+    }
+
+    .stats{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .stat{
+      padding: 8px 10px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: var(--glass);
+      font-size: 13px;
+      color: var(--muted);
+      min-width: 160px;
+    }
+    .stat b{ color: var(--fg); }
+    .mono{ font-family: var(--mono); }
+
+    /* Header */
+    .hero{
+      text-align:center;
+      margin: 18px 0 14px;
+    }
+    .title{
+      font-weight: 900;
+      letter-spacing: .6px;
+      font-size: clamp(44px, 7vw, 88px); /* ~triplé en pratique sur mobile */
+      margin: 6px 0 2px;
+      line-height: 1;
+    }
+    .subtitle{
+      margin: 0;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: clamp(14px, 2.8vw, 18px);
+    }
+
+    /* Main card */
+    .card{
+      border:1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius2);
+      padding: 18px;
+      backdrop-filter: var(--glass);
+      position: relative;
+      overflow:hidden;
+    }
+
+    /* Big progress */
+    .progressWrap{
+      margin: 10px auto 10px;
+      border-radius: var(--radius2);
+      border: 1px solid var(--line);
+      background: color-mix(in oklab, var(--panelSolid) 80%, transparent);
+      padding: 14px;
+    }
+    .bar{
+      position: relative;
+      width: 100%;
+      height: 44px; /* épaisseur ++ */
+      border-radius: 999px;
+      background: var(--barBg);
+      overflow:hidden;
+      border: 1px solid color-mix(in oklab, var(--line) 70%, transparent);
+    }
+    .barFill{
+      position:absolute;
+      inset:0 auto 0 0;
+      width: 100%;
+      background: linear-gradient(90deg,
+        color-mix(in oklab, var(--barFill) 92%, #fff),
+        color-mix(in oklab, var(--barFill) 72%, #0000)
+      );
+      transform-origin:left center;
+      transform: scaleX(1);
+      transition: transform .25s ease;
+    }
+    .barPct{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      color: color-mix(in oklab, var(--fg) 92%, #0000);
+      text-shadow: 0 1px 0 rgba(0,0,0,.06);
+      letter-spacing: .4px;
+    }
+
+    .targetName{
+      margin: 10px 0 2px;
+      font-size: clamp(18px, 3.2vw, 26px);
+      font-weight: 850;
+      text-align:center;
+    }
+    .targetHint{
+      margin: 0 0 10px;
+      color: var(--muted);
+      text-align:center;
+      font-size: 13px;
+    }
+
+    /* Torion fragments */
+    .torionWrap{
+      margin: 14px 0 6px;
+    }
+    .torionRow{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .torionTrack{
+      width:100%;
+      height: 14px;
+      border-radius: 999px;
+      border:1px dashed color-mix(in oklab, var(--muted) 35%, var(--line));
+      background: color-mix(in oklab, var(--panelSolid) 80%, transparent);
+      overflow:hidden;
+      position:relative;
+    }
+    .torionFill{
+      position:absolute;
+      inset:0 auto 0 0;
+      width:100%;
+      background: color-mix(in oklab, var(--accent) 28%, transparent);
+      transform-origin:left center;
+      transform: scaleX(1);
+      transition: transform .25s ease;
+    }
+    .ticks{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:.9;
+      background-image: repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0) 0px,
+        rgba(255,255,255,0) 10px,
+        color-mix(in oklab, var(--muted) 22%, transparent) 10px,
+        color-mix(in oklab, var(--muted) 22%, transparent) 11px
+      );
+      mix-blend-mode: multiply;
+    }
+    [data-theme="dark"] .ticks{ mix-blend-mode: screen; }
+
+    /* Action zone */
+    .actions{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top: 12px;
+      align-items:center;
+    }
+    .actionRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+    }
+
+    .strikeZone{
+      margin-top: 2px;
+      border-radius: var(--radius2);
+      border:1px solid var(--line);
+      background: color-mix(in oklab, var(--panelSolid) 75%, transparent);
+      padding: 14px;
+      width: min(720px, 100%);
+      position:relative;
+      overflow:hidden;
+    }
+    .strikeZone:before{
+      content:"";
+      position:absolute;
+      inset:-40px;
+      background:
+        radial-gradient(circle at 50% 40%, color-mix(in oklab, var(--accent) 18%, transparent) 0%, transparent 55%),
+        radial-gradient(circle at 65% 65%, color-mix(in oklab, var(--accent2) 10%, transparent) 0%, transparent 58%);
+      filter: blur(1px);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .strikeZoneInner{
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+    }
+
+    /* Roulette animation */
+    .wheel{
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border:2px solid color-mix(in oklab, var(--accent) 80%, var(--line));
+      border-top-color: transparent;
+      display:inline-block;
+      transform: rotate(0deg);
+    }
+    .spin .wheel{
+      animation: spin .55s linear infinite;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg);} }
+
+    /* Overlay menu */
+    .overlay{
+      position: fixed;
+      inset:0;
+      background: rgba(0,0,0,.22);
+      backdrop-filter: blur(8px);
+      display:none;
+      z-index: 50;
+      padding: 18px 14px;
+    }
+    .overlay.open{ display:block; }
+    .drawer{
+      max-width: 980px;
+      margin: 0 auto;
+      border-radius: 26px;
+      border:1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: var(--glass);
+      overflow:hidden;
+    }
+    .drawerHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding: 14px 14px;
+      border-bottom:1px solid var(--line);
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .drawerHead h2{
+      margin:0;
+      font-size: 16px;
+      letter-spacing: .3px;
+    }
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      padding: 12px 14px 0;
+    }
+    .tab{
+      border:1px solid var(--line);
+      background: color-mix(in oklab, var(--panelSolid) 75%, transparent);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 750;
+      font-size: 13px;
+    }
+    .tab.active{
+      color: var(--fg);
+      border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
+      background: color-mix(in oklab, var(--accent) 14%, var(--panelSolid));
+    }
+    .pane{
+      display:none;
+      padding: 14px;
+      border-top:1px solid var(--line);
+    }
+    .pane.active{ display:block; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 860px){
+      .grid{ grid-template-columns: 1.2fr .8fr; }
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      background: color-mix(in oklab, var(--panelSolid) 78%, transparent);
+      border-radius: 22px;
+      padding: 12px;
+    }
+    .panel h3{
+      margin: 4px 0 10px;
+      font-size: 14px;
+      letter-spacing: .2px;
+    }
+    textarea, input[type="text"], input[type="number"], select{
+      width:100%;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: var(--panelSolid);
+      color: var(--fg);
+      padding: 10px 12px;
+      font: inherit;
+      box-shadow: none;
+      outline:none;
+    }
+    textarea:focus, input:focus, select:focus{ box-shadow: var(--ring); }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .row > *{ flex: 1 1 180px; }
+    .hint{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      margin-top: 6px;
+    }
+
+    /* Task list */
+    .taskList{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .taskItem{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border:1px solid var(--line);
+      background: color-mix(in oklab, var(--panelSolid) 78%, transparent);
+      border-radius: 16px;
+      padding: 10px 10px;
+    }
+    .taskMeta{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width: 0;
+    }
+    .taskTitle{
+      font-weight: 800;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 520px;
+    }
+    .taskSub{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .taskBtns{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    /* Categories chips */
+    .chips{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 8px;
+    }
+    .chip{
+      border:1px solid var(--line);
+      background: var(--chip);
+      border-radius: 999px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-size: 13px;
+      color: var(--muted);
+      user-select:none;
+      font-weight: 750;
+    }
+    .chip.active{
+      color: var(--fg);
+      border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
+      background: color-mix(in oklab, var(--accent) 14%, var(--panelSolid));
+    }
+
+    /* Notes */
+    .notesGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    @media (min-width: 720px){
+      .notesGrid{ grid-template-columns: 1fr 1fr; }
+    }
+    .noteCard{
+      border:1px solid var(--noteEdge);
+      background: var(--note);
+      border-radius: 18px;
+      padding: 10px 12px;
+    }
+    .noteTime{
+      font-size: 11px;
+      color: color-mix(in oklab, var(--muted) 80%, #0000);
+      margin-bottom: 6px;
+      font-family: var(--mono);
+    }
+    .noteText{
+      white-space: pre-wrap;
+      line-height: 1.35;
+      font-size: 13px;
+    }
+
+    /* Celebration */
+    .celebrate{
+      position: fixed;
+      inset: 0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 80;
+      pointer-events:none;
+    }
+    .celebrate.show{ display:flex; }
+    .celebrate .msg{
+      max-width: 920px;
+      margin: 0 14px;
+      border-radius: 26px;
+      border: 1px solid color-mix(in oklab, var(--accent) 45%, var(--line));
+      background: color-mix(in oklab, var(--panelSolid) 86%, transparent);
+      box-shadow: var(--shadow);
+      padding: 18px 18px;
+      text-align:center;
+      backdrop-filter: var(--glass);
+      transform: translateY(10px) scale(.98);
+      opacity: 0;
+      animation: pop .18s ease forwards;
+    }
+    @keyframes pop{
+      to{ transform: translateY(0) scale(1); opacity:1; }
+    }
+    .celebrate .big{
+      font-weight: 950;
+      font-size: clamp(22px, 4vw, 44px);
+      letter-spacing:.3px;
+      margin: 0 0 6px;
+      text-shadow: 0 1px 0 rgba(0,0,0,.06);
+    }
+    .celebrate .small{
+      margin:0;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    canvas#confetti{
+      position: fixed;
+      inset:0;
+      pointer-events:none;
+    }
+
+    /* Focus mode */
+    [data-focus="on"] .stats{ display:none; }
+    [data-focus="on"] .topbar .rightControls{ display:none; }
+    [data-focus="on"] .targetHint{ display:none; }
+    [data-focus="on"] .torionRow{ display:none; }
+    [data-focus="on"] .btn.secondaryHide{ display:none; }
+
+    /* Small screens */
+    @media (max-width: 420px){
+      .stat{ min-width: 140px; font-size: 12px; }
+      .btn{ padding: 9px 10px; font-size: 13px; }
+      .bar{ height: 40px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap" id="app">
+    <div class="topbar">
+      <div class="leftControls">
+        <button class="btn icon primary" id="openMenuBtn" title="Menu">
+          ☰ <span>Menu</span>
+        </button>
+
+        <button class="btn icon" id="focusBtn" title="Mode focus">
+          ◉ <span id="focusLabel">Focus</span>
+        </button>
+
+        <button class="btn icon danger" id="resetBtn" title="Reset tâches (notes conservées)">
+          ↺ <span>Reset</span>
+        </button>
+      </div>
+
+      <div class="rightControls">
+        <div class="seg" title="Thème (clair par défaut)">
+          <button id="themeLight" class="active">Clair</button>
+          <button id="themeDark">Sombre</button>
+        </div>
+
+        <div class="seg" title="Mode de sélection">
+          <button id="modeRoulette" class="active">Roulette</button>
+          <button id="modeOrder">Ordre</button>
+        </div>
+
+        <div class="stats" id="stats">
+          <div class="stat">
+            Tâches: <b id="tasksLeft">0</b>/<b id="tasksTotal">0</b> · Fait: <b id="tasksDone">0</b>
+          </div>
+          <div class="stat">
+            Étorions: <b id="torionsLeft">0</b>/<b id="torionsTotal">0</b> · ⏱ <b class="mono" id="elapsed">00:00</b>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="title">ELIMINATOR</div>
+      <p class="subtitle">Dégomme toutes les tâches. Ou tous les étorions. Ou l’univers. Étape par étape.</p>
+    </header>
+
+    <main class="card">
+      <div class="progressWrap">
+        <div class="bar" aria-label="Progression de la tâche en cours">
+          <div class="barFill" id="mainBarFill"></div>
+          <div class="barPct" id="mainPct">—%</div>
+        </div>
+      </div>
+
+      <div class="targetName" id="currentTitle">Aucune tâche</div>
+      <div class="targetHint" id="currentHint">Ajoute des tâches via Menu → Inbox / Liste.</div>
+
+      <div class="torionWrap" id="torionSection" style="display:none;">
+        <div class="torionRow">
+          <span>Fragments (étorions)</span>
+          <span class="mono"><b id="taskTorionsLeft">0</b>/<b id="taskTorionsTotal">0</b> · 1 étorion = 5 min</span>
+        </div>
+        <div class="torionTrack" aria-label="Barre d'étorions">
+          <div class="torionFill" id="torionFill"></div>
+          <div class="ticks" id="ticks"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="strikeZone">
+          <div class="strikeZoneInner">
+            <div class="actionRow">
+              <button class="btn primary spin" id="rouletteBtn" title="Relancer une cible">
+                <span class="wheel" aria-hidden="true"></span>
+                <span>Roulette</span>
+              </button>
+
+              <button class="btn primary" id="hitBtn" title="Dégommer 1 étorion">
+                💥 <span>Dégommer 1 étorion</span>
+              </button>
+            </div>
+
+            <div class="actionRow">
+              <button class="btn small secondaryHide" id="pinBtn" title="Prioriser (remonter)">
+                📌 <span>Prioriser</span>
+              </button>
+              <button class="btn small secondaryHide" id="downBtn" title="Renvoyer dans le pool">
+                ↘ <span>Descendre</span>
+              </button>
+              <button class="btn small secondaryHide" id="editBtn" title="Éditer le titre">
+                ✎ <span>Éditer</span>
+              </button>
+              <button class="btn small danger secondaryHide" id="deleteBtn" title="Supprimer la tâche">
+                ✕ <span>Supprimer</span>
+              </button>
+              <button class="btn small secondaryHide" id="noteQuickBtn" title="Note rapide (post-it, sauvegardé)">
+                🗒 <span>Note</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Drawer / Menu -->
+  <div class="overlay" id="overlay">
+    <div class="drawer">
+      <div class="drawerHead">
+        <h2>Menu — réglages, inbox, liste, notes</h2>
+        <div class="row" style="justify-content:flex-end; gap:8px; flex:0 0 auto;">
+          <button class="btn" id="closeMenuBtn">Fermer</button>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="inbox">Inbox</button>
+        <button class="tab" data-tab="list">Liste</button>
+        <button class="tab" data-tab="notes">Notes</button>
+        <button class="tab" data-tab="profil">Profil</button>
+      </div>
+
+      <div class="pane active" id="pane-inbox">
+        <div class="grid">
+          <div class="panel">
+            <h3>Importer / ajouter</h3>
+            <textarea id="inboxArea" rows="9" placeholder="Colle ici des tâches.
+Formats acceptés (exemples) :
+- Appeler Samira
+* Faire rapport (cat: qui fonce) (etorions: 4)
+Catégorie: Qui fonce | Tâche: ... | Étorions: 3
+[qui fonce] Dégommer le planning — 6
+"></textarea>
+            <div class="row" style="margin-top:10px;">
+              <select id="defaultCat">
+                <option value="">Catégorie par défaut (si rien trouvé)</option>
+              </select>
+              <input type="number" id="defaultTorions" min="1" max="999" value="1" />
+            </div>
+            <div class="hint">
+              Astuce: si tu mets <span class="mono">[qui fonce]</span> ou <span class="mono">cat: qui fonce</span>, ça atterrit directement dans la catégorie “qui fonce”.
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <button class="btn primary" id="importBtn">Importer</button>
+              <button class="btn" id="clearInboxBtn">Vider</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Pool actif</h3>
+            <div class="hint">
+              Les catégories sélectionnées ici alimentent la roulette / l’ordre.
+            </div>
+            <div class="chips" id="catChips"></div>
+
+            <div class="hint" style="margin-top:10px;">
+              Mode “Ordre” = prend la première tâche disponible (en respectant priorités & catégories). Mode “Roulette” = aléatoire.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" id="pane-list">
+        <div class="grid">
+          <div class="panel">
+            <h3>Liste des tâches</h3>
+            <div class="taskList" id="taskList"></div>
+            <div class="hint" style="margin-top:10px;">
+              Boutons: supprimer · prioriser · éditer (le strict nécessaire, promis juré).
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Tri & catégories</h3>
+            <div class="row">
+              <select id="sortSelect">
+                <option value="pinned_first">Prioritaires d'abord</option>
+                <option value="alpha">Alphabétique</option>
+                <option value="etorions_desc">Étorions (↓)</option>
+                <option value="etorions_asc">Étorions (↑)</option>
+                <option value="created_desc">Récentes d'abord</option>
+                <option value="created_asc">Anciennes d'abord</option>
+              </select>
+              <button class="btn" id="applySortBtn">Appliquer</button>
+            </div>
+
+            <div class="panel" style="margin-top:12px;">
+              <h3>Créer catégorie</h3>
+              <div class="row">
+                <input type="text" id="newCatName" placeholder="Nom (ex: qui fonce)" />
+                <button class="btn primary" id="addCatBtn">Ajouter</button>
+              </div>
+              <div class="hint">Les catégories servent surtout au filtrage du pool actif.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" id="pane-notes">
+        <div class="grid">
+          <div class="panel">
+            <h3>Post-it (sauvegardés, même après reset)</h3>
+            <textarea id="noteArea" rows="5" placeholder="Note rapide…"></textarea>
+            <div class="row" style="margin-top:10px;">
+              <button class="btn primary" id="saveNoteBtn">Sauvegarder</button>
+              <button class="btn" id="clearNoteInputBtn">Effacer</button>
+            </div>
+            <div class="hint">Chaque note garde date/heure. Oui, ton cerveau arborescent aura une serre tropicale dédiée.</div>
+          </div>
+
+          <div class="panel">
+            <h3>Archive</h3>
+            <div class="notesGrid" id="notesGrid"></div>
+            <div class="row" style="margin-top:10px;">
+              <button class="btn danger" id="wipeNotesBtn">Supprimer toutes les notes</button>
+            </div>
+            <div class="hint">Attention: là c’est un effacement définitif. Pas de résurrection.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" id="pane-profil">
+        <div class="grid">
+          <div class="panel">
+            <h3>Affichage</h3>
+            <div class="row">
+              <label class="btn" style="justify-content:space-between;">
+                <span>Focus au démarrage</span>
+                <input type="checkbox" id="focusDefault" />
+              </label>
+
+              <label class="btn" style="justify-content:space-between;">
+                <span>Montrer stats (hors focus)</span>
+                <input type="checkbox" id="showStats" checked />
+              </label>
+            </div>
+            <div class="hint">Le focus masque l’info non essentielle. But: action, pas contemplation.</div>
+
+            <h3 style="margin-top:14px;">Célébration</h3>
+            <div class="row">
+              <select id="celebrateLevel">
+                <option value="off">Off (tu es une statue stoïque)</option>
+                <option value="soft">Soft</option>
+                <option value="full" selected>Full confettis</option>
+              </select>
+              <input type="number" id="celebrateMs" min="900" max="7000" value="2600" />
+            </div>
+            <div class="hint">Durée d’affichage (ms). Le message est volontairement lisible et pas timide.</div>
+          </div>
+
+          <div class="panel">
+            <h3>Calibration</h3>
+            <div class="row">
+              <label>
+                <div class="hint" style="margin:0 0 6px;">1 étorion =</div>
+                <input type="number" id="torionMinutes" min="1" max="60" value="5" />
+              </label>
+              <button class="btn" id="saveProfileBtn">Enregistrer</button>
+            </div>
+
+            <div class="panel" style="margin-top:12px;">
+              <h3>Nettoyage</h3>
+              <div class="row">
+                <button class="btn danger" id="wipeAllBtn">Tout effacer (tâches + stats)</button>
+              </div>
+              <div class="hint">Les notes ne sont pas effacées par “Reset”. Ici, si tu appuies, tu fais tomber l’astéroïde.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Celebration -->
+  <div class="celebrate" id="celebrate">
+    <canvas id="confetti"></canvas>
+    <div class="msg">
+      <div class="big" id="celebrateBig">Bravo.</div>
+      <p class="small" id="celebrateSmall">Tu viens de réduire l’entropie de l’univers. L’univers n’avait pas signé, mais tant pis.</p>
+    </div>
+  </div>
+
+<script>
+(() => {
+  /* -----------------------------
+     Storage keys
+  ------------------------------ */
+  const K = {
+    state: "elim_state_v2",
+    notes: "elim_notes_v2",
+    prefs: "elim_prefs_v2"
+  };
+
+  /* -----------------------------
+     Helpers
+  ------------------------------ */
+  const uid = () => Math.random().toString(16).slice(2) + Date.now().toString(16);
+  const pad2 = n => String(n).padStart(2,"0");
+  const nowISO = () => new Date().toISOString();
+  const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+  const sanitizeCat = (s)=> (s||"").trim().toLowerCase();
+  const titleCase = (s)=> (s||"").trim();
+
+  function mmss(ms){
+    const s = Math.floor(ms/1000);
+    const m = Math.floor(s/60);
+    const r = s % 60;
+    return `${pad2(m)}:${pad2(r)}`;
+  }
+
+  /* -----------------------------
+     Default data
+  ------------------------------ */
+  const defaultPrefs = {
+    theme: "light",          // light by default
+    focus: false,
+    focusDefault: false,
+    showStats: true,
+    pickMode: "roulette",    // roulette | order
+    celebrate: "full",       // off | soft | full
+    celebrateMs: 2600,
+    torionMinutes: 5,
+    selectedCats: ["inbox","qui fonce"] // pool filter
+  };
+
+  const defaultState = {
+    tasks: [],               // active pool
+    tasksStartCount: 0,
+    torionsStartCount: 0,
+    doneCount: 0,
+    currentId: null,
+    currentStartedAt: null,  // ms timestamp when current task first shown/selected
+    sortMode: "pinned_first",
+    cats: ["inbox","qui fonce"], // known categories
+  };
+
+  /* Task shape:
+     {
+       id, title, cat,
+       torionsTotal, torionsLeft,
+       pinned: false,
+       createdAt: ms
+     }
+  */
+
+  /* -----------------------------
+     Load / Save
+  ------------------------------ */
+  const load = (key, fallback) => {
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) return structuredClone(fallback);
+      const obj = JSON.parse(raw);
+      return Object.assign(structuredClone(fallback), obj);
+    }catch(e){
+      return structuredClone(fallback);
+    }
+  };
+  const save = (key, obj) => localStorage.setItem(key, JSON.stringify(obj));
+
+  let prefs = load(K.prefs, defaultPrefs);
+  let state = load(K.state, defaultState);
+  let notes = load(K.notes, { items: [] });
+
+  /* -----------------------------
+     DOM refs
+  ------------------------------ */
+  const app = document.getElementById("app");
+
+  const openMenuBtn = document.getElementById("openMenuBtn");
+  const closeMenuBtn = document.getElementById("closeMenuBtn");
+  const overlay = document.getElementById("overlay");
+
+  const themeLight = document.getElementById("themeLight");
+  const themeDark  = document.getElementById("themeDark");
+
+  const modeRoulette = document.getElementById("modeRoulette");
+  const modeOrder    = document.getElementById("modeOrder");
+
+  const focusBtn = document.getElementById("focusBtn");
+  const focusLabel = document.getElementById("focusLabel");
+  const resetBtn = document.getElementById("resetBtn");
+
+  const tasksLeftEl = document.getElementById("tasksLeft");
+  const tasksTotalEl = document.getElementById("tasksTotal");
+  const tasksDoneEl = document.getElementById("tasksDone");
+  const torionsLeftEl = document.getElementById("torionsLeft");
+  const torionsTotalEl = document.getElementById("torionsTotal");
+  const elapsedEl = document.getElementById("elapsed");
+  const statsEl = document.getElementById("stats");
+
+  const mainBarFill = document.getElementById("mainBarFill");
+  const mainPct = document.getElementById("mainPct");
+
+  const currentTitle = document.getElementById("currentTitle");
+  const currentHint = document.getElementById("currentHint");
+
+  const torionSection = document.getElementById("torionSection");
+  const taskTorionsLeft = document.getElementById("taskTorionsLeft");
+  const taskTorionsTotal = document.getElementById("taskTorionsTotal");
+  const torionFill = document.getElementById("torionFill");
+  const ticks = document.getElementById("ticks");
+
+  const rouletteBtn = document.getElementById("rouletteBtn");
+  const hitBtn = document.getElementById("hitBtn");
+  const pinBtn = document.getElementById("pinBtn");
+  const downBtn = document.getElementById("downBtn");
+  const editBtn = document.getElementById("editBtn");
+  const deleteBtn = document.getElementById("deleteBtn");
+  const noteQuickBtn = document.getElementById("noteQuickBtn");
+
+  // Drawer tabs
+  const tabBtns = Array.from(document.querySelectorAll(".tab"));
+  const panes = {
+    inbox: document.getElementById("pane-inbox"),
+    list: document.getElementById("pane-list"),
+    notes: document.getElementById("pane-notes"),
+    profil: document.getElementById("pane-profil")
+  };
+
+  // Inbox
+  const inboxArea = document.getElementById("inboxArea");
+  const defaultCat = document.getElementById("defaultCat");
+  const defaultTorions = document.getElementById("defaultTorions");
+  const importBtn = document.getElementById("importBtn");
+  const clearInboxBtn = document.getElementById("clearInboxBtn");
+  const catChips = document.getElementById("catChips");
+
+  // List
+  const taskList = document.getElementById("taskList");
+  const sortSelect = document.getElementById("sortSelect");
+  const applySortBtn = document.getElementById("applySortBtn");
+  const newCatName = document.getElementById("newCatName");
+  const addCatBtn = document.getElementById("addCatBtn");
+
+  // Notes
+  const noteArea = document.getElementById("noteArea");
+  const saveNoteBtn = document.getElementById("saveNoteBtn");
+  const clearNoteInputBtn = document.getElementById("clearNoteInputBtn");
+  const notesGrid = document.getElementById("notesGrid");
+  const wipeNotesBtn = document.getElementById("wipeNotesBtn");
+
+  // Profile
+  const focusDefault = document.getElementById("focusDefault");
+  const showStats = document.getElementById("showStats");
+  const celebrateLevel = document.getElementById("celebrateLevel");
+  const celebrateMs = document.getElementById("celebrateMs");
+  const torionMinutes = document.getElementById("torionMinutes");
+  const saveProfileBtn = document.getElementById("saveProfileBtn");
+  const wipeAllBtn = document.getElementById("wipeAllBtn");
+
+  // Celebration
+  const celebrate = document.getElementById("celebrate");
+  const celebrateBig = document.getElementById("celebrateBig");
+  const celebrateSmall = document.getElementById("celebrateSmall");
+  const confettiCanvas = document.getElementById("confetti");
+  const ctx = confettiCanvas.getContext("2d");
+
+  /* -----------------------------
+     Parsing import
+  ------------------------------ */
+  function parseLines(text){
+    const lines = (text||"")
+      .split(/\r?\n/)
+      .map(l => l.trim())
+      .filter(Boolean);
+
+    const defCat = sanitizeCat(defaultCat.value || "inbox") || "inbox";
+    const defTor = clamp(parseInt(defaultTorions.value||"1",10)||1,1,999);
+
+    const out = [];
+
+    for(const line of lines){
+      // Patterns:
+      // [cat] title — 6
+      // * title (cat: xxx) (etorions: 4)
+      // Catégorie: X | Tâche: Y | Étorions: 3
+      // - title
+      let cat = defCat;
+      let tor = defTor;
+      let title = line;
+
+      // Strip bullets
+      title = title.replace(/^[-*•\u2022]+\s*/, "");
+
+      // Structured pipe format
+      const pipe = title.match(/cat(é|e)gorie\s*:\s*([^|]+)\|\s*t(â|a)che\s*:\s*([^|]+)\|\s*(é|e)torions\s*:\s*([0-9]+)/i);
+      if(pipe){
+        cat = sanitizeCat(pipe[2]);
+        title = pipe[4].trim();
+        tor = clamp(parseInt(pipe[6],10)||defTor,1,999);
+        out.push({ cat, title, tor });
+        continue;
+      }
+
+      // [cat] prefix
+      const bracket = title.match(/^\[([^\]]+)\]\s*(.+)$/);
+      if(bracket){
+        cat = sanitizeCat(bracket[1]);
+        title = bracket[2].trim();
+      }
+
+      // (cat: xxx)
+      const catTag = title.match(/\(\s*cat\s*:\s*([^)]+)\)/i);
+      if(catTag){
+        cat = sanitizeCat(catTag[1]);
+        title = title.replace(catTag[0], "").trim();
+      }
+
+      // (etorions: n)
+      const torTag = title.match(/\(\s*(é|e)torions?\s*:\s*([0-9]+)\s*\)/i);
+      if(torTag){
+        tor = clamp(parseInt(torTag[2],10)||defTor,1,999);
+        title = title.replace(torTag[0], "").trim();
+      }
+
+      // trailing — n or - n
+      const tail = title.match(/(?:—|-)\s*([0-9]{1,4})\s*$/);
+      if(tail){
+        tor = clamp(parseInt(tail[1],10)||tor,1,999);
+        title = title.replace(/(?:—|-)\s*[0-9]{1,4}\s*$/, "").trim();
+      }
+
+      // If line is just "cat: X" ignore
+      if(!title) continue;
+
+      out.push({ cat, title, tor });
+    }
+
+    return out;
+  }
+
+  /* -----------------------------
+     Core selection logic
+  ------------------------------ */
+  function poolTasks(){
+    const selected = new Set((prefs.selectedCats||[]).map(sanitizeCat));
+    // If none selected -> all
+    const useAll = selected.size === 0;
+    return state.tasks.filter(t => useAll || selected.has(sanitizeCat(t.cat)));
+  }
+
+  function getCurrent(){
+    return state.tasks.find(t => t.id === state.currentId) || null;
+  }
+
+  function ensureCurrent(){
+    const pool = poolTasks();
+    if(pool.length === 0){
+      state.currentId = null;
+      state.currentStartedAt = null;
+      return null;
+    }
+
+    let cur = getCurrent();
+    if(cur && (pool.some(t => t.id === cur.id))) return cur;
+
+    // Choose a new current based on mode
+    cur = pickTask();
+    state.currentId = cur?.id || null;
+    state.currentStartedAt = cur ? Date.now() : null;
+    return cur;
+  }
+
+  function pickTask(){
+    const pool = poolTasks();
+    if(pool.length === 0) return null;
+
+    // Prioritaires: always first class citizen
+    const pinned = pool.filter(t => t.pinned);
+    const normal = pool.filter(t => !t.pinned);
+
+    const candidates = pinned.length ? pinned : normal;
+
+    if(prefs.pickMode === "order"){
+      // Order = after applying state.sortMode to full list, pick first candidate in that order
+      const sorted = sortTasks([...state.tasks], state.sortMode);
+      const selected = new Set(candidates.map(t=>t.id));
+      return sorted.find(t => selected.has(t.id)) || candidates[0];
+    } else {
+      // Roulette = random among candidates
+      return candidates[Math.floor(Math.random()*candidates.length)];
+    }
+  }
+
+  function sortTasks(arr, mode){
+    const m = mode || "pinned_first";
+    const byTitle = (a,b)=>a.title.localeCompare(b.title, "fr", { sensitivity:"base" });
+    const byCreated = (a,b)=> (a.createdAt||0) - (b.createdAt||0);
+    const byTor = (a,b)=> (a.torionsTotal||0) - (b.torionsTotal||0);
+    const pinnedFirst = (a,b)=> (b.pinned?1:0) - (a.pinned?1:0);
+
+    let res = [...arr];
+    if(m === "pinned_first"){
+      res.sort((a,b)=> pinnedFirst(a,b) || byCreated(a,b));
+    }else if(m === "alpha"){
+      res.sort((a,b)=> pinnedFirst(a,b) || byTitle(a,b));
+    }else if(m === "etorions_desc"){
+      res.sort((a,b)=> pinnedFirst(a,b) || (byTor(b,a)));
+    }else if(m === "etorions_asc"){
+      res.sort((a,b)=> pinnedFirst(a,b) || byTor(a,b));
+    }else if(m === "created_desc"){
+      res.sort((a,b)=> pinnedFirst(a,b) || byCreated(b,a));
+    }else if(m === "created_asc"){
+      res.sort((a,b)=> pinnedFirst(a,b) || byCreated(a,b));
+    }
+    return res;
+  }
+
+  /* -----------------------------
+     Stats
+  ------------------------------ */
+  function recomputeStartCountsIfNeeded(){
+    // If we have never initialized start counts, set them once when tasks first appear.
+    if(state.tasksStartCount === 0 && state.torionsStartCount === 0 && state.tasks.length){
+      state.tasksStartCount = state.tasks.length;
+      state.torionsStartCount = state.tasks.reduce((s,t)=>s+(t.torionsTotal||0),0);
+    }
+  }
+
+  function computeCurrentOverall(){
+    const tasksTotal = state.tasksStartCount || state.tasks.length;
+    const tasksLeft = state.tasks.length;
+    const torionsTotal = state.torionsStartCount || state.tasks.reduce((s,t)=>s+(t.torionsTotal||0),0);
+    const torionsLeft = state.tasks.reduce((s,t)=>s+(t.torionsLeft||0),0);
+    return { tasksTotal, tasksLeft, torionsTotal, torionsLeft };
+  }
+
+  /* -----------------------------
+     UI render
+  ------------------------------ */
+  function applyTheme(){
+    document.documentElement.setAttribute("data-theme", prefs.theme === "dark" ? "dark" : "light");
+    themeLight.classList.toggle("active", prefs.theme !== "dark");
+    themeDark.classList.toggle("active", prefs.theme === "dark");
+  }
+
+  function applyFocus(){
+    document.documentElement.setAttribute("data-focus", prefs.focus ? "on" : "off");
+    focusLabel.textContent = prefs.focus ? "Focus ON" : "Focus";
+    statsEl.style.display = prefs.showStats ? "" : "none";
+  }
+
+  function applyPickMode(){
+    modeRoulette.classList.toggle("active", prefs.pickMode === "roulette");
+    modeOrder.classList.toggle("active", prefs.pickMode === "order");
+  }
+
+  function renderCats(){
+    // Ensure baseline cats exist
+    if(!state.cats.includes("inbox")) state.cats.unshift("inbox");
+    if(!state.cats.includes("qui fonce")) state.cats.push("qui fonce");
+
+    // Default cat dropdown
+    defaultCat.innerHTML = `<option value="">Catégorie par défaut (si rien trouvé)</option>` +
+      state.cats
+        .slice()
+        .sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}))
+        .map(c => `<option value="${c}">${c}</option>`)
+        .join("");
+    defaultCat.value = "";
+
+    // Chips for pool selection
+    const selected = new Set((prefs.selectedCats||[]).map(sanitizeCat));
+    catChips.innerHTML = "";
+    const sortedCats = state.cats.slice().sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+    for(const c of sortedCats){
+      const chip = document.createElement("div");
+      chip.className = "chip" + (selected.has(sanitizeCat(c)) ? " active" : "");
+      chip.textContent = c;
+      chip.onclick = () => {
+        const key = sanitizeCat(c);
+        const set = new Set((prefs.selectedCats||[]).map(sanitizeCat));
+        if(set.has(key)) set.delete(key); else set.add(key);
+        prefs.selectedCats = [...set];
+        save(K.prefs, prefs);
+        renderCats();
+        // current might become invalid if filtered out
+        ensureCurrent();
+        renderMain();
+        renderList();
+      };
+      catChips.appendChild(chip);
+    }
+  }
+
+  function renderList(){
+    const sorted = sortTasks([...state.tasks], state.sortMode);
+    taskList.innerHTML = "";
+    if(sorted.length === 0){
+      taskList.innerHTML = `<div class="hint">Aucune tâche. Ajoute-en via Inbox. Oui, c’est vide. Comme un frigo après garde de nuit.</div>`;
+      return;
+    }
+
+    for(const t of sorted){
+      const item = document.createElement("div");
+      item.className = "taskItem";
+
+      const meta = document.createElement("div");
+      meta.className = "taskMeta";
+
+      const title = document.createElement("div");
+      title.className = "taskTitle";
+      title.textContent = (t.id === state.currentId ? "➤ " : "") + t.title;
+
+      const sub = document.createElement("div");
+      sub.className = "taskSub";
+      const pinTxt = t.pinned ? " · 📌 prioritaire" : "";
+      sub.textContent = `${t.cat} · ${t.torionsLeft}/${t.torionsTotal} étorions${pinTxt}`;
+
+      meta.appendChild(title);
+      meta.appendChild(sub);
+
+      const btns = document.createElement("div");
+      btns.className = "taskBtns";
+
+      const bDel = document.createElement("button");
+      bDel.className = "btn small danger";
+      bDel.textContent = "Supprimer";
+      bDel.onclick = () => removeTask(t.id);
+
+      const bPin = document.createElement("button");
+      bPin.className = "btn small";
+      bPin.textContent = t.pinned ? "Dé-prioriser" : "Prioriser";
+      bPin.onclick = () => togglePin(t.id);
+
+      const bEdit = document.createElement("button");
+      bEdit.className = "btn small";
+      bEdit.textContent = "Éditer";
+      bEdit.onclick = () => editTask(t.id);
+
+      btns.appendChild(bEdit);
+      btns.appendChild(bPin);
+      btns.appendChild(bDel);
+
+      item.appendChild(meta);
+      item.appendChild(btns);
+
+      item.ondblclick = () => { // quick select current
+        state.currentId = t.id;
+        state.currentStartedAt = Date.now();
+        save(K.state, state);
+        renderMain();
+        renderList();
+      };
+
+      taskList.appendChild(item);
+    }
+  }
+
+  function renderNotes(){
+    notesGrid.innerHTML = "";
+    const items = (notes.items||[]).slice().sort((a,b)=> (b.ts||0) - (a.ts||0));
+    if(items.length === 0){
+      notesGrid.innerHTML = `<div class="hint">Aucune note. Ton cerveau a encore de la RAM disponible. Profite.</div>`;
+      return;
+    }
+    for(const n of items){
+      const card = document.createElement("div");
+      card.className = "noteCard";
+      const d = new Date(n.ts);
+      const stamp = `${d.toLocaleDateString("fr-BE")} ${d.toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"})}`;
+      card.innerHTML = `
+        <div class="noteTime">${stamp}</div>
+        <div class="noteText">${escapeHtml(n.text)}</div>
+        <div style="margin-top:8px; display:flex; justify-content:flex-end;">
+          <button class="btn small danger" data-del="${n.id}">Supprimer</button>
+        </div>
+      `;
+      card.querySelector("button[data-del]").onclick = () => {
+        notes.items = notes.items.filter(x => x.id !== n.id);
+        save(K.notes, notes);
+        renderNotes();
+      };
+      notesGrid.appendChild(card);
+    }
+  }
+
+  function escapeHtml(s){
+    return (s||"").replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[m]));
+  }
+
+  function renderMain(){
+    recomputeStartCountsIfNeeded();
+    const cur = ensureCurrent();
+    const overall = computeCurrentOverall();
+
+    tasksLeftEl.textContent = overall.tasksLeft;
+    tasksTotalEl.textContent = overall.tasksTotal || overall.tasksLeft;
+    tasksDoneEl.textContent = state.doneCount || 0;
+    torionsLeftEl.textContent = overall.torionsLeft;
+    torionsTotalEl.textContent = overall.torionsTotal || overall.torionsLeft;
+
+    if(!prefs.showStats) statsEl.style.display = "none";
+    else statsEl.style.display = "";
+
+    if(!cur){
+      currentTitle.textContent = "Aucune tâche";
+      currentHint.textContent = "Ajoute des tâches via Menu → Inbox / Liste.";
+      torionSection.style.display = "none";
+      mainPct.textContent = "—%";
+      mainBarFill.style.transform = "scaleX(1)";
+      elapsedEl.textContent = "00:00";
+      setActionAvailability(false);
+      return;
+    }
+
+    setActionAvailability(true);
+
+    // UI: title
+    currentTitle.textContent = cur.title;
+    currentHint.textContent = `Catégorie: ${cur.cat}`;
+
+    // Task progress based on torions
+    const pctDone = cur.torionsTotal > 0
+      ? Math.round(100 * (1 - (cur.torionsLeft / cur.torionsTotal)))
+      : 0;
+
+    mainPct.textContent = `${pctDone}%`;
+    // Bar starts full and shrinks (your “countdown to zero” logic)
+    const fillScale = cur.torionsTotal > 0 ? (cur.torionsLeft / cur.torionsTotal) : 1;
+    mainBarFill.style.transform = `scaleX(${clamp(fillScale,0,1)})`;
+
+    // Torion fragments
+    torionSection.style.display = "";
+    taskTorionsLeft.textContent = cur.torionsLeft;
+    taskTorionsTotal.textContent = cur.torionsTotal;
+    torionFill.style.transform = `scaleX(${clamp(fillScale,0,1)})`;
+
+    // ticks density approximated to total torions (visual)
+    const tor = clamp(cur.torionsTotal||1, 1, 200);
+    const stepPx = Math.max(6, Math.floor(520/tor));
+    ticks.style.backgroundImage = `repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0) 0px,
+      rgba(255,255,255,0) ${stepPx}px,
+      color-mix(in oklab, var(--muted) 22%, transparent) ${stepPx}px,
+      color-mix(in oklab, var(--muted) 22%, transparent) ${stepPx+1}px
+    )`;
+
+    // Ensure elapsed base
+    if(!state.currentStartedAt) state.currentStartedAt = Date.now();
+    save(K.state, state);
+  }
+
+  function setActionAvailability(on){
+    hitBtn.disabled = !on;
+    rouletteBtn.disabled = !on;
+    pinBtn.disabled = !on;
+    downBtn.disabled = !on;
+    editBtn.disabled = !on;
+    deleteBtn.disabled = !on;
+    noteQuickBtn.disabled = !on;
+  }
+
+  /* -----------------------------
+     Actions
+  ------------------------------ */
+  function addTasks(tasks){
+    if(!tasks || tasks.length === 0) return;
+
+    for(const it of tasks){
+      const cat = sanitizeCat(it.cat) || "inbox";
+      if(!state.cats.includes(cat)) state.cats.push(cat);
+
+      state.tasks.push({
+        id: uid(),
+        title: titleCase(it.title),
+        cat,
+        torionsTotal: clamp(it.tor,1,999),
+        torionsLeft: clamp(it.tor,1,999),
+        pinned: false,
+        createdAt: Date.now()
+      });
+    }
+
+    // If this is the first batch, initialize start counts right away
+    if(state.tasksStartCount === 0 && state.torionsStartCount === 0){
+      state.tasksStartCount = state.tasks.length;
+      state.torionsStartCount = state.tasks.reduce((s,t)=>s+(t.torionsTotal||0),0);
+    } else {
+      // If already started, we also update totals so stats remain coherent with new tasks
+      state.tasksStartCount += tasks.length;
+      state.torionsStartCount += tasks.reduce((s,t)=>s+clamp(it.tor,1,999),0);
+    }
+
+    save(K.state, state);
+    ensureCurrent();
+    renderCats();
+    renderMain();
+    renderList();
+  }
+
+  function removeTask(id){
+    const wasCurrent = (id === state.currentId);
+    state.tasks = state.tasks.filter(t => t.id !== id);
+    if(wasCurrent){
+      state.currentId = null;
+      state.currentStartedAt = null;
+    }
+    save(K.state, state);
+    ensureCurrent();
+    renderMain();
+    renderList();
+  }
+
+  function togglePin(id){
+    const t = state.tasks.find(x => x.id === id);
+    if(!t) return;
+    t.pinned = !t.pinned;
+    save(K.state, state);
+    renderMain();
+    renderList();
+  }
+
+  function demoteCurrent(){
+    const cur = getCurrent();
+    if(!cur) return;
+    cur.pinned = false;
+    // Move to end of list (pool)
+    state.tasks = state.tasks.filter(t => t.id !== cur.id);
+    state.tasks.push(cur);
+    // Keep same current? No: choose a new one
+    state.currentId = null;
+    state.currentStartedAt = null;
+    save(K.state, state);
+    ensureCurrent();
+    renderMain();
+    renderList();
+  }
+
+  function editTask(id){
+    const t = state.tasks.find(x => x.id === id);
+    if(!t) return;
+    const newTitle = prompt("Nouveau titre :", t.title);
+    if(newTitle === null) return;
+    const trimmed = newTitle.trim();
+    if(!trimmed) return;
+    t.title = trimmed;
+    save(K.state, state);
+    renderMain();
+    renderList();
+  }
+
+  function roulettePick(){
+    const curBefore = getCurrent();
+    const next = pickTask();
+    if(!next) return;
+
+    // If roulette returns same, try a few times
+    if(curBefore && next.id === curBefore.id && poolTasks().length > 1){
+      for(let i=0;i<4;i++){
+        const alt = pickTask();
+        if(alt && alt.id !== curBefore.id){ state.currentId = alt.id; break; }
+      }
+    }else{
+      state.currentId = next.id;
+    }
+    state.currentStartedAt = Date.now();
+    save(K.state, state);
+    renderMain();
+    renderList();
+  }
+
+  function hitTorion(){
+    const cur = getCurrent();
+    if(!cur) return;
+
+    cur.torionsLeft = clamp((cur.torionsLeft||0) - 1, 0, cur.torionsTotal||1);
+    save(K.state, state);
+    renderMain();
+    renderList();
+
+    if(cur.torionsLeft <= 0){
+      completeTask(cur.id);
+    }
+  }
+
+  function completeTask(id){
+    // Remove task from pool, increment done
+    const t = state.tasks.find(x => x.id === id);
+    if(!t) return;
+
+    state.doneCount = (state.doneCount||0) + 1;
+
+    // Celebration
+    triggerCelebration(t);
+
+    // Remove task
+    state.tasks = state.tasks.filter(x => x.id !== id);
+    state.currentId = null;
+    state.currentStartedAt = null;
+
+    save(K.state, state);
+    ensureCurrent();
+    renderMain();
+    renderList();
+  }
+
+  /* -----------------------------
+     Celebration (big + readable)
+  ------------------------------ */
+  const bigPhrases = [
+    "DÉGOMMÉ.",
+    "CIBLE ÉLIMINÉE.",
+    "TU VIENS DE GAGNER 1 POINT DE RÉALITÉ.",
+    "LA TÂCHE A DISPARU. COMME PAR MAGIE. (MAIS C’EST TOI.)",
+    "ÇA. C’EST DU TRAVAIL PROPRE."
+  ];
+  const smallPhrases = [
+    "L’univers prend note. Et recule légèrement.",
+    "On appelle ça: réduire le chaos avec élégance.",
+    "Tes étorions n’ont aucune chance.",
+    "L’entropie pleure dans un coin.",
+    "Encore un petit pas pour toi, un grand pas pour ton cerveau."
+  ];
+
+  let confettiParticles = [];
+  let confettiRAF = null;
+
+  function resizeConfetti(){
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resizeConfetti);
+  resizeConfetti();
+
+  function spawnConfetti(count){
+    confettiParticles = [];
+    const W = confettiCanvas.width, H = confettiCanvas.height;
+    for(let i=0;i<count;i++){
+      confettiParticles.push({
+        x: Math.random()*W,
+        y: -20 - Math.random()*H*0.2,
+        vx: (Math.random()-0.5)*2.2,
+        vy: 2.2 + Math.random()*4.5,
+        r: 2 + Math.random()*4,
+        rot: Math.random()*Math.PI,
+        vr: (Math.random()-0.5)*0.18,
+        life: 120 + Math.random()*90
+      });
+    }
+  }
+
+  function drawConfetti(){
+    const W = confettiCanvas.width, H = confettiCanvas.height;
+    ctx.clearRect(0,0,W,H);
+    for(const p of confettiParticles){
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      // Intentionally no fixed colors request: we rely on current theme accent mixed
+      // We'll draw in two tones derived from CSS colors via computed style.
+      const a = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#1f6fff";
+      const b = getComputedStyle(document.documentElement).getPropertyValue("--accent2").trim() || "#19c37d";
+      ctx.fillStyle = (Math.random() > 0.5) ? a : b;
+      ctx.fillRect(-p.r, -p.r, p.r*2.2, p.r*1.4);
+      ctx.restore();
+
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      p.life -= 1;
+    }
+    confettiParticles = confettiParticles.filter(p => p.life > 0 && p.y < H + 40);
+    if(confettiParticles.length){
+      confettiRAF = requestAnimationFrame(drawConfetti);
+    }else{
+      cancelAnimationFrame(confettiRAF);
+      confettiRAF = null;
+    }
+  }
+
+  function triggerCelebration(task){
+    if(prefs.celebrate === "off") return;
+
+    celebrateBig.textContent = bigPhrases[Math.floor(Math.random()*bigPhrases.length)];
+    celebrateSmall.textContent = smallPhrases[Math.floor(Math.random()*smallPhrases.length)] + ` (${task.torionsTotal} étorions neutralisés)`;
+
+    celebrate.classList.add("show");
+
+    const duration = clamp(parseInt(prefs.celebrateMs,10)||2600, 900, 7000);
+    const level = prefs.celebrate;
+    if(level === "full"){
+      spawnConfetti(240);
+      resizeConfetti();
+      drawConfetti();
+    }else if(level === "soft"){
+      spawnConfetti(110);
+      resizeConfetti();
+      drawConfetti();
+    }
+
+    setTimeout(() => {
+      celebrate.classList.remove("show");
+      ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+      confettiParticles = [];
+      if(confettiRAF) cancelAnimationFrame(confettiRAF);
+      confettiRAF = null;
+    }, duration);
+  }
+
+  /* -----------------------------
+     Notes
+  ------------------------------ */
+  function addNote(text){
+    const t = (text||"").trim();
+    if(!t) return;
+    notes.items = notes.items || [];
+    notes.items.push({ id: uid(), ts: Date.now(), text: t });
+    save(K.notes, notes);
+    renderNotes();
+  }
+
+  /* -----------------------------
+     Reset logic
+     - Reset = reinit tasks progress for the day (notes preserved)
+     - It keeps categories and prefs
+  ------------------------------ */
+  function resetTasks(){
+    // Reset progress counts and done count
+    state.doneCount = 0;
+    state.tasksStartCount = state.tasks.length; // restart from current pool
+    state.torionsStartCount = state.tasks.reduce((s,t)=>s+(t.torionsTotal||0),0);
+
+    // reset each task left to total
+    state.tasks.forEach(t => t.torionsLeft = t.torionsTotal);
+
+    state.currentId = null;
+    state.currentStartedAt = null;
+
+    save(K.state, state);
+    ensureCurrent();
+    renderMain();
+    renderList();
+  }
+
+  function wipeAll(){
+    state = structuredClone(defaultState);
+    save(K.state, state);
+    // prefs stay as is (user wants defaults: light)
+    renderCats();
+    renderMain();
+    renderList();
+  }
+
+  /* -----------------------------
+     Elapsed timer
+  ------------------------------ */
+  function tickElapsed(){
+    const cur = getCurrent();
+    if(!cur || !state.currentStartedAt){
+      elapsedEl.textContent = "00:00";
+      return;
+    }
+    const ms = Date.now() - state.currentStartedAt;
+    elapsedEl.textContent = mmss(ms);
+  }
+  setInterval(tickElapsed, 250);
+
+  /* -----------------------------
+     Menu handling
+  ------------------------------ */
+  function openMenu(){
+    overlay.classList.add("open");
+    // default to inbox
+    switchTab("inbox");
+    renderCats();
+    renderList();
+    renderNotes();
+  }
+  function closeMenu(){
+    overlay.classList.remove("open");
+  }
+
+  function switchTab(name){
+    tabBtns.forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+    Object.entries(panes).forEach(([k,el]) => el.classList.toggle("active", k === name));
+  }
+
+  /* -----------------------------
+     Bind events
+  ------------------------------ */
+  openMenuBtn.onclick = openMenu;
+  closeMenuBtn.onclick = closeMenu;
+  overlay.addEventListener("click", (e) => {
+    if(e.target === overlay) closeMenu();
+  });
+
+  tabBtns.forEach(b => b.onclick = () => switchTab(b.dataset.tab));
+
+  themeLight.onclick = () => {
+    prefs.theme = "light";
+    save(K.prefs, prefs);
+    applyTheme();
+  };
+  themeDark.onclick = () => {
+    prefs.theme = "dark";
+    save(K.prefs, prefs);
+    applyTheme();
+  };
+
+  modeRoulette.onclick = () => {
+    prefs.pickMode = "roulette";
+    save(K.prefs, prefs);
+    applyPickMode();
+  };
+  modeOrder.onclick = () => {
+    prefs.pickMode = "order";
+    save(K.prefs, prefs);
+    applyPickMode();
+  };
+
+  focusBtn.onclick = () => {
+    prefs.focus = !prefs.focus;
+    save(K.prefs, prefs);
+    applyFocus();
+  };
+
+  resetBtn.onclick = () => resetTasks();
+
+  rouletteBtn.onclick = () => {
+    rouletteBtn.classList.add("spin");
+    // small playful delay so the wheel is visible
+    setTimeout(() => {
+      roulettePick();
+      rouletteBtn.classList.remove("spin");
+    }, 520);
+  };
+
+  hitBtn.onclick = () => hitTorion();
+
+  pinBtn.onclick = () => {
+    const cur = getCurrent();
+    if(cur) togglePin(cur.id);
+  };
+
+  downBtn.onclick = () => demoteCurrent();
+
+  editBtn.onclick = () => {
+    const cur = getCurrent();
+    if(cur) editTask(cur.id);
+  };
+
+  deleteBtn.onclick = () => {
+    const cur = getCurrent();
+    if(cur){
+      if(confirm("Supprimer cette tâche ?")){
+        removeTask(cur.id);
+      }
+    }
+  };
+
+  noteQuickBtn.onclick = () => {
+    const cur = getCurrent();
+    const promptTxt = cur ? `Note (liée dans ta tête à: "${cur.title}") :` : "Note :";
+    const t = prompt(promptTxt, "");
+    if(t !== null) addNote(t);
+  };
+
+  // Inbox
+  importBtn.onclick = () => {
+    const parsed = parseLines(inboxArea.value);
+    addTasks(parsed);
+    inboxArea.value = "";
+  };
+  clearInboxBtn.onclick = () => inboxArea.value = "";
+
+  // Sorting
+  sortSelect.onchange = () => {
+    state.sortMode = sortSelect.value;
+    save(K.state, state);
+  };
+  applySortBtn.onclick = () => {
+    state.sortMode = sortSelect.value;
+    // apply by reordering the underlying array so "order mode" feels consistent
+    state.tasks = sortTasks([...state.tasks], state.sortMode);
+    save(K.state, state);
+    renderList();
+    renderMain();
+  };
+
+  // Categories
+  addCatBtn.onclick = () => {
+    const c = sanitizeCat(newCatName.value);
+    if(!c) return;
+    if(!state.cats.includes(c)) state.cats.push(c);
+    newCatName.value = "";
+    save(K.state, state);
+    renderCats();
+  };
+
+  // Notes
+  saveNoteBtn.onclick = () => {
+    addNote(noteArea.value);
+    noteArea.value = "";
+  };
+  clearNoteInputBtn.onclick = () => noteArea.value = "";
+  wipeNotesBtn.onclick = () => {
+    if(confirm("Supprimer toutes les notes ?")){
+      notes.items = [];
+      save(K.notes, notes);
+      renderNotes();
+    }
+  };
+
+  // Profile
+  function renderProfile(){
+    focusDefault.checked = !!prefs.focusDefault;
+    showStats.checked = !!prefs.showStats;
+    celebrateLevel.value = prefs.celebrate || "full";
+    celebrateMs.value = prefs.celebrateMs || 2600;
+    torionMinutes.value = prefs.torionMinutes || 5;
+  }
+
+  saveProfileBtn.onclick = () => {
+    prefs.focusDefault = !!focusDefault.checked;
+    prefs.showStats = !!showStats.checked;
+    prefs.celebrate = celebrateLevel.value;
+    prefs.celebrateMs = clamp(parseInt(celebrateMs.value,10)||2600, 900, 7000);
+    prefs.torionMinutes = clamp(parseInt(torionMinutes.value,10)||5, 1, 60);
+
+    save(K.prefs, prefs);
+    applyFocus();
+    renderProfile();
+    renderMain();
+  };
+
+  wipeAllBtn.onclick = () => {
+    if(confirm("Tout effacer (tâches + stats) ? Les notes restent sauf si tu les supprimes dans Notes.")){
+      wipeAll();
+    }
+  };
+
+  /* -----------------------------
+     Init defaults & integrity
+  ------------------------------ */
+  function normalize(){
+    // Theme defaults to light
+    if(prefs.theme !== "dark") prefs.theme = "light";
+
+    // Apply focus default at boot if requested
+    if(prefs.focusDefault && prefs.focus === false) prefs.focus = true;
+
+    // Ensure arrays exist
+    prefs.selectedCats = Array.isArray(prefs.selectedCats) ? prefs.selectedCats : ["inbox","qui fonce"];
+    state.cats = Array.isArray(state.cats) ? state.cats : ["inbox","qui fonce"];
+    state.tasks = Array.isArray(state.tasks) ? state.tasks : [];
+
+    // Ensure tasks are sane
+    state.tasks.forEach(t => {
+      t.cat = sanitizeCat(t.cat) || "inbox";
+      t.title = titleCase(t.title) || "Tâche sans nom (mystère)";
+      t.torionsTotal = clamp(parseInt(t.torionsTotal,10)||1,1,999);
+      t.torionsLeft = clamp(parseInt(t.torionsLeft,10)||t.torionsTotal,0,t.torionsTotal);
+      t.pinned = !!t.pinned;
+      t.createdAt = t.createdAt || Date.now();
+      if(!state.cats.includes(t.cat)) state.cats.push(t.cat);
+    });
+
+    save(K.prefs, prefs);
+    save(K.state, state);
+    save(K.notes, notes);
+  }
+
+  /* -----------------------------
+     Boot
+  ------------------------------ */
+  normalize();
+  applyTheme();
+  applyPickMode();
+  applyFocus();
+  renderProfile();
+  renderCats();
+  sortSelect.value = state.sortMode || "pinned_first";
+
+  ensureCurrent();
+  renderMain();
+  renderList();
+  renderNotes();
+
+})();
+</script>
+</body>
+</html>
