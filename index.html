@@ -4,355 +4,346 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>ELIMINATOR</title>
-  <style>
-    :root{
-      --bg:#f6f7fb;
-      --fg:#0c1220;
-      --muted:#5b6477;
-      --line:#d8ddea;
-      --panel: rgba(255,255,255,.72);
-      --panel2: rgba(255,255,255,.56);
-      --shadow: 0 12px 35px rgba(14, 22, 44, .12);
-      --accent:#2a67ff;          /* bleu (clair) */
-      --accent2:#1fd18a;         /* vert (sombre) */
-      --good:#18a558;
-      --warn:#ffb020;
-      --bad:#ff3b5c;
-      --glass: blur(14px);
-      --radius: 18px;
-      --radius2: 26px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-    }
 
-    [data-theme="dark"]{
-      --bg:#0d1017;
+  <style>
+    /* =========================
+       THEME (minimal glass)
+       ========================= */
+    :root{
+      --bg:#0f1218;
       --fg:#e9edf5;
       --muted:#a8b0bd;
-      --line:#2a2f3a;
-      --panel: rgba(20,24,35,.72);
-      --panel2: rgba(16,20,33,.60);
-      --shadow: 0 14px 50px rgba(0,0,0,.45);
-      --accent:#1fd18a;          /* vert (sombre) */
-      --accent2:#2a67ff;         /* bleu (clair) */
-      --good:#2ae08e;
-      --warn:#ffb020;
-      --bad:#ff4d6d;
+      --line:rgba(255,255,255,.12);
+      --glass:rgba(18,22,30,.62);
+      --glass2:rgba(18,22,30,.40);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --blur: blur(14px);
+
+      /* accents: only 2, subtle */
+      --accent:#8fd3ff;     /* light-blue */
+      --accent2:#7cffc7;    /* mint */
+
+      --radius:22px;
+      --radius2:28px;
+
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --barH: 54px;         /* big bar thickness */
+      --ethH: 18px;         /* eth bar thickness */
+
+      --centerMax: 920px;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    [data-theme="light"]{
+      --bg:#f5f7fb;
+      --fg:#0d1323;
+      --muted:#5c667a;
+      --line:rgba(13,19,35,.14);
+      --glass:rgba(255,255,255,.66);
+      --glass2:rgba(255,255,255,.42);
+      --shadow: 0 18px 60px rgba(10,16,30,.16);
+      --accent:#2a67ff;
+      --accent2:#16c784;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
       font-family:var(--sans);
       background:
-        radial-gradient(1200px 800px at 10% -10%, rgba(42,103,255,.14), transparent 55%),
-        radial-gradient(1000px 700px at 90% 0%, rgba(31,209,138,.12), transparent 55%),
-        radial-gradient(900px 900px at 40% 110%, rgba(255,176,32,.10), transparent 55%),
+        radial-gradient(1200px 800px at 10% -10%, rgba(42,103,255,.10), transparent 55%),
+        radial-gradient(1000px 700px at 90% 0%, rgba(22,199,132,.10), transparent 55%),
         var(--bg);
       color:var(--fg);
       overflow-x:hidden;
     }
 
+    /* =========================
+       Layout
+       ========================= */
     .wrap{
-      max-width:900px;
-      margin:0 auto;
-      padding:18px 14px 38px;
-    }
-
-    /* Header top controls */
-    .topbar{
+      max-width: var(--centerMax);
+      margin: 0 auto;
+      padding: 18px 14px 40px;
       display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:10px;
+      flex-direction:column;
+      align-items:center;     /* center everything */
+      gap: 14px;
     }
 
-    .leftControls, .rightControls{
+    .topRow{
+      width:100%;
       display:flex;
       align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
+      justify-content:space-between;
+      gap: 10px;
     }
+
+    .group{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
 
     .btn{
       border:1px solid var(--line);
-      background:var(--panel);
-      backdrop-filter: var(--glass);
-      -webkit-backdrop-filter: var(--glass);
-      color:var(--fg);
-      border-radius:999px;
-      padding:10px 12px;
-      font-weight:650;
+      background: var(--glass);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      color: var(--fg);
+      border-radius: 999px;
+      padding: 10px 12px;
+      font-weight: 800;
       cursor:pointer;
-      box-shadow: 0 6px 18px rgba(0,0,0,.06);
-      transition: transform .08s ease, border-color .2s ease, background .2s ease;
       user-select:none;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
     }
     .btn:active{ transform: translateY(1px) scale(.99); }
+    .btn.small{ padding: 8px 10px; font-weight: 800; box-shadow:none; background:var(--glass2); }
     .btn.ghost{ background:transparent; box-shadow:none; }
-    .btn.small{ padding:8px 10px; font-weight:650; }
     .btn.primary{
       border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
-      background: color-mix(in oklab, var(--accent) 12%, var(--panel));
-    }
-    .btn.danger{
-      border-color: color-mix(in oklab, var(--bad) 55%, var(--line));
-      background: color-mix(in oklab, var(--bad) 10%, var(--panel));
+      background: color-mix(in oklab, var(--accent) 10%, var(--glass));
     }
 
-    .pill{
-      border:1px solid var(--line);
-      background:var(--panel2);
-      backdrop-filter: var(--glass);
-      -webkit-backdrop-filter: var(--glass);
-      border-radius:999px;
-      padding:8px 10px;
-      font-family:var(--mono);
-      font-size:12px;
-      color:var(--muted);
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      box-shadow: 0 6px 20px rgba(0,0,0,.05);
-    }
-    .pill b{ color:var(--fg); font-weight:800; }
-
-    .switch{
+    .toggle{
       display:inline-flex;
       border:1px solid var(--line);
       border-radius:999px;
       overflow:hidden;
-      background:var(--panel);
-      backdrop-filter: var(--glass);
-      -webkit-backdrop-filter: var(--glass);
-      box-shadow: 0 6px 18px rgba(0,0,0,.06);
+      background:var(--glass);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
     }
-    .switch button{
+    .toggle button{
       border:0;
-      padding:9px 12px;
-      cursor:pointer;
       background:transparent;
       color:var(--muted);
-      font-weight:800;
+      padding: 9px 12px;
+      cursor:pointer;
+      font-weight: 900;
     }
-    .switch button.active{
+    .toggle button.active{
       color:var(--fg);
-      background: color-mix(in oklab, var(--accent) 16%, transparent);
-    }
-    [data-theme="dark"] .switch button.active{
-      background: color-mix(in oklab, var(--accent) 14%, transparent);
+      background: color-mix(in oklab, var(--accent) 12%, transparent);
     }
 
-    /* Title block */
+    .hud{
+      border:1px solid var(--line);
+      background:var(--glass);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border-radius:999px;
+      padding: 9px 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      display:flex;
+      gap: 14px;
+      align-items:center;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .hud b{ color: var(--fg); font-weight: 900; }
+
     .titleBlock{
-      margin:8px 0 14px;
+      width:100%;
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:6px;
       text-align:center;
+      gap: 6px;
+      margin-top: 2px;
     }
     .title{
-      font-size: clamp(44px, 6.2vw, 78px); /* très grand */
-      letter-spacing: .5px;
-      font-weight: 950;
-      line-height: .98;
       margin:0;
-      text-shadow: 0 10px 30px rgba(0,0,0,.10);
+      font-weight: 950;
+      letter-spacing: .6px;
+      font-size: clamp(44px, 6.2vw, 86px);
+      line-height: .95;
+      text-shadow: 0 14px 40px rgba(0,0,0,.14);
     }
     .subtitle{
       margin:0;
-      font-weight:850;
-      color:var(--muted);
-      letter-spacing:.2px;
+      color: var(--muted);
+      font-weight: 850;
+      letter-spacing: .2px;
     }
 
-    /* Main panel */
-    .panel{
+    /* =========================
+       Main blocks
+       ========================= */
+    .block{
+      width:100%;
       border:1px solid var(--line);
-      background:var(--panel);
-      backdrop-filter: var(--glass);
-      -webkit-backdrop-filter: var(--glass);
       border-radius: var(--radius2);
+      background: var(--glass);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
       box-shadow: var(--shadow);
-      padding:16px;
+      padding: 16px;
+    }
+
+    /* Big progress bar block (distinct) */
+    .barTrack{
+      height: var(--barH);
+      border-radius: 999px;
+      border:1px solid color-mix(in oklab, var(--line) 90%, transparent);
+      background: color-mix(in oklab, var(--line) 25%, transparent);
       overflow:hidden;
       position:relative;
     }
-
-    /* Big progress bar */
-    .bigBarBox{
-      border:1px solid var(--line);
-      border-radius: 22px;
-      padding:14px;
-      background: color-mix(in oklab, var(--panel) 72%, transparent);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
-    }
-
-    .bigBarTrack{
-      height: 42px; /* épais */
-      border-radius: 20px;
-      background: color-mix(in oklab, var(--line) 40%, transparent);
-      border: 1px solid color-mix(in oklab, var(--line) 75%, transparent);
-      overflow:hidden;
-      position:relative;
-    }
-    .bigBarFill{
+    .barFill{
       height:100%;
       width:100%;
-      background: linear-gradient(90deg,
-        color-mix(in oklab, var(--accent) 85%, white 0%),
-        color-mix(in oklab, var(--accent) 55%, var(--accent2) 25%)
-      );
-      border-radius:20px;
       transform-origin:left center;
       transform: scaleX(1);
+      background: linear-gradient(90deg,
+        color-mix(in oklab, var(--accent) 70%, transparent),
+        color-mix(in oklab, var(--accent2) 55%, transparent)
+      );
       transition: transform .18s ease;
     }
-    .bigBarPct{
+    .barPct{
       position:absolute;
       inset:0;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-weight:950;
-      font-family:var(--mono);
-      letter-spacing:.5px;
-      color: rgba(255,255,255,.96);
-      text-shadow: 0 6px 18px rgba(0,0,0,.35);
-      mix-blend-mode: normal;
+      font-family: var(--mono);
+      font-weight: 950;
+      letter-spacing: .6px;
+      color: rgba(255,255,255,.92);
+      text-shadow: 0 10px 30px rgba(0,0,0,.35);
       pointer-events:none;
+      mix-blend-mode: normal;
     }
-    [data-theme="light"] .bigBarPct{
+    [data-theme="light"] .barPct{
       color: rgba(255,255,255,.95);
+      text-shadow: 0 12px 30px rgba(0,0,0,.32);
     }
 
+    /* Task block */
     .taskName{
-      margin:14px 2px 10px;
-      font-size: clamp(18px, 3vw, 26px);
-      font-weight: 920;
-      letter-spacing:.2px;
+      margin: 0;
       text-align:center;
+      font-size: clamp(18px, 2.8vw, 28px);
+      font-weight: 950;
+      letter-spacing: .2px;
     }
-    .taskMetaRow{
+
+    .taskSub{
+      margin-top: 10px;
       display:flex;
-      align-items:center;
+      gap: 10px;
       justify-content:center;
-      gap:10px;
       flex-wrap:wrap;
-      margin-bottom:8px;
-      color:var(--muted);
-      font-family:var(--mono);
-      font-size:12px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
     }
-    .taskMetaRow .badge{
+    .pill{
       border:1px solid var(--line);
-      background:var(--panel2);
       border-radius:999px;
-      padding:6px 10px;
+      padding: 7px 10px;
+      background: var(--glass2);
     }
 
     /* Etherions bar */
     .ethBox{
-      margin-top:10px;
-      padding:12px 12px 10px;
-      border:1px dashed color-mix(in oklab, var(--line) 85%, transparent);
-      border-radius: 18px;
-      background: color-mix(in oklab, var(--panel2) 70%, transparent);
+      margin-top: 14px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--glass2);
+      padding: 12px;
     }
     .ethTop{
       display:flex;
-      align-items:center;
       justify-content:space-between;
-      gap:8px;
+      gap:10px;
       flex-wrap:wrap;
-      margin-bottom:8px;
+      align-items:center;
+      margin-bottom: 10px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
     }
-    .ethLabel{
-      font-family:var(--mono);
-      font-size:12px;
-      color:var(--muted);
-    }
-    .ethLabel b{ color:var(--fg); }
+    .ethTop b{ color: var(--fg); }
     .ethTrack{
-      height:14px;
-      border-radius:999px;
-      background: color-mix(in oklab, var(--line) 45%, transparent);
-      border:1px solid color-mix(in oklab, var(--line) 70%, transparent);
+      height: var(--ethH);
+      border-radius: 999px;
+      border:1px solid color-mix(in oklab, var(--line) 90%, transparent);
+      background: color-mix(in oklab, var(--line) 25%, transparent);
       overflow:hidden;
       position:relative;
     }
     .ethFill{
       height:100%;
       width:100%;
-      background: linear-gradient(90deg,
-        color-mix(in oklab, var(--accent) 45%, transparent),
-        color-mix(in oklab, var(--accent) 25%, var(--accent2) 35%)
-      );
       transform-origin:left center;
       transform: scaleX(1);
+      background: linear-gradient(90deg,
+        color-mix(in oklab, var(--accent) 55%, transparent),
+        color-mix(in oklab, var(--accent2) 45%, transparent)
+      );
       transition: transform .18s ease;
     }
     .ethTicks{
       position:absolute;
       inset:0;
       display:flex;
-      gap:0;
-      opacity:.75;
+      opacity:.65;
       pointer-events:none;
     }
     .ethTicks span{
       flex:1;
-      border-right:1px dashed rgba(255,255,255,.30);
+      border-right:1px dashed rgba(255,255,255,.22);
     }
     [data-theme="light"] .ethTicks span{
-      border-right:1px dashed rgba(0,0,0,.12);
+      border-right:1px dashed rgba(13,19,35,.14);
     }
 
-    /* Main actions row */
-    .actions{
+    /* Actions */
+    .actionRow{
+      margin-top: 16px;
       display:flex;
+      gap: 14px;
       justify-content:center;
       align-items:center;
-      gap:10px;
       flex-wrap:wrap;
-      margin-top:12px;
     }
 
+    /* Big roulette */
     .rouletteBtn{
-      width:56px;
-      height:56px;
-      border-radius: 18px;
+      width: 112px;
+      height: 112px;
+      border-radius: 26px;
       border:1px solid var(--line);
-      background: var(--panel);
-      backdrop-filter: var(--glass);
-      -webkit-backdrop-filter: var(--glass);
-      box-shadow: 0 10px 26px rgba(0,0,0,.10);
+      background: var(--glass);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      box-shadow: 0 18px 50px rgba(0,0,0,.16);
       cursor:pointer;
-      display:grid;
-      place-items:center;
-      position:relative;
-      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+      user-select:none;
     }
     .rouletteWheel{
-      width:34px;
-      height:34px;
-      border-radius:999px;
-      border:2px solid color-mix(in oklab, var(--accent) 65%, var(--line));
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      border:2px solid color-mix(in oklab, var(--accent) 55%, var(--line));
       background:
         conic-gradient(
           from 0deg,
-          color-mix(in oklab, var(--accent) 70%, transparent),
-          color-mix(in oklab, var(--accent2) 55%, transparent),
-          color-mix(in oklab, var(--warn) 55%, transparent),
-          color-mix(in oklab, var(--accent) 70%, transparent)
+          color-mix(in oklab, var(--accent) 26%, transparent),
+          color-mix(in oklab, var(--accent2) 24%, transparent),
+          color-mix(in oklab, var(--accent) 26%, transparent)
         );
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.18);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.10);
       transform: rotate(0deg);
     }
     .rouletteBtn.spinning .rouletteWheel{
@@ -362,143 +353,140 @@
       0%{ transform: rotate(0deg); }
       100%{ transform: rotate(1080deg); }
     }
+    .rouletteLabel{
+      font-family: var(--mono);
+      font-weight: 950;
+      letter-spacing:.6px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
 
-    .bigAction{
+    /* Smash button */
+    .smashBtn{
       border:1px solid color-mix(in oklab, var(--accent) 55%, var(--line));
-      background: linear-gradient(180deg,
-        color-mix(in oklab, var(--accent) 16%, var(--panel)),
-        color-mix(in oklab, var(--accent) 10%, var(--panel))
-      );
-      padding:14px 16px;
-      border-radius: 18px;
-      font-size:16px;
-      font-weight:950;
+      background: color-mix(in oklab, var(--accent) 8%, var(--glass));
+      border-radius: 26px;
+      padding: 18px 22px;
+      font-weight: 950;
+      letter-spacing: .2px;
       cursor:pointer;
-      box-shadow: 0 12px 30px rgba(0,0,0,.12);
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.16);
       user-select:none;
-    }
-    .bigAction:active{ transform: translateY(1px); }
-
-    .miniActions{
       display:flex;
-      gap:10px;
-      justify-content:center;
-      flex-wrap:wrap;
-      margin-top:12px;
+      align-items:center;
+      gap: 10px;
+      font-size: 18px;
     }
+    .smashBtn:active{ transform: translateY(1px); }
 
-    /* Tiny icon buttons under task (pin/up/down/edit/delete) */
-    .iconRow{
+    /* Bottom quick bar (menu + note) */
+    .bottomBar{
+      margin-top: 14px;
       display:flex;
       justify-content:center;
-      align-items:center;
-      gap:8px;
+      gap: 10px;
       flex-wrap:wrap;
-      margin-top:6px;
     }
-    .iconBtn{
-      border:1px solid var(--line);
-      background: var(--panel2);
-      border-radius: 14px;
-      padding:10px 12px;
-      cursor:pointer;
-      font-weight:900;
-      color:var(--fg);
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      box-shadow: 0 8px 22px rgba(0,0,0,.06);
-      user-select:none;
-    }
-    .iconBtn small{ color:var(--muted); font-weight:800; }
 
-    /* Overlay menu */
-    .overlay{
+    /* =========================
+       Drawer (left, hideable)
+       ========================= */
+    .drawerOverlay{
       position:fixed;
       inset:0;
-      background: rgba(0,0,0,.18);
+      background: rgba(0,0,0,.25);
       display:none;
-      align-items:flex-end;
-      justify-content:center;
-      z-index:50;
-      padding:14px;
+      z-index:60;
     }
-    [data-theme="dark"] .overlay{ background: rgba(0,0,0,.42); }
-    .overlay.show{ display:flex; }
+    [data-theme="light"] .drawerOverlay{ background: rgba(0,0,0,.12); }
+    .drawerOverlay.show{ display:block; }
 
-    .sheet{
-      width:min(900px, 100%);
-      max-height: 86vh;
-      overflow:hidden;
-      border:1px solid var(--line);
-      background: var(--panel);
-      backdrop-filter: var(--glass);
-      -webkit-backdrop-filter: var(--glass);
-      border-radius: 26px;
+    .drawer{
+      position:fixed;
+      top:0;
+      left:0;
+      height:100%;
+      width: min(420px, 88vw);
+      background: var(--glass);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border-right:1px solid var(--line);
       box-shadow: var(--shadow);
+      transform: translateX(-102%);
+      transition: transform .22s ease;
+      z-index:70;
       display:flex;
       flex-direction:column;
     }
-    .sheetTop{
+    .drawerOverlay.show .drawer{
+      transform: translateX(0);
+    }
+
+    .drawerTop{
+      padding: 14px 14px 10px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      padding:12px 12px 10px;
       border-bottom:1px solid var(--line);
     }
-    .tabs{
+
+    .drawerTabs{
+      padding: 10px 14px 0;
       display:flex;
       gap:8px;
       flex-wrap:wrap;
     }
     .tab{
       border:1px solid var(--line);
-      background: var(--panel2);
-      border-radius:999px;
-      padding:8px 10px;
+      background: var(--glass2);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-weight: 900;
+      color: var(--muted);
       cursor:pointer;
-      font-weight:900;
-      color:var(--muted);
       user-select:none;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      font-family: var(--mono);
     }
     .tab.active{
-      color:var(--fg);
+      color: var(--fg);
       border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
-      background: color-mix(in oklab, var(--accent) 12%, var(--panel2));
+      background: color-mix(in oklab, var(--accent) 10%, var(--glass2));
     }
-    .sheetBody{
+
+    .drawerBody{
+      padding: 12px 14px 16px;
       overflow:auto;
-      padding:12px;
     }
 
     .card{
       border:1px solid var(--line);
-      background: var(--panel2);
-      border-radius: 18px;
-      padding:12px;
-      margin-bottom:10px;
-      box-shadow: 0 8px 22px rgba(0,0,0,.06);
+      border-radius: var(--radius);
+      background: var(--glass2);
+      padding: 12px;
+      margin-bottom: 12px;
     }
     .cardTitle{
-      font-weight:950;
-      margin:0 0 8px;
+      margin:0 0 10px;
+      font-weight: 950;
+      letter-spacing:.2px;
     }
 
     textarea, input, select{
       width:100%;
       border:1px solid var(--line);
-      background: color-mix(in oklab, var(--panel) 75%, transparent);
-      border-radius: 14px;
-      padding:10px 12px;
-      color:var(--fg);
+      background: color-mix(in oklab, var(--glass) 70%, transparent);
+      color: var(--fg);
+      border-radius: 16px;
+      padding: 10px 12px;
       outline:none;
       font-family: var(--sans);
     }
-    textarea{ min-height: 120px; resize: vertical; }
+    textarea{ min-height: 130px; resize: vertical; }
 
     .row{
       display:flex;
@@ -506,214 +494,287 @@
       flex-wrap:wrap;
       align-items:center;
     }
-    .row > *{ flex:1; min-width: 160px; }
-    .row.tight > *{ min-width: 120px; }
+    .row > *{ flex:1; min-width: 140px; }
+
     .help{
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.35;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      font-family: var(--mono);
     }
 
-    /* Task list */
+    /* List items (minimal icons in list) */
     .taskItem{
+      border:1px solid var(--line);
+      background: color-mix(in oklab, var(--glass) 60%, transparent);
+      border-radius: 18px;
+      padding: 10px 10px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      padding:10px 10px;
+      margin-bottom: 8px;
+    }
+    .taskLeft .name{
+      font-weight: 950;
+      line-height: 1.15;
+    }
+    .taskLeft .sub{
+      margin-top: 3px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .taskAct{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .iconBtn{
       border:1px solid var(--line);
-      background: color-mix(in oklab, var(--panel) 65%, transparent);
-      border-radius: 16px;
-      margin-bottom:8px;
-    }
-    .taskItem .name{
-      font-weight:900;
-      line-height:1.2;
-    }
-    .taskItem .sub{
-      color:var(--muted);
-      font-family:var(--mono);
-      font-size:12px;
-      margin-top:3px;
-    }
-    .taskItem .actions{
-      margin:0;
-      justify-content:flex-end;
-      gap:8px;
-    }
-    .taskItem .actions .btn{
-      padding:8px 10px;
+      background: var(--glass2);
       border-radius: 14px;
-      box-shadow:none;
-      background: var(--panel2);
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 950;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--fg);
+      user-select:none;
     }
+    .iconBtn:active{ transform: translateY(1px); }
 
-    /* Notes: post-it vibe */
+    /* Notes */
     .noteGrid{
       display:grid;
-      grid-template-columns: repeat( auto-fit, minmax(220px, 1fr) );
-      gap:10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
     }
     .note{
       border:1px solid var(--line);
-      background:
-        linear-gradient(180deg,
-          color-mix(in oklab, var(--warn) 16%, var(--panel)),
-          color-mix(in oklab, var(--warn) 8%, var(--panel2))
-        );
-      border-radius:18px;
-      padding:12px;
-      box-shadow: 0 10px 24px rgba(0,0,0,.10);
-    }
-    [data-theme="dark"] .note{
-      background:
-        linear-gradient(180deg,
-          color-mix(in oklab, var(--warn) 14%, var(--panel)),
-          color-mix(in oklab, var(--warn) 6%, var(--panel2))
-        );
+      border-radius: 18px;
+      background: color-mix(in oklab, var(--glass2) 85%, transparent);
+      padding: 12px;
     }
     .note .stamp{
-      font-family:var(--mono);
-      font-size:11px;
-      color:var(--muted);
-      margin-bottom:6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
     }
     .note .txt{
-      white-space:pre-wrap;
-      font-weight:750;
+      white-space: pre-wrap;
+      font-weight: 800;
     }
 
-    /* Celebration banner */
-    .celebrate{
-      position:fixed;
-      left:50%;
-      top:14px;
-      transform:translateX(-50%) translateY(-20px);
-      opacity:0;
-      pointer-events:none;
-      z-index:80;
-      border:1px solid color-mix(in oklab, var(--accent) 55%, var(--line));
-      background: color-mix(in oklab, var(--accent) 16%, var(--panel));
-      backdrop-filter: var(--glass);
-      -webkit-backdrop-filter: var(--glass);
-      border-radius: 999px;
-      padding:10px 14px;
-      box-shadow: 0 14px 40px rgba(0,0,0,.16);
-      font-weight:950;
-      letter-spacing:.2px;
+    /* Habits */
+    .habitItem{
+      border:1px solid var(--line);
+      border-radius: 18px;
+      background: color-mix(in oklab, var(--glass) 60%, transparent);
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .habitTop{
       display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
       gap:10px;
-      align-items:center;
-      transition: opacity .25s ease, transform .25s ease;
     }
-    .celebrate.show{
-      opacity:1;
-      transform:translateX(-50%) translateY(0);
+    .habitName{
+      font-weight: 950;
+      margin:0;
     }
-    .celebrate .small{
-      font-family:var(--mono);
-      font-weight:850;
-      color:var(--muted);
-      font-size:12px;
+    .habitMeta{
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    .habitChecks{
+      margin-top: 10px;
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+    }
+    .check{
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border:1px solid var(--line);
+      background: var(--glass2);
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      user-select:none;
+      font-family: var(--mono);
+      font-weight: 950;
+      color: var(--fg);
+    }
+    .check.on{
+      background: color-mix(in oklab, var(--accent) 12%, var(--glass2));
+      border-color: color-mix(in oklab, var(--accent) 40%, var(--line));
     }
 
-    /* Confetti canvas */
-    #confetti{
+    /* =========================
+       Celebration full-screen
+       ========================= */
+    .celebrateOverlay{
       position:fixed;
       inset:0;
-      pointer-events:none;
-      z-index:70;
+      display:none;
+      z-index:90;
+      background: rgba(0,0,0,.24);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    [data-theme="light"] .celebrateOverlay{ background: rgba(0,0,0,.10); }
+    .celebrateOverlay.show{ display:block; }
+
+    .celebrateBox{
+      position:absolute;
+      inset: 0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+    }
+    .celebrateCard{
+      width: min(760px, 92vw);
+      border:1px solid var(--line);
+      border-radius: 34px;
+      background: var(--glass);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      box-shadow: var(--shadow);
+      padding: 26px 22px;
+      text-align:center;
+    }
+    .celebrateTitle{
+      margin:0;
+      font-size: clamp(28px, 4.2vw, 52px);
+      font-weight: 980;
+      letter-spacing: .6px;
+      line-height: 1.02;
+    }
+    .celebrateSub{
+      margin: 12px 0 0;
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: .3px;
+    }
+    .celebrateHint{
+      margin: 18px 0 0;
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 12px;
     }
 
-    /* Focus mode: ultra épuré */
-    [data-focus="1"] .titleBlock{ margin-bottom:10px; }
-    [data-focus="1"] .topbar .pill{ display:none; }
-    [data-focus="1"] .topbar .rightControls .btn:not(.keep){ display:none; }
-    [data-focus="1"] .miniActions{ display:none; }
-    [data-focus="1"] .taskMetaRow{ display:none; }
-    [data-focus="1"] .iconRow .iconBtn small{ display:none; }
-    [data-focus="1"] .sheetTop .tabs{ display:flex; } /* menu reste ok */
+    /* =========================
+       Focus mode (hard minimal)
+       ========================= */
+    [data-focus="1"] .topRow{ display:none; }
+    [data-focus="1"] .subtitle{ display:none; }
+    [data-focus="1"] .taskSub{ display:none; }
+    [data-focus="1"] .ethBox{ display:none; }
+    [data-focus="1"] .bottomBar{ display:none; }
+    [data-focus="1"] .focusExit{
+      display:flex;
+      justify-content:center;
+      margin-top: 14px;
+    }
+    .focusExit{ display:none; }
 
-    /* Pure mode: encore plus minimal (optionnel) */
-    [data-pure="1"] .iconRow{ display:none; }
-    [data-pure="1"] .ethBox{ display:none; }
-    [data-pure="1"] .taskMetaRow{ display:none; }
-    [data-pure="1"] .miniActions{ display:none; }
-
-    /* small screens */
-    @media (max-width: 460px){
-      .btn{ padding:9px 10px; }
-      .bigAction{ width:100%; justify-content:center; }
-      .rouletteBtn{ width:52px; height:52px; border-radius:16px; }
-      .bigBarTrack{ height:40px; }
-      .wrap{ padding:14px 12px 34px; }
+    /* Mobile tightening */
+    @media (max-width: 480px){
+      :root{ --barH: 50px; }
+      .hud{ gap: 10px; }
+      .rouletteBtn{ width: 104px; height: 104px; }
+      .rouletteWheel{ width: 52px; height: 52px; }
+      .smashBtn{ width:100%; justify-content:center; }
+      .topRow{ justify-content:center; }
     }
   </style>
 </head>
 
-<body data-theme="light" data-focus="0" data-pure="0">
-  <canvas id="confetti"></canvas>
+<body data-theme="light" data-focus="0">
+  <div class="celebrateOverlay" id="celebrateOverlay" aria-hidden="true">
+    <div class="celebrateBox">
+      <div class="celebrateCard">
+        <h2 class="celebrateTitle" id="celebrateTitle">VICTOIRE ABSURDE</h2>
+        <p class="celebrateSub" id="celebrateSub">+1 éthorion dégommé</p>
+        <p class="celebrateHint">Clique n’importe où pour revenir.</p>
+      </div>
+    </div>
+  </div>
 
-  <div class="celebrate" id="celebrate">
-    <span id="celebrateMain">GLORIEUX TRIOMPHE</span>
-    <span class="small" id="celebrateSub">+1 étorion éliminé</span>
+  <!-- Drawer -->
+  <div class="drawerOverlay" id="drawerOverlay">
+    <aside class="drawer" role="dialog" aria-modal="true">
+      <div class="drawerTop">
+        <button class="btn small" id="btnDrawerClose">Fermer</button>
+        <div class="toggle" title="Thème">
+          <button id="themeLight" class="active">Clair</button>
+          <button id="themeDark">Sombre</button>
+        </div>
+      </div>
+
+      <div class="drawerTabs" id="drawerTabs"></div>
+
+      <div class="drawerBody">
+        <!-- panels injected by JS -->
+        <div id="drawerPanels"></div>
+      </div>
+    </aside>
   </div>
 
   <div class="wrap">
-    <div class="topbar">
-      <div class="leftControls">
-        <button class="btn keep" id="btnMenu">☰ Menu</button>
-        <button class="btn keep" id="btnReset">⟲ Reset</button>
-        <button class="btn keep" id="btnFocus">⦿ Focus</button>
+    <div class="topRow">
+      <div class="group">
+        <button class="btn" id="btnMenu">Menu</button>
+        <button class="btn" id="btnReset">Reset</button>
+        <button class="btn" id="btnFocus">Focus</button>
       </div>
 
-      <div class="rightControls">
-        <div class="pill" id="hud">
-          <span>Tâches: <b id="hudTasks">0/0</b></span>
-          <span>Éthorions: <b id="hudEth">0/0</b></span>
-          <span>Faits: <b id="hudDone">0</b></span>
-          <span>⏱ <b id="hudTimer">00:00</b></span>
-        </div>
-
-        <div class="switch" title="Thème">
-          <button id="themeLight" class="active">Clair</button>
-          <button id="themeDark">Sombre</button>
+      <div class="group">
+        <div class="hud" id="hud">
+          <span>Tâches <b id="hudTasks">0/0</b></span>
+          <span>Éthorions <b id="hudEth">0/0</b></span>
+          <span>Faits <b id="hudDone">0</b></span>
+          <span>Temps <b id="hudTimer">00:00</b></span>
         </div>
       </div>
     </div>
 
     <div class="titleBlock">
       <h1 class="title">ELIMINATOR</h1>
-      <p class="subtitle">Dégomme toutes les tâches, tous les éthorions en cours</p>
+      <p class="subtitle">Dégomme toutes les tâches • Dégomme tous les éthorions en cours</p>
     </div>
 
-    <div class="panel" id="mainPanel">
-      <div class="bigBarBox">
-        <div class="bigBarTrack" aria-label="Progression de la tâche">
-          <div class="bigBarFill" id="bigFill"></div>
-          <div class="bigBarPct" id="bigPct">100%</div>
-        </div>
+    <!-- Big progress bar (distinct block) -->
+    <section class="block" aria-label="Barre de progression globale">
+      <div class="barTrack">
+        <div class="barFill" id="bigFill"></div>
+        <div class="barPct" id="bigPct">100%</div>
       </div>
+    </section>
 
-      <div class="taskName" id="taskName">Aucune tâche (ouvre Menu → Inbox / Liste)</div>
+    <!-- Task block -->
+    <section class="block" aria-label="Tâche en cours">
+      <h2 class="taskName" id="taskName">Aucune tâche</h2>
 
-      <div class="taskMetaRow" id="taskMetaRow">
-        <span class="badge" id="metaEst">Estimé: 0 min</span>
-        <span class="badge" id="metaCat">Catégorie: —</span>
-      </div>
-
-      <div class="iconRow" id="iconRow">
-        <button class="iconBtn" id="btnPin">📌 <small id="pinState">non</small></button>
-        <button class="iconBtn" id="btnUp">⬆️ <small>prioriser</small></button>
-        <button class="iconBtn" id="btnDown">⬇️ <small>déprioriser</small></button>
-        <button class="iconBtn" id="btnEdit">✏️ <small>éditer</small></button>
-        <button class="iconBtn" id="btnDelete">🗑️ <small>supprimer</small></button>
+      <div class="taskSub" id="taskSub">
+        <div class="pill" id="metaCat">Cat —</div>
+        <div class="pill" id="metaEst">Estimé —</div>
       </div>
 
       <div class="ethBox" id="ethBox">
         <div class="ethTop">
-          <div class="ethLabel">Éthorions: <b id="ethNow">0</b>/<b id="ethStart">0</b> • Temps estimé: <b id="ethMinutes">0</b> min</div>
-          <div class="ethLabel">Fragment: <b>1 éthorion</b> = <b id="ethSizeLabel">5</b> min</div>
+          <div>Éthorions <b id="ethNow">0</b>/<b id="ethStart">0</b></div>
+          <div>Temps restant <b id="ethMinutes">0</b> min</div>
         </div>
         <div class="ethTrack">
           <div class="ethFill" id="ethFill"></div>
@@ -721,1256 +782,1504 @@
         </div>
       </div>
 
-      <div class="actions">
-        <button class="rouletteBtn" id="btnRoulette" title="Roulette (choisir une autre tâche)">
+      <div class="actionRow">
+        <button class="rouletteBtn" id="btnRoulette" aria-label="Roulette">
           <div class="rouletteWheel" id="rouletteWheel"></div>
+          <div class="rouletteLabel">ROULETTE</div>
         </button>
 
-        <button class="bigAction" id="btnSmash">
-          🧨 Dégommer 1 éthorion
+        <button class="smashBtn" id="btnSmash" aria-label="Dégommer un éthorion">
+          <span>🧨</span>
+          <span>Dégommer 1 éthorion</span>
         </button>
       </div>
 
-      <div class="miniActions" id="miniActions">
-        <button class="btn small" id="btnNoteQuick">🗒 Note</button>
-        <button class="btn small ghost" id="btnPure">⟡ Pur</button>
+      <div class="bottomBar">
+        <button class="btn small" id="btnBottomMenu">Menu</button>
+        <button class="btn small" id="btnBottomNote">Note</button>
+        <button class="btn small ghost" id="btnBottomFocus">Focus</button>
       </div>
-    </div>
+
+      <div class="focusExit" id="focusExit">
+        <button class="btn primary" id="btnExitFocus">Quitter Focus</button>
+      </div>
+    </section>
   </div>
 
-  <!-- Overlay Menu -->
-  <div class="overlay" id="overlay">
-    <div class="sheet">
-      <div class="sheetTop">
-        <div class="tabs">
-          <div class="tab active" data-tab="inbox">Inbox</div>
-          <div class="tab" data-tab="list">Liste</div>
-          <div class="tab" data-tab="notes">Notes</div>
-          <div class="tab" data-tab="profile">Profil & Stats</div>
-        </div>
-        <button class="btn" id="btnClose">✕ Fermer</button>
-      </div>
-
-      <div class="sheetBody">
-        <!-- Inbox -->
-        <div class="tabPanel" id="tab-inbox">
-          <div class="card">
-            <p class="cardTitle">Importer / coller des tâches</p>
-            <textarea id="inboxText" placeholder="Colle n’importe quel format.
-Exemples supportés :
-- Appeler Hugo
-• Catégorie: Qui fonce | Éthorions: 4 | Appeler Hugo
-[Qui fonce] (eth=3) Appeler Samira
-Appeler Myriam P ; cat=admin ; eth=2
-"></textarea>
-            <div class="row tight" style="margin-top:10px;">
-              <select id="defaultCategory">
-                <option value="">Catégorie par défaut (optionnel)</option>
-              </select>
-              <input id="defaultEth" type="number" min="1" placeholder="Éthorions par défaut (ex: 3)" />
-            </div>
-            <div class="row" style="margin-top:10px;">
-              <button class="btn primary" id="btnImport">+ Importer</button>
-              <button class="btn" id="btnClearInbox">Vider</button>
-            </div>
-            <div class="help" style="margin-top:8px;">
-              - Si une ligne contient « qui fonce » (ou [qui fonce]), elle part direct dans cette catégorie.<br>
-              - Si tu ne mets pas d’éthorions, on prend la valeur par défaut (ou 1).<br>
-              - Les notes (onglet Notes) survivent à tous les reset (oui, comme des cafards).
-            </div>
-          </div>
-        </div>
-
-        <!-- List -->
-        <div class="tabPanel" id="tab-list" style="display:none;">
-          <div class="card">
-            <p class="cardTitle">Filtre des catégories actives</p>
-            <div class="help">Choisis quelles catégories sont “actives” pour la roulette / la sélection.</div>
-            <div id="catFilters" style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;"></div>
-            <div class="row tight" style="margin-top:10px;">
-              <select id="sortMode">
-                <option value="roulette">Mode: Roulette (aléatoire)</option>
-                <option value="order">Mode: Dans l'ordre (liste)</option>
-                <option value="alpha">Mode: Alphabétique</option>
-                <option value="chrono">Mode: Chronologique (création)</option>
-              </select>
-              <button class="btn" id="btnApplySort">Appliquer</button>
-            </div>
-          </div>
-
-          <div class="card">
-            <p class="cardTitle">Tâches</p>
-            <div id="taskList"></div>
-          </div>
-        </div>
-
-        <!-- Notes -->
-        <div class="tabPanel" id="tab-notes" style="display:none;">
-          <div class="card">
-            <p class="cardTitle">Ajouter une note (persistante)</p>
-            <textarea id="noteText" placeholder="Une pensée, un rappel, un éclair de génie ou un cri existentiel…"></textarea>
-            <div class="row" style="margin-top:10px;">
-              <button class="btn primary" id="btnAddNote">+ Ajouter</button>
-              <button class="btn danger" id="btnClearNotes">Effacer toutes les notes</button>
-            </div>
-            <div class="help" style="margin-top:8px;">
-              Les notes sont sauvegardées et ne disparaissent pas quand tu reset les tâches.
-            </div>
-          </div>
-
-          <div class="card">
-            <p class="cardTitle">Notes sauvegardées</p>
-            <div class="noteGrid" id="notesGrid"></div>
-          </div>
-        </div>
-
-        <!-- Profile & Stats -->
-        <div class="tabPanel" id="tab-profile" style="display:none;">
-          <div class="card">
-            <p class="cardTitle">Affichage</p>
-            <div class="row tight">
-              <button class="btn" id="btnToggleFocusFromMenu">Basculer Focus</button>
-              <button class="btn" id="btnTogglePureFromMenu">Basculer Pur</button>
-              <select id="ethMinutesPer">
-                <option value="5">1 éthorion = 5 min</option>
-                <option value="10">1 éthorion = 10 min</option>
-                <option value="15">1 éthorion = 15 min</option>
-              </select>
-            </div>
-            <div class="help" style="margin-top:8px;">
-              Focus = masque le bruit. Pur = encore plus minimal (barre only, style “laser”).
-            </div>
-          </div>
-
-          <div class="card">
-            <p class="cardTitle">Stats & Historique quotidien</p>
-            <div id="statsBox" class="help" style="font-family:var(--mono); font-size:12px; white-space:pre-wrap;"></div>
-            <div class="row" style="margin-top:10px;">
-              <button class="btn" id="btnExport">Exporter JSON</button>
-              <button class="btn danger" id="btnNuke">Tout effacer (tâches + stats) — SAUF notes</button>
-            </div>
-            <div class="help" style="margin-top:8px;">
-              “Tout effacer” garde les notes (oui, encore).
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-<script>
-(() => {
-  /***********************
-   * Storage keys
-   ***********************/
-  const K = {
-    state: "ELIMINATOR_STATE_V2",
-    notes: "ELIMINATOR_NOTES_V2",
-    history: "ELIMINATOR_HISTORY_V2",
-    settings: "ELIMINATOR_SETTINGS_V2"
-  };
-
-  /***********************
-   * Defaults
-   ***********************/
-  const DEFAULTS = {
-    theme: "light",        // clair par défaut ✅
-    focus: 0,
-    pure: 0,
-    ethMinutesPer: 5,
-    sortMode: "roulette",
-    activeCats: null       // null => toutes actives
-  };
-
-  const CELEB = [
-    "GLORIEUX TRIOMPHE",
-    "CONQUÊTE ABSOLUE",
-    "VICTOIRE COSMIQUE",
-    "DÉMOLITION IMPÉRIALE",
-    "ÉCLAT DIVIN (SANS PREUVE)",
-    "RÈGNE DE LA PRODUCTIVITÉ",
-    "TU ES UN CATACLYSME ORGANISÉ",
-    "LA LISTE TREMBLE",
-    "L’UNIVERS APPLAUDIT (PEUT-ÊTRE)",
-    "C’EST ILLÉGAL D’ÊTRE SI EFFICACE",
-    "HONNEUR, GLOIRE, ET CAFÉINE"
-  ];
-
-  /***********************
-   * DOM
-   ***********************/
-  const body = document.body;
-
-  const hudTasks = document.getElementById("hudTasks");
-  const hudEth = document.getElementById("hudEth");
-  const hudDone = document.getElementById("hudDone");
-  const hudTimer = document.getElementById("hudTimer");
-
-  const bigFill = document.getElementById("bigFill");
-  const bigPct = document.getElementById("bigPct");
-  const taskNameEl = document.getElementById("taskName");
-  const metaEst = document.getElementById("metaEst");
-  const metaCat = document.getElementById("metaCat");
-
-  const ethNowEl = document.getElementById("ethNow");
-  const ethStartEl = document.getElementById("ethStart");
-  const ethMinutesEl = document.getElementById("ethMinutes");
-  const ethFill = document.getElementById("ethFill");
-  const ethTicks = document.getElementById("ethTicks");
-  const ethSizeLabel = document.getElementById("ethSizeLabel");
-
-  const btnMenu = document.getElementById("btnMenu");
-  const btnClose = document.getElementById("btnClose");
-  const overlay = document.getElementById("overlay");
-
-  const btnReset = document.getElementById("btnReset");
-  const btnFocus = document.getElementById("btnFocus");
-  const btnPure = document.getElementById("btnPure");
-
-  const themeLight = document.getElementById("themeLight");
-  const themeDark = document.getElementById("themeDark");
-
-  const btnRoulette = document.getElementById("btnRoulette");
-  const rouletteWheel = document.getElementById("rouletteWheel");
-  const btnSmash = document.getElementById("btnSmash");
-
-  const btnPin = document.getElementById("btnPin");
-  const pinState = document.getElementById("pinState");
-  const btnUp = document.getElementById("btnUp");
-  const btnDown = document.getElementById("btnDown");
-  const btnEdit = document.getElementById("btnEdit");
-  const btnDelete = document.getElementById("btnDelete");
-
-  const btnNoteQuick = document.getElementById("btnNoteQuick");
-
-  const celebrate = document.getElementById("celebrate");
-  const celebrateMain = document.getElementById("celebrateMain");
-  const celebrateSub = document.getElementById("celebrateSub");
-
-  // Tabs
-  const tabs = [...document.querySelectorAll(".tab")];
-  const panels = {
-    inbox: document.getElementById("tab-inbox"),
-    list: document.getElementById("tab-list"),
-    notes: document.getElementById("tab-notes"),
-    profile: document.getElementById("tab-profile")
-  };
-
-  // Inbox
-  const inboxText = document.getElementById("inboxText");
-  const defaultCategory = document.getElementById("defaultCategory");
-  const defaultEth = document.getElementById("defaultEth");
-  const btnImport = document.getElementById("btnImport");
-  const btnClearInbox = document.getElementById("btnClearInbox");
-
-  // List
-  const taskList = document.getElementById("taskList");
-  const catFilters = document.getElementById("catFilters");
-  const sortModeSel = document.getElementById("sortMode");
-  const btnApplySort = document.getElementById("btnApplySort");
-
-  // Notes
-  const noteText = document.getElementById("noteText");
-  const btnAddNote = document.getElementById("btnAddNote");
-  const btnClearNotes = document.getElementById("btnClearNotes");
-  const notesGrid = document.getElementById("notesGrid");
-
-  // Profile
-  const btnToggleFocusFromMenu = document.getElementById("btnToggleFocusFromMenu");
-  const btnTogglePureFromMenu = document.getElementById("btnTogglePureFromMenu");
-  const ethMinutesPerSel = document.getElementById("ethMinutesPer");
-  const statsBox = document.getElementById("statsBox");
-  const btnExport = document.getElementById("btnExport");
-  const btnNuke = document.getElementById("btnNuke");
-
-  // Confetti
-  const confettiCanvas = document.getElementById("confetti");
-  const ctx = confettiCanvas.getContext("2d");
-
-  /***********************
-   * State
-   ***********************/
-  const nowISO = () => new Date().toISOString();
-  const todayKey = () => new Date().toISOString().slice(0,10);
-
-  const uid = () => Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
-
-  function loadJSON(key, fallback){
-    try{
-      const raw = localStorage.getItem(key);
-      if(!raw) return fallback;
-      return JSON.parse(raw);
-    }catch(e){ return fallback; }
-  }
-  function saveJSON(key, value){
-    localStorage.setItem(key, JSON.stringify(value));
-  }
-
-  let settings = loadJSON(K.settings, DEFAULTS);
-  settings = { ...DEFAULTS, ...settings };
-
-  // Tasks state:
-  // task: {id, title, cat, ethStart, ethLeft, createdAt, pinned, doneAt?}
-  // state: { tasks:[], done:[], currentId:null, startCounts:{tasks,eth}, timer:{taskId, startedAt, elapsedMs} }
-  let state = loadJSON(K.state, null);
-  if(!state){
-    state = {
-      tasks: [],
-      done: [],
-      currentId: null,
-      startCounts: { tasks: 0, eth: 0 },
-      timer: { taskId: null, startedAt: null, elapsedMs: 0 }
+  <script>
+  (() => {
+    /* =========================
+       Storage keys
+       ========================= */
+    const K = {
+      state: "ELIMINATOR_STATE_V3",
+      settings: "ELIMINATOR_SETTINGS_V3",
+      notes: "ELIMINATOR_NOTES_V3",
+      history: "ELIMINATOR_HISTORY_V3",
+      kiff: "ELIMINATOR_KIFF_V3",
+      habits: "ELIMINATOR_HABITS_V3"
     };
-  }
 
-  // Notes stored separately, survive resets
-  let notes = loadJSON(K.notes, []);
-  // History stored separately
-  let history = loadJSON(K.history, {}); // { "YYYY-MM-DD": {ethSmashed, tasksDone, msWorked, snapshots:[] } }
+    /* =========================
+       Tabs (drawer)
+       (We keep your big list, but grouped/clean)
+       ========================= */
+    const TAB_DEFS = [
+      { key:"inbox",    label:"Inbox" },
+      { key:"liste",    label:"Liste" },
+      { key:"kiff",     label:"Kiffance" },
+      { key:"notes",    label:"Notes" },
+      { key:"habits",   label:"Suivi des habitudes" },
+      { key:"hist",     label:"Historique" },
+      { key:"rapport",  label:"Rapport" },
+      { key:"params",   label:"Param" }
+    ];
 
-  /***********************
-   * Helpers
-   ***********************/
-  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
-
-  function formatMMSS(ms){
-    const s = Math.floor(ms/1000);
-    const m = Math.floor(s/60);
-    const r = s % 60;
-    return String(m).padStart(2,"0") + ":" + String(r).padStart(2,"0");
-  }
-
-  function getActiveCatsSet(){
-    const allCats = [...new Set(state.tasks.map(t=>t.cat || "Sans catégorie"))].sort((a,b)=>a.localeCompare(b));
-    if(!settings.activeCats || settings.activeCats.length===0){
-      return new Set(allCats); // all active
-    }
-    return new Set(settings.activeCats);
-  }
-
-  function normalizeCat(s){
-    if(!s) return "Sans catégorie";
-    const x = String(s).trim();
-    if(!x) return "Sans catégorie";
-    // keep user's case but normalize common "qui fonce"
-    if(x.toLowerCase().includes("qui fonce")) return "Qui fonce";
-    return x;
-  }
-
-  function parseLineToTask(line, catDefault, ethDefault){
-    const raw = line.trim();
-    if(!raw) return null;
-
-    // strip leading bullets
-    let s = raw.replace(/^[-•*\u2022]\s+/, "").trim();
-    if(!s) return null;
-
-    // Detect category hints
-    let cat = null;
-
-    // [cat] prefix
-    const mBracket = s.match(/^\[(.+?)\]\s*(.+)$/);
-    if(mBracket){
-      cat = mBracket[1];
-      s = mBracket[2].trim();
-    }
-
-    // "Catégorie: X | ..."
-    const mCat1 = s.match(/cat(é|e)gorie\s*:\s*([^|;]+)\s*/i);
-    if(mCat1) cat = mCat1[2].trim();
-
-    // "cat=..."
-    const mCat2 = s.match(/\bcat\s*=\s*([^|;]+)\b/i);
-    if(mCat2) cat = mCat2[1].trim();
-
-    // "qui fonce" anywhere
-    if(s.toLowerCase().includes("qui fonce") || (cat && cat.toLowerCase().includes("qui fonce"))){
-      cat = "Qui fonce";
-    }
-
-    // Detect eth
-    let eth = null;
-    const mEth1 = s.match(/(é|e)thorions?\s*:\s*(\d+)/i);
-    if(mEth1) eth = parseInt(mEth1[2],10);
-
-    const mEth2 = s.match(/\beth\s*=\s*(\d+)/i);
-    if(mEth2) eth = parseInt(mEth2[1],10);
-
-    const mEth3 = s.match(/\b(\d+)\s*eth\b/i);
-    if(mEth3) eth = parseInt(mEth3[1],10);
-
-    // Clean title by removing obvious meta patterns
-    s = s
-      .replace(/\bcat(é|e)gorie\s*:\s*[^|;]+/ig, "")
-      .replace(/\bcat\s*=\s*[^|;]+/ig, "")
-      .replace(/(é|e)thorions?\s*:\s*\d+/ig, "")
-      .replace(/\beth\s*=\s*\d+/ig, "")
-      .replace(/\b\d+\s*eth\b/ig, "")
-      .replace(/\|/g," ")
-      .replace(/\s{2,}/g," ")
-      .trim();
-
-    const finalCat = normalizeCat(cat || catDefault || "Sans catégorie");
-    const finalEth = clamp((eth || ethDefault || 1), 1, 999);
-
-    if(!s) return null;
-
-    return {
-      id: uid(),
-      title: s,
-      cat: finalCat,
-      ethStart: finalEth,
-      ethLeft: finalEth,
-      createdAt: nowISO(),
-      pinned: false
+    /* =========================
+       Defaults
+       ========================= */
+    const DEFAULTS = {
+      theme: "light",
+      focus: 0,
+      ethMinutesPer: 5,
+      sortMode: "roulette",         // roulette | order | alpha | chrono
+      activeCats: null,             // null => all active
+      showMeta: 1,                  // can be used later (display modes)
+      showTimeRemaining: 1,
+      showCategory: 1
     };
-  }
 
-  function recalcStartCountsIfNeeded(){
-    // Start counts = counts at the moment of (re)starting a "run"
-    // If not set (0) but there are tasks, set them. Or if tasks changed while startCounts is zero.
-    if(state.startCounts.tasks === 0 && state.tasks.length > 0){
-      state.startCounts.tasks = state.tasks.length;
-      state.startCounts.eth = state.tasks.reduce((a,t)=>a+t.ethStart, 0);
+    const DEFAULT_KIFF = {
+      celebrations: [
+        "TRIOMPHE ABSURDE. L’HISTOIRE TE REGARDE.",
+        "VICTOIRE IMPÉRIALE. LA LISTE A PEUR.",
+        "CONQUÊTE TOTALE. LA PRODUCTIVITÉ PLEURE DE JOIE.",
+        "TU ES UN CONQUISTADOR DU QUOTIDIEN.",
+        "RÈGNE ABSOLU. LES TÂCHES SE RENDENT SANS CONDITIONS.",
+        "DÉMOLITION NOBLE. ON T’INSCRIT DANS LA LÉGENDE.",
+        "GLOIRE. HONNEUR. ET UN BRIN DE DÉMESURE.",
+        "C’EST TROP EFFICACE POUR ÊTRE LÉGAL (MAIS ON NE DIT RIEN).",
+        "LE CHAOS RECULE. TU AVANCES. MAGISTRAL.",
+        "TON NOM SERA CHUCHOTÉ PAR LES CHECKLISTS ANCIENNES."
+      ],
+      encouragements: [
+        "Un pas, une brique. Un éthorion, un empire.",
+        "Tu n’es pas en retard. Tu es en conquête.",
+        "La tâche résiste ? Parfait. Tu aussi.",
+        "Simple, net, efficace. Comme un laser.",
+        "Un éthorion de moins, et le monde s’améliore."
+      ],
+      encouragementFrequencyMin: 0   // 0 = off (option)
+    };
+
+    const DEFAULT_HABITS = {
+      slots: 8,                      // number of checkboxes per habit per day
+      habits: [
+        // {id, name, createdAt}
+      ],
+      marksByDay: {
+        // "YYYY-MM-DD": { [habitId]: [0/1,...] }
+      }
+    };
+
+    /* =========================
+       Utils
+       ========================= */
+    const uid = () => Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
+    const nowISO = () => new Date().toISOString();
+    const todayKey = () => new Date().toISOString().slice(0,10);
+    const clamp = (n,a,b) => Math.max(a, Math.min(b, n));
+    const fmtMMSS = (ms) => {
+      const s = Math.floor(ms/1000);
+      const m = Math.floor(s/60);
+      const r = s % 60;
+      return String(m).padStart(2,"0")+":"+String(r).padStart(2,"0");
+    };
+    const escapeHTML = (s)=>String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+
+    function loadJSON(key, fallback){
+      try{
+        const raw = localStorage.getItem(key);
+        if(!raw) return fallback;
+        return JSON.parse(raw);
+      }catch(e){ return fallback; }
     }
-  }
+    function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
 
-  function setTheme(theme){
-    settings.theme = theme;
-    body.setAttribute("data-theme", theme);
-    themeLight.classList.toggle("active", theme==="light");
-    themeDark.classList.toggle("active", theme==="dark");
-    saveJSON(K.settings, settings);
-    // no further UI needed
-  }
+    /* =========================
+       State
+       ========================= */
+    let settings = { ...DEFAULTS, ...(loadJSON(K.settings, null) || {}) };
 
-  function setFocus(on){
-    settings.focus = on ? 1 : 0;
-    body.setAttribute("data-focus", settings.focus);
-    saveJSON(K.settings, settings);
-  }
-
-  function setPure(on){
-    settings.pure = on ? 1 : 0;
-    body.setAttribute("data-pure", settings.pure);
-    saveJSON(K.settings, settings);
-  }
-
-  function openMenu(tabName="inbox"){
-    overlay.classList.add("show");
-    selectTab(tabName);
-    renderAll();
-  }
-  function closeMenu(){
-    overlay.classList.remove("show");
-  }
-
-  function selectTab(name){
-    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab===name));
-    Object.keys(panels).forEach(k => panels[k].style.display = (k===name) ? "" : "none");
-  }
-
-  function setCurrentTask(id){
-    state.currentId = id;
-    // timer handling:
-    if(state.timer.taskId !== id){
-      state.timer.taskId = id;
-      state.timer.startedAt = Date.now();
-      state.timer.elapsedMs = 0;
-    }else{
-      // keep current
-      if(!state.timer.startedAt) state.timer.startedAt = Date.now();
-    }
-    saveJSON(K.state, state);
-  }
-
-  function currentTask(){
-    return state.tasks.find(t => t.id === state.currentId) || null;
-  }
-
-  function pickNextTaskRoulette(){
-    const active = getActiveCatsSet();
-    const pool = state.tasks.filter(t => active.has(t.cat || "Sans catégorie"));
-    if(pool.length === 0) return null;
-
-    // Weighted: pinned tasks get extra chance
-    const bag = [];
-    for(const t of pool){
-      const w = t.pinned ? 3 : 1;
-      for(let i=0;i<w;i++) bag.push(t);
-    }
-    return bag[Math.floor(Math.random()*bag.length)];
-  }
-
-  function pickNextTaskOrdered(){
-    const active = getActiveCatsSet();
-    const pool = state.tasks.filter(t => active.has(t.cat || "Sans catégorie"));
-    if(pool.length === 0) return null;
-
-    if(settings.sortMode === "alpha"){
-      return [...pool].sort((a,b)=>a.title.localeCompare(b.title))[0];
-    }
-    if(settings.sortMode === "chrono"){
-      return [...pool].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt))[0];
-    }
-    // "order" = current list order (respect user moves)
-    return pool[0];
-  }
-
-  function ensureCurrent(){
-    if(state.tasks.length === 0){
-      state.currentId = null;
-      state.timer = { taskId:null, startedAt:null, elapsedMs:0 };
-      saveJSON(K.state, state);
-      return;
-    }
-    if(!state.currentId || !currentTask()){
-      const t = (settings.sortMode==="roulette") ? pickNextTaskRoulette() : pickNextTaskOrdered();
-      if(t) setCurrentTask(t.id);
-    }
-  }
-
-  function moveTask(id, dir){
-    const idx = state.tasks.findIndex(t=>t.id===id);
-    if(idx < 0) return;
-    const newIdx = clamp(idx + dir, 0, state.tasks.length-1);
-    if(newIdx === idx) return;
-    const [x] = state.tasks.splice(idx,1);
-    state.tasks.splice(newIdx,0,x);
-    saveJSON(K.state, state);
-  }
-
-  function celebrateNow(sub){
-    celebrateMain.textContent = CELEB[Math.floor(Math.random()*CELEB.length)];
-    celebrateSub.textContent = sub || "Fait.";
-    celebrate.classList.add("show");
-    setTimeout(()=>celebrate.classList.remove("show"), 1200);
-  }
-
-  /***********************
-   * Confetti
-   ***********************/
-  let confettiPieces = [];
-  function resizeConfetti(){
-    confettiCanvas.width = window.innerWidth * devicePixelRatio;
-    confettiCanvas.height = window.innerHeight * devicePixelRatio;
-    confettiCanvas.style.width = window.innerWidth + "px";
-    confettiCanvas.style.height = window.innerHeight + "px";
-    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
-  }
-  window.addEventListener("resize", resizeConfetti);
-  resizeConfetti();
-
-  function burstConfetti(){
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const n = 140;
-
-    for(let i=0;i<n;i++){
-      confettiPieces.push({
-        x: w/2 + (Math.random()*80-40),
-        y: 70 + (Math.random()*20-10),
-        vx: (Math.random()*6-3),
-        vy: (Math.random()*-5 - 2),
-        g: 0.18 + Math.random()*0.12,
-        r: 2 + Math.random()*4,
-        a: 1,
-        spin: (Math.random()*0.4-0.2),
-        angle: Math.random()*Math.PI*2,
-        life: 70 + Math.random()*40
-      });
-    }
-  }
-
-  function confettiLoop(){
-    ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
-    const next = [];
-    for(const p of confettiPieces){
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += p.g;
-      p.angle += p.spin;
-      p.life -= 1;
-      p.a = clamp(p.life/90, 0, 1);
-
-      // draw as small rotated rect
-      ctx.save();
-      ctx.globalAlpha = p.a;
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.angle);
-      ctx.fillStyle = "rgba(255,255,255,0.0)"; // placeholder
-      // no fixed palette required; we’ll derive from theme accents dynamically
-      const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#2a67ff";
-      const accent2 = getComputedStyle(document.documentElement).getPropertyValue("--accent2").trim() || "#1fd18a";
-      const warn = getComputedStyle(document.documentElement).getPropertyValue("--warn").trim() || "#ffb020";
-      const bad = getComputedStyle(document.documentElement).getPropertyValue("--bad").trim() || "#ff3b5c";
-      const pick = [accent, accent2, warn, bad][Math.floor(Math.random()*4)];
-      ctx.fillStyle = pick;
-      ctx.fillRect(-p.r, -p.r/2, p.r*2.2, p.r);
-      ctx.restore();
-
-      if(p.life > 0 && p.y < window.innerHeight + 60) next.push(p);
-    }
-    confettiPieces = next;
-    requestAnimationFrame(confettiLoop);
-  }
-  confettiLoop();
-
-  /***********************
-   * History / Stats
-   ***********************/
-  function ensureDay(){
-    const k = todayKey();
-    if(!history[k]){
-      history[k] = { ethSmashed:0, tasksDone:0, msWorked:0, snapshots:[] };
-    }
-  }
-
-  function addWorkMs(ms){
-    ensureDay();
-    history[todayKey()].msWorked += ms;
-    saveJSON(K.history, history);
-  }
-
-  function addEthSmashed(n){
-    ensureDay();
-    history[todayKey()].ethSmashed += n;
-    saveJSON(K.history, history);
-  }
-
-  function addTaskDone(){
-    ensureDay();
-    history[todayKey()].tasksDone += 1;
-    saveJSON(K.history, history);
-  }
-
-  function snapshot(label){
-    ensureDay();
-    const k = todayKey();
-    history[k].snapshots.push({
-      at: nowISO(),
-      label,
-      tasksLeft: state.tasks.length,
-      ethLeft: state.tasks.reduce((a,t)=>a+t.ethLeft,0)
-    });
-    // keep snapshots reasonable
-    if(history[k].snapshots.length > 60) history[k].snapshots.shift();
-    saveJSON(K.history, history);
-  }
-
-  /***********************
-   * Rendering
-   ***********************/
-  function renderHUD(){
-    const totalTasksStart = state.startCounts.tasks || (state.tasks.length + state.done.length);
-    const totalEthStart = state.startCounts.eth || state.tasks.reduce((a,t)=>a+t.ethStart,0) + state.done.reduce((a,t)=>a+t.ethStart,0);
-
-    const tasksLeft = state.tasks.length;
-    const ethLeft = state.tasks.reduce((a,t)=>a+t.ethLeft,0);
-    const done = state.done.length;
-
-    hudTasks.textContent = `${tasksLeft}/${totalTasksStart}`;
-    hudEth.textContent = `${ethLeft}/${totalEthStart}`;
-    hudDone.textContent = `${done}`;
-
-    // timer is handled in tick()
-  }
-
-  function renderCurrent(){
-    ensureCurrent();
-    const t = currentTask();
-    if(!t){
-      taskNameEl.textContent = "Aucune tâche (ouvre Menu → Inbox / Liste)";
-      metaEst.textContent = "Estimé: 0 min";
-      metaCat.textContent = "Catégorie: —";
-      pinState.textContent = "non";
-
-      bigFill.style.transform = "scaleX(1)";
-      bigPct.textContent = "100%";
-
-      ethNowEl.textContent = "0";
-      ethStartEl.textContent = "0";
-      ethMinutesEl.textContent = "0";
-      ethFill.style.transform = "scaleX(1)";
-      ethTicks.innerHTML = "";
-      return;
-    }
-
-    taskNameEl.textContent = t.title;
-    metaCat.textContent = `Catégorie: ${t.cat || "Sans catégorie"}`;
-
-    const minPer = settings.ethMinutesPer;
-    const estTotal = t.ethStart * minPer;
-    metaEst.textContent = `Estimé: ${estTotal} min`;
-
-    // Big bar: inverse proportionnel (bar starts full and shrinks)
-    const frac = t.ethStart > 0 ? (t.ethLeft / t.ethStart) : 1;
-    bigFill.style.transform = `scaleX(${clamp(frac,0,1)})`;
-    bigPct.textContent = `${Math.round(frac*100)}%`;
-
-    // ETH bar
-    ethNowEl.textContent = `${t.ethLeft}`;
-    ethStartEl.textContent = `${t.ethStart}`;
-    ethMinutesEl.textContent = `${t.ethLeft * minPer}`;
-    ethSizeLabel.textContent = `${minPer}`;
-
-    ethFill.style.transform = `scaleX(${clamp(frac,0,1)})`;
-
-    // ticks = ethStart segments
-    ethTicks.innerHTML = "";
-    const n = clamp(t.ethStart, 1, 60);
-    for(let i=0;i<n;i++){
-      const sp = document.createElement("span");
-      ethTicks.appendChild(sp);
-    }
-
-    pinState.textContent = t.pinned ? "oui" : "non";
-  }
-
-  function renderCategories(){
-    // Populate defaultCategory list
-    const cats = [...new Set(state.tasks.map(t=>t.cat || "Sans catégorie"))].sort((a,b)=>a.localeCompare(b));
-    const all = ["Qui fonce", ...cats.filter(c=>c!=="Qui fonce")];
-    const uniq = [...new Set(all)];
-
-    defaultCategory.innerHTML = `<option value="">Catégorie par défaut (optionnel)</option>` + uniq.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
-
-    // Filters
-    const active = getActiveCatsSet();
-    catFilters.innerHTML = "";
-    for(const c of uniq){
-      const btn = document.createElement("button");
-      btn.className = "btn small";
-      const on = active.has(c);
-      btn.textContent = (on ? "✓ " : "○ ") + c;
-      btn.onclick = () => {
-        // toggle
-        let next = settings.activeCats;
-        const allCats = uniq;
-
-        if(!next || next.length===0){
-          // currently all active -> set explicit list then toggle off one
-          next = [...allCats];
-        }else{
-          next = [...next];
-        }
-
-        if(next.includes(c)){
-          next = next.filter(x=>x!==c);
-        }else{
-          next.push(c);
-        }
-
-        // If ends up empty => none active (we allow, but then roulette has no pool)
-        settings.activeCats = next;
-        saveJSON(K.settings, settings);
-        renderAll();
+    // Tasks:
+    // task: {id, title, cat, ethStart, ethLeft, createdAt, pinned, doneAt?}
+    // state: { tasks:[], done:[], currentId, startCounts:{tasks,eth}, timer:{taskId, elapsedMs, running} }
+    let state = loadJSON(K.state, null);
+    if(!state){
+      state = {
+        tasks: [],
+        done: [],
+        currentId: null,
+        startCounts: { tasks: 0, eth: 0 },
+        timer: { taskId: null, elapsedMs: 0, running: false }
       };
-      catFilters.appendChild(btn);
-    }
-  }
-
-  function renderTaskList(){
-    taskList.innerHTML = "";
-    const active = getActiveCatsSet();
-
-    const arr = [...state.tasks];
-    // minimal sorting preview (doesn't mutate order unless apply)
-    const preview = arr;
-
-    for(const t of preview){
-      const item = document.createElement("div");
-      item.className = "taskItem";
-
-      const left = document.createElement("div");
-      const name = document.createElement("div");
-      name.className = "name";
-      name.textContent = t.title;
-
-      const sub = document.createElement("div");
-      sub.className = "sub";
-      const isActive = active.has(t.cat || "Sans catégorie");
-      sub.textContent = `${t.cat || "Sans catégorie"} • eth ${t.ethLeft}/${t.ethStart}` + (t.pinned ? " • 📌" : "") + (isActive ? "" : " • (inactif)");
-
-      left.appendChild(name);
-      left.appendChild(sub);
-
-      const right = document.createElement("div");
-      right.className = "actions";
-
-      const btnSet = mkBtn("Voir", () => { setCurrentTask(t.id); closeMenu(); renderAll(); }, "btn");
-      const btnPri = mkBtn("↑", () => { moveTask(t.id, -1); renderAll(); }, "btn");
-      const btnDel = mkBtn("🗑", () => { deleteTask(t.id); renderAll(); }, "btn danger");
-      const btnEd = mkBtn("✏️", () => { editTaskPrompt(t.id); renderAll(); }, "btn");
-
-      right.appendChild(btnSet);
-      right.appendChild(btnPri);
-      right.appendChild(btnEd);
-      right.appendChild(btnDel);
-
-      item.appendChild(left);
-      item.appendChild(right);
-      taskList.appendChild(item);
     }
 
-    if(state.tasks.length===0){
-      const empty = document.createElement("div");
-      empty.className="help";
-      empty.textContent = "Liste vide. Inbox → colle des tâches, puis reviens ici comme un monarque organisé.";
-      taskList.appendChild(empty);
-    }
-  }
+    let notes = loadJSON(K.notes, []);
+    let history = loadJSON(K.history, {}); // "YYYY-MM-DD": {ethSmashed, tasksDone, msWorked, exports:[]}
+    let kiff = { ...DEFAULT_KIFF, ...(loadJSON(K.kiff, null) || {}) };
+    let habits = { ...DEFAULT_HABITS, ...(loadJSON(K.habits, null) || {}) };
 
-  function renderNotes(){
-    notesGrid.innerHTML = "";
-    const arr = [...notes].sort((a,b)=>new Date(b.at)-new Date(a.at));
-    for(const n of arr){
-      const d = document.createElement("div");
-      d.className = "note";
-      const stamp = document.createElement("div");
-      stamp.className = "stamp";
-      stamp.textContent = new Date(n.at).toLocaleString();
-      const txt = document.createElement("div");
-      txt.className = "txt";
-      txt.textContent = n.text;
-      d.appendChild(stamp);
-      d.appendChild(txt);
-      notesGrid.appendChild(d);
-    }
-    if(arr.length===0){
-      const empty = document.createElement("div");
-      empty.className="help";
-      empty.textContent="Pas de notes. Ton cerveau n’a pas encore lâché ses post-its dans l’univers, incroyable.";
-      notesGrid.appendChild(empty);
-    }
-  }
-
-  function renderStats(){
-    ensureDay();
-    const k = todayKey();
-    const day = history[k];
-
-    const totalEthLeft = state.tasks.reduce((a,t)=>a+t.ethLeft,0);
-    const totalEthStart = state.startCounts.eth || (state.tasks.reduce((a,t)=>a+t.ethStart,0) + state.done.reduce((a,t)=>a+t.ethStart,0));
-    const totalTasksStart = state.startCounts.tasks || (state.tasks.length + state.done.length);
-
-    const lines = [];
-    lines.push(`Aujourd’hui (${k})`);
-    lines.push(`- Éthorions dégommés: ${day.ethSmashed}`);
-    lines.push(`- Tâches terminées: ${day.tasksDone}`);
-    lines.push(`- Temps cumulé (approx): ${formatMMSS(day.msWorked)}`);
-
-    lines.push(``);
-    lines.push(`Run actuel`);
-    lines.push(`- Tâches restantes: ${state.tasks.length}/${totalTasksStart}`);
-    lines.push(`- Éthorions restants: ${totalEthLeft}/${totalEthStart}`);
-    lines.push(`- Faits (run): ${state.done.length}`);
-
-    lines.push(``);
-    lines.push(`Snapshots (derniers)`);
-    const snaps = day.snapshots.slice(-6);
-    for(const s of snaps){
-      lines.push(`- ${new Date(s.at).toLocaleTimeString()} • ${s.label} • tasks:${s.tasksLeft} eth:${s.ethLeft}`);
-    }
-    statsBox.textContent = lines.join("\n");
-  }
-
-  function renderAll(){
-    recalcStartCountsIfNeeded();
-    renderHUD();
-    renderCurrent();
-    renderCategories();
-    renderTaskList();
-    renderNotes();
-    renderStats();
-    saveJSON(K.state, state);
-  }
-
-  function mkBtn(label, onClick, className){
-    const b = document.createElement("button");
-    b.className = className || "btn";
-    b.textContent = label;
-    b.onclick = onClick;
-    return b;
-  }
-
-  function escapeHTML(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-  }
-
-  /***********************
-   * Core actions
-   ***********************/
-  function roulettePick(){
-    // spin animation
-    btnRoulette.classList.add("spinning");
-    setTimeout(()=>btnRoulette.classList.remove("spinning"), 920);
-
-    const t = (settings.sortMode==="roulette") ? pickNextTaskRoulette() : pickNextTaskOrdered();
-    if(!t){
-      celebrateNow("Aucune tâche active (filtre catégories?)");
-      return;
-    }
-    setCurrentTask(t.id);
-    snapshot("roulette");
-    renderAll();
-  }
-
-  function smashOneEth(){
-    const t = currentTask();
-    if(!t){
-      celebrateNow("Pas de tâche. Inbox d’abord.");
-      return;
+    function ensureDay(){
+      const k = todayKey();
+      if(!history[k]){
+        history[k] = { ethSmashed:0, tasksDone:0, msWorked:0 };
+      }
+      if(!habits.marksByDay[k]) habits.marksByDay[k] = {};
     }
 
-    // time log: add time since last tick chunk is handled in tick()
-    // decrement eth
-    if(t.ethLeft > 0){
-      t.ethLeft -= 1;
-      addEthSmashed(1);
-      celebrateNow("+1 éthorion éliminé");
-      burstConfetti();
+    /* =========================
+       DOM
+       ========================= */
+    const body = document.body;
 
-      if(t.ethLeft <= 0){
-        // task complete
-        t.ethLeft = 0;
-        t.doneAt = nowISO();
-        state.done.push(t);
-        state.tasks = state.tasks.filter(x=>x.id!==t.id);
-        addTaskDone();
-        snapshot("tâche terminée");
+    const btnMenu = document.getElementById("btnMenu");
+    const btnBottomMenu = document.getElementById("btnBottomMenu");
+    const btnBottomNote = document.getElementById("btnBottomNote");
+    const btnBottomFocus = document.getElementById("btnBottomFocus");
 
-        // choose next task automatically
-        state.currentId = null;
-        state.timer = { taskId:null, startedAt:null, elapsedMs:0 };
-        ensureCurrent();
+    const btnReset = document.getElementById("btnReset");
+    const btnFocus = document.getElementById("btnFocus");
+    const focusExit = document.getElementById("focusExit");
+    const btnExitFocus = document.getElementById("btnExitFocus");
 
-        celebrateNow("Tâche pulvérisée. Prochaine victime.");
-        burstConfetti();
-      }else{
-        snapshot("eth -1");
+    const hudTasks = document.getElementById("hudTasks");
+    const hudEth = document.getElementById("hudEth");
+    const hudDone = document.getElementById("hudDone");
+    const hudTimer = document.getElementById("hudTimer");
+
+    const bigFill = document.getElementById("bigFill");
+    const bigPct = document.getElementById("bigPct");
+
+    const taskNameEl = document.getElementById("taskName");
+    const taskSub = document.getElementById("taskSub");
+    const metaCat = document.getElementById("metaCat");
+    const metaEst = document.getElementById("metaEst");
+
+    const ethBox = document.getElementById("ethBox");
+    const ethNowEl = document.getElementById("ethNow");
+    const ethStartEl = document.getElementById("ethStart");
+    const ethMinutesEl = document.getElementById("ethMinutes");
+    const ethFill = document.getElementById("ethFill");
+    const ethTicks = document.getElementById("ethTicks");
+
+    const btnRoulette = document.getElementById("btnRoulette");
+    const rouletteWheel = document.getElementById("rouletteWheel");
+    const btnSmash = document.getElementById("btnSmash");
+
+    const drawerOverlay = document.getElementById("drawerOverlay");
+    const btnDrawerClose = document.getElementById("btnDrawerClose");
+    const drawerTabs = document.getElementById("drawerTabs");
+    const drawerPanels = document.getElementById("drawerPanels");
+
+    const themeLight = document.getElementById("themeLight");
+    const themeDark = document.getElementById("themeDark");
+
+    const celebrateOverlay = document.getElementById("celebrateOverlay");
+    const celebrateTitle = document.getElementById("celebrateTitle");
+    const celebrateSub = document.getElementById("celebrateSub");
+
+    /* =========================
+       Theme / Focus
+       ========================= */
+    function setTheme(theme){
+      settings.theme = theme;
+      body.setAttribute("data-theme", theme);
+      themeLight.classList.toggle("active", theme==="light");
+      themeDark.classList.toggle("active", theme==="dark");
+      saveJSON(K.settings, settings);
+    }
+    function setFocus(on){
+      settings.focus = on ? 1 : 0;
+      body.setAttribute("data-focus", settings.focus);
+      saveJSON(K.settings, settings);
+    }
+
+    /* =========================
+       Drawer UI builders
+       ========================= */
+    function buildDrawer(){
+      drawerTabs.innerHTML = "";
+      drawerPanels.innerHTML = "";
+
+      for(const t of TAB_DEFS){
+        const tab = document.createElement("div");
+        tab.className = "tab";
+        tab.textContent = t.label;
+        tab.dataset.key = t.key;
+        tab.onclick = () => selectDrawerTab(t.key);
+        drawerTabs.appendChild(tab);
+
+        const panel = document.createElement("div");
+        panel.id = "panel-"+t.key;
+        panel.style.display = "none";
+        drawerPanels.appendChild(panel);
       }
 
+      // default tab
+      selectDrawerTab("inbox");
+    }
+
+    function selectDrawerTab(key){
+      [...drawerTabs.children].forEach(el => el.classList.toggle("active", el.dataset.key===key));
+      [...drawerPanels.children].forEach(p => p.style.display = (p.id==="panel-"+key) ? "" : "none");
+
+      // render content of that panel
+      renderDrawerPanel(key);
+    }
+
+    function openDrawer(tabKey="inbox"){
+      drawerOverlay.classList.add("show");
+      selectDrawerTab(tabKey);
+    }
+    function closeDrawer(){
+      drawerOverlay.classList.remove("show");
+    }
+
+    drawerOverlay.addEventListener("click", (e)=>{ if(e.target===drawerOverlay) closeDrawer(); });
+
+    /* =========================
+       Parsing: uppercase category headings + "task - 3"
+       Rules you asked:
+       - A line in ALL CAPS = category title (applies to following tasks until next ALL CAPS line)
+       - Task line:
+         "Nom tâche - 4" or "Nom tâche 4" => eth = 4
+       - Priority may exist but optional (we store it if found)
+       ========================= */
+    function isAllCapsHeading(line){
+      const s = line.trim();
+      if(!s) return false;
+      // Must contain letters, and no lowercase
+      const hasLetter = /[A-ZÀ-ÖØ-Þ]/.test(s);
+      const hasLower = /[a-zà-öø-ÿ]/.test(s);
+      // If it's mostly caps and spaces/punct
+      return hasLetter && !hasLower && s.length >= 3;
+    }
+
+    function normalizeCat(s){
+      const x = String(s || "").trim();
+      if(!x) return "Sans catégorie";
+      return x
+        .replace(/\s{2,}/g, " ")
+        .replace(/^#+\s*/,"")
+        .trim();
+    }
+
+    function parseTaskLine(line, currentCat, ethDefault=1){
+      let s = line.trim();
+      if(!s) return null;
+
+      // strip bullets
+      s = s.replace(/^[-•*\u2022]\s+/, "").trim();
+      if(!s) return null;
+
+      // Priority detection (optional)
+      // Examples accepted: "!","!!","prio:high","P1"
+      let prio = null;
+      if(/\bP1\b/i.test(s) || /\bprio\s*:\s*high\b/i.test(s) || /!!/.test(s)) prio = "high";
+      else if(/\bP2\b/i.test(s) || /\bprio\s*:\s*med\b/i.test(s) || /!/.test(s)) prio = "med";
+
+      // Eth: "- 3" or " 3" at end
+      let eth = null;
+      const mDash = s.match(/\s*-\s*(\d+)\s*$/);
+      if(mDash) eth = parseInt(mDash[1],10);
+
+      if(eth === null){
+        const mEnd = s.match(/\s+(\d+)\s*$/);
+        if(mEnd) eth = parseInt(mEnd[1],10);
+      }
+
+      // Clean title from eth tail if matched
+      if(mDash) s = s.replace(/\s*-\s*\d+\s*$/,"").trim();
+      else if(eth !== null) s = s.replace(/\s+\d+\s*$/,"").trim();
+
+      if(!s) return null;
+
+      const finalEth = clamp((Number.isFinite(eth) ? eth : ethDefault), 1, 999);
+
+      return {
+        id: uid(),
+        title: s,
+        cat: normalizeCat(currentCat),
+        ethStart: finalEth,
+        ethLeft: finalEth,
+        pinned: false,
+        prio,
+        createdAt: nowISO()
+      };
+    }
+
+    /* =========================
+       Core: current task / selection
+       ========================= */
+    function recalcStartCountsIfNeeded(){
+      if(state.startCounts.tasks === 0 && state.tasks.length > 0){
+        state.startCounts.tasks = state.tasks.length;
+        state.startCounts.eth = state.tasks.reduce((a,t)=>a+t.ethStart,0);
+      }
+    }
+
+    function getActiveCatsSet(){
+      const cats = [...new Set(state.tasks.map(t=>t.cat || "Sans catégorie"))];
+      if(!settings.activeCats || settings.activeCats.length===0){
+        return new Set(cats);
+      }
+      return new Set(settings.activeCats);
+    }
+
+    function currentTask(){
+      return state.tasks.find(t=>t.id===state.currentId) || null;
+    }
+
+    function ensureCurrent(){
+      if(state.tasks.length===0){
+        state.currentId = null;
+        state.timer = { taskId:null, elapsedMs:0, running:false };
+        saveJSON(K.state, state);
+        return;
+      }
+      if(!state.currentId || !currentTask()){
+        const t = pickNextTask();
+        if(t){
+          state.currentId = t.id;
+          state.timer = { taskId: t.id, elapsedMs:0, running:true };
+          saveJSON(K.state, state);
+        }
+      }
+    }
+
+    function pickNextTask(){
+      const active = getActiveCatsSet();
+      const pool = state.tasks.filter(t => active.has(t.cat || "Sans catégorie"));
+      if(pool.length===0) return state.tasks[0] || null;
+
+      if(settings.sortMode==="alpha"){
+        return [...pool].sort((a,b)=>a.title.localeCompare(b.title))[0];
+      }
+      if(settings.sortMode==="chrono"){
+        return [...pool].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt))[0];
+      }
+      if(settings.sortMode==="order"){
+        return pool[0];
+      }
+
+      // roulette
+      const bag = [];
+      for(const t of pool){
+        const w = t.pinned ? 3 : 1;
+        for(let i=0;i<w;i++) bag.push(t);
+      }
+      return bag[Math.floor(Math.random()*bag.length)];
+    }
+
+    /* =========================
+       Celebration
+       ========================= */
+    function showCelebration(subText){
+      const phrase = kiff.celebrations[Math.floor(Math.random()*kiff.celebrations.length)] || "VICTOIRE";
+      celebrateTitle.textContent = phrase;
+      celebrateSub.textContent = subText || "";
+      celebrateOverlay.classList.add("show");
+      celebrateOverlay.setAttribute("aria-hidden","false");
+    }
+    function hideCelebration(){
+      celebrateOverlay.classList.remove("show");
+      celebrateOverlay.setAttribute("aria-hidden","true");
+    }
+    celebrateOverlay.addEventListener("click", hideCelebration);
+
+    /* =========================
+       Render main (FIXED bars)
+       ========================= */
+    function renderHUD(){
+      const totalTasksStart = state.startCounts.tasks || (state.tasks.length + state.done.length);
+      const totalEthStart = state.startCounts.eth || (state.tasks.reduce((a,t)=>a+t.ethStart,0) + state.done.reduce((a,t)=>a+t.ethStart,0));
+
+      const tasksLeft = state.tasks.length;
+      const ethLeft = state.tasks.reduce((a,t)=>a+t.ethLeft,0);
+      const done = state.done.length;
+
+      hudTasks.textContent = `${tasksLeft}/${totalTasksStart}`;
+      hudEth.textContent = `${ethLeft}/${totalEthStart}`;
+      hudDone.textContent = `${done}`;
+    }
+
+    function renderCurrent(){
+      ensureCurrent();
+      const t = currentTask();
+
+      if(!t){
+        taskNameEl.textContent = "Aucune tâche (Menu → Inbox)";
+        metaCat.textContent = "Cat —";
+        metaEst.textContent = "Estimé —";
+
+        // Bars at 100% when empty
+        bigFill.style.transform = "scaleX(1)";
+        bigPct.textContent = "100%";
+        ethNowEl.textContent = "0";
+        ethStartEl.textContent = "0";
+        ethMinutesEl.textContent = "0";
+        ethFill.style.transform = "scaleX(1)";
+        ethTicks.innerHTML = "";
+        return;
+      }
+
+      taskNameEl.textContent = t.title;
+
+      const minPer = settings.ethMinutesPer || 5;
+      const estTotal = t.ethStart * minPer;
+      metaCat.textContent = settings.showCategory ? `Cat ${t.cat}` : "Cat —";
+      metaEst.textContent = settings.showTimeRemaining ? `Estimé ${estTotal} min` : "Estimé —";
+
+      // IMPORTANT: bars must shrink with ethLeft
+      const frac = (t.ethStart > 0) ? (t.ethLeft / t.ethStart) : 1;
+      const f = clamp(frac, 0, 1);
+
+      bigFill.style.transform = `scaleX(${f})`;
+      bigPct.textContent = `${Math.round(f*100)}%`;
+
+      ethNowEl.textContent = `${t.ethLeft}`;
+      ethStartEl.textContent = `${t.ethStart}`;
+      ethMinutesEl.textContent = `${t.ethLeft * minPer}`;
+
+      ethFill.style.transform = `scaleX(${f})`;
+
+      // ticks
+      ethTicks.innerHTML = "";
+      const n = clamp(t.ethStart, 1, 60);
+      for(let i=0;i<n;i++){
+        const sp = document.createElement("span");
+        ethTicks.appendChild(sp);
+      }
+    }
+
+    function renderAll(){
+      ensureDay();
+      recalcStartCountsIfNeeded();
+      renderHUD();
+      renderCurrent();
+      saveJSON(K.settings, settings);
       saveJSON(K.state, state);
+      saveJSON(K.notes, notes);
+      saveJSON(K.history, history);
+      saveJSON(K.kiff, kiff);
+      saveJSON(K.habits, habits);
+    }
+
+    /* =========================
+       Timer tick (elapsed on current task)
+       ========================= */
+    let lastTick = Date.now();
+    function tick(){
+      const now = Date.now();
+      const dt = now - lastTick;
+      lastTick = now;
+
+      const t = currentTask();
+      if(t && state.timer && state.timer.taskId===t.id && state.timer.running){
+        state.timer.elapsedMs += dt;
+        history[todayKey()].msWorked += dt;
+        hudTimer.textContent = fmtMMSS(state.timer.elapsedMs);
+      }else{
+        hudTimer.textContent = "00:00";
+      }
+
+      // keep HUD live
+      renderHUD();
+      requestAnimationFrame(tick);
+    }
+
+    /* =========================
+       Actions
+       ========================= */
+    function roulettePick(){
+      btnRoulette.classList.add("spinning");
+      setTimeout(()=>btnRoulette.classList.remove("spinning"), 920);
+
+      const t = pickNextTask();
+      if(!t){
+        showCelebration("Aucune tâche active (filtre catégories?)");
+        return;
+      }
+      state.currentId = t.id;
+      state.timer = { taskId: t.id, elapsedMs:0, running:true };
       renderAll();
     }
-  }
 
-  function deleteTask(id){
-    const t = state.tasks.find(x=>x.id===id);
-    if(!t) return;
-    state.tasks = state.tasks.filter(x=>x.id!==id);
-    if(state.currentId === id){
-      state.currentId = null;
-      state.timer = { taskId:null, startedAt:null, elapsedMs:0 };
+    function smashOne(){
+      const t = currentTask();
+      if(!t){
+        showCelebration("Pas de tâche. Inbox d’abord.");
+        return;
+      }
+
+      if(t.ethLeft > 0){
+        t.ethLeft -= 1;
+        history[todayKey()].ethSmashed += 1;
+
+        if(t.ethLeft <= 0){
+          t.ethLeft = 0;
+          t.doneAt = nowISO();
+          state.done.push(t);
+          state.tasks = state.tasks.filter(x=>x.id!==t.id);
+          history[todayKey()].tasksDone += 1;
+
+          // choose next task
+          state.currentId = null;
+          state.timer = { taskId:null, elapsedMs:0, running:false };
+          ensureCurrent();
+
+          showCelebration("Tâche terminée. L’ennemi recule.");
+        }else{
+          showCelebration("+1 éthorion dégommé");
+        }
+
+        renderAll(); // <-- FIX: update bars immediately
+      }
     }
-    snapshot("suppression");
-    ensureCurrent();
-    saveJSON(K.state, state);
-  }
 
-  function editTaskPrompt(id){
-    const t = state.tasks.find(x=>x.id===id);
-    if(!t) return;
+    function resetRun(){
+      // Reset = reset "done" counter + define new startCounts on remaining tasks
+      // DOES NOT restore ethLeft to ethStart (we can add an option if you want later)
+      if(!confirm("Reset du run (compteur 'Faits' à zéro). Les tâches restent. Notes restent.")) return;
 
-    const newTitle = prompt("Modifier le titre :", t.title);
-    if(newTitle === null) return;
-    const cleaned = newTitle.trim();
-    if(!cleaned) return;
+      state.done = [];
+      state.startCounts.tasks = state.tasks.length;
+      state.startCounts.eth = state.tasks.reduce((a,t)=>a+t.ethStart,0);
 
-    t.title = cleaned;
-    snapshot("édition titre");
-    saveJSON(K.state, state);
-    renderAll();
-  }
+      // keep current task; reset its timer
+      const t = currentTask();
+      state.timer = t ? { taskId:t.id, elapsedMs:0, running:true } : { taskId:null, elapsedMs:0, running:false };
 
-  function togglePinCurrent(){
-    const t = currentTask();
-    if(!t) return;
-    t.pinned = !t.pinned;
-    snapshot(t.pinned ? "pin" : "unpin");
-    saveJSON(K.state, state);
-    renderAll();
-  }
-
-  function prioritizeCurrent(){
-    const t = currentTask();
-    if(!t) return;
-    // move to top within list (hard prioritize)
-    const idx = state.tasks.findIndex(x=>x.id===t.id);
-    if(idx>0){
-      state.tasks.splice(idx,1);
-      state.tasks.unshift(t);
-      snapshot("prioriser");
-      saveJSON(K.state, state);
       renderAll();
     }
-  }
 
-  function deprioritizeCurrent(){
-    const t = currentTask();
-    if(!t) return;
-    // move to bottom
-    const idx = state.tasks.findIndex(x=>x.id===t.id);
-    if(idx>=0 && idx<state.tasks.length-1){
-      state.tasks.splice(idx,1);
-      state.tasks.push(t);
-      snapshot("déprioriser");
+    /* =========================
+       Drawer panels
+       ========================= */
+    function renderDrawerPanel(key){
+      const panel = document.getElementById("panel-"+key);
+      panel.innerHTML = "";
+
+      if(key==="inbox") panel.appendChild(buildInboxPanel());
+      if(key==="liste") panel.appendChild(buildListPanel());
+      if(key==="kiff") panel.appendChild(buildKiffPanel());
+      if(key==="notes") panel.appendChild(buildNotesPanel());
+      if(key==="habits") panel.appendChild(buildHabitsPanel());
+      if(key==="hist") panel.appendChild(buildHistPanel());
+      if(key==="rapport") panel.appendChild(buildRapportPanel());
+      if(key==="params") panel.appendChild(buildParamsPanel());
+    }
+
+    function mkCard(title, innerHTML){
+      const c = document.createElement("div");
+      c.className = "card";
+      c.innerHTML = `<p class="cardTitle">${escapeHTML(title)}</p>` + innerHTML;
+      return c;
+    }
+
+    /* --- Inbox panel: uppercase categories + task - 3 --- */
+    function buildInboxPanel(){
+      const wrap = document.createElement("div");
+
+      const c1 = mkCard("Importer / coller une liste", `
+        <textarea id="inboxText" placeholder="Règles :
+- TITRE EN MAJUSCULE = catégorie
+- Tâche - 3   => 3 éthorions
+- Tâche 3     => 3 éthorions
+Exemple :
+
+APPELS
+Appeler Hugo - 2
+Appeler Samira 3
+
+QUI FONCE
+Envoyer mail X - 1
+"></textarea>
+
+        <div class="row" style="margin-top:10px;">
+          <input id="inboxDefaultEth" type="number" min="1" value="1" />
+          <select id="inboxSortMode">
+            <option value="roulette">Mode sélection: roulette</option>
+            <option value="order">Mode sélection: ordre</option>
+            <option value="alpha">Mode sélection: alpha</option>
+            <option value="chrono">Mode sélection: chrono</option>
+          </select>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn primary" id="btnImport">Importer</button>
+          <button class="btn" id="btnClearInbox">Vider</button>
+        </div>
+
+        <div class="help" style="margin-top:10px;">
+          Astuce : une catégorie en majuscules s’applique à toutes les lignes suivantes jusqu’à la prochaine catégorie.
+        </div>
+      `);
+
+      wrap.appendChild(c1);
+
+      // Wire events after inserted
+      setTimeout(() => {
+        const inboxText = document.getElementById("inboxText");
+        const inboxDefaultEth = document.getElementById("inboxDefaultEth");
+        const inboxSortMode = document.getElementById("inboxSortMode");
+        const btnImport = document.getElementById("btnImport");
+        const btnClearInbox = document.getElementById("btnClearInbox");
+
+        inboxSortMode.value = settings.sortMode;
+
+        btnClearInbox.onclick = () => { inboxText.value = ""; };
+
+        btnImport.onclick = () => {
+          const raw = inboxText.value || "";
+          const lines = raw.split(/\r?\n/);
+          let currentCat = "Sans catégorie";
+          const ethDef = parseInt(inboxDefaultEth.value,10);
+          const ethDefaultSafe = Number.isFinite(ethDef) && ethDef>0 ? ethDef : 1;
+
+          const added = [];
+          for(const line0 of lines){
+            const line = line0.trim();
+            if(!line) continue;
+
+            if(isAllCapsHeading(line)){
+              currentCat = normalizeCat(line);
+              continue;
+            }
+            const t = parseTaskLine(line, currentCat, ethDefaultSafe);
+            if(t) added.push(t);
+          }
+
+          if(added.length===0){
+            showCelebration("Rien à importer.");
+            return;
+          }
+
+          state.tasks.push(...added);
+          // reset start counts to include new tasks
+          state.startCounts.tasks = state.tasks.length;
+          state.startCounts.eth = state.tasks.reduce((a,t)=>a+t.ethStart,0);
+
+          // apply sort mode choice
+          settings.sortMode = inboxSortMode.value;
+          saveJSON(K.settings, settings);
+
+          ensureCurrent();
+          renderAll();
+          showCelebration(`${added.length} tâche(s) importée(s)`);
+        };
+
+      }, 0);
+
+      return wrap;
+    }
+
+    /* --- Liste panel: minimal actions only (up/down/edit) + active cats --- */
+    function buildListPanel(){
+      const wrap = document.createElement("div");
+
+      const cats = [...new Set(state.tasks.map(t=>t.cat || "Sans catégorie"))].sort((a,b)=>a.localeCompare(b));
+      const active = getActiveCatsSet();
+
+      const cFilter = mkCard("Catégories actives", `
+        <div id="catFilterRow" class="row"></div>
+        <div class="help" style="margin-top:10px;">
+          Les catégories inactives ne sont pas tirées par la roulette / sélection.
+        </div>
+      `);
+
+      wrap.appendChild(cFilter);
+
+      const cList = mkCard("Tâches", `<div id="taskList"></div>`);
+      wrap.appendChild(cList);
+
+      setTimeout(() => {
+        const row = document.getElementById("catFilterRow");
+        row.innerHTML = "";
+        for(const c of cats){
+          const b = document.createElement("button");
+          b.className = "btn small";
+          const on = active.has(c);
+          b.textContent = (on ? "[x] " : "[ ] ") + c;
+          b.onclick = () => {
+            let next = settings.activeCats;
+            if(!next || next.length===0) next = [...cats];
+            else next = [...next];
+
+            if(next.includes(c)) next = next.filter(x=>x!==c);
+            else next.push(c);
+
+            settings.activeCats = next;
+            saveJSON(K.settings, settings);
+            renderDrawerPanel("liste");
+          };
+          row.appendChild(b);
+        }
+
+        const list = document.getElementById("taskList");
+        list.innerHTML = "";
+
+        for(const t of state.tasks){
+          const item = document.createElement("div");
+          item.className = "taskItem";
+
+          const left = document.createElement("div");
+          left.className = "taskLeft";
+          left.innerHTML = `
+            <div class="name">${escapeHTML(t.title)}</div>
+            <div class="sub">${escapeHTML(t.cat)} · eth ${t.ethLeft}/${t.ethStart}</div>
+          `;
+
+          const act = document.createElement("div");
+          act.className = "taskAct";
+
+          const up = document.createElement("button");
+          up.className = "iconBtn";
+          up.textContent = "↑";
+          up.onclick = () => { moveTask(t.id, -1); renderDrawerPanel("liste"); renderAll(); };
+
+          const down = document.createElement("button");
+          down.className = "iconBtn";
+          down.textContent = "↓";
+          down.onclick = () => { moveTask(t.id, +1); renderDrawerPanel("liste"); renderAll(); };
+
+          const edit = document.createElement("button");
+          edit.className = "iconBtn";
+          edit.textContent = "edit";
+          edit.onclick = () => {
+            const nv = prompt("Modifier le titre :", t.title);
+            if(nv===null) return;
+            const cleaned = nv.trim();
+            if(!cleaned) return;
+            t.title = cleaned;
+            renderDrawerPanel("liste");
+            renderAll();
+          };
+
+          const del = document.createElement("button");
+          del.className = "iconBtn";
+          del.textContent = "del";
+          del.onclick = () => {
+            if(!confirm("Supprimer cette tâche ?")) return;
+            deleteTask(t.id);
+            renderDrawerPanel("liste");
+            renderAll();
+          };
+
+          act.appendChild(up);
+          act.appendChild(down);
+          act.appendChild(edit);
+          act.appendChild(del);
+
+          item.appendChild(left);
+          item.appendChild(act);
+          list.appendChild(item);
+        }
+
+        if(state.tasks.length===0){
+          const empty = document.createElement("div");
+          empty.className = "help";
+          empty.textContent = "Liste vide. Inbox pour importer.";
+          list.appendChild(empty);
+        }
+      }, 0);
+
+      return wrap;
+    }
+
+    function moveTask(id, dir){
+      const idx = state.tasks.findIndex(x=>x.id===id);
+      if(idx<0) return;
+      const newIdx = clamp(idx + dir, 0, state.tasks.length-1);
+      if(newIdx===idx) return;
+      const [x] = state.tasks.splice(idx,1);
+      state.tasks.splice(newIdx,0,x);
       saveJSON(K.state, state);
-      renderAll();
     }
-  }
 
-  function resetRun(){
-    // Reset = remettre une “run” propre : on conserve tâches + done? (au choix)
-    // Ici: reset remet done à vide et réinitialise les compteurs de départ sur les tâches actuelles
-    // et remet timer. Notes restent. Historique reste.
-    if(!confirm("Reset du run (tâches faites repassent à zéro dans le compteur 'Faits'). Notes conservées.")) return;
+    function deleteTask(id){
+      state.tasks = state.tasks.filter(x=>x.id!==id);
+      if(state.currentId===id){
+        state.currentId = null;
+        state.timer = { taskId:null, elapsedMs:0, running:false };
+        ensureCurrent();
+      }
+      saveJSON(K.state, state);
+    }
 
-    state.done = [];
-    state.startCounts.tasks = state.tasks.length;
-    state.startCounts.eth = state.tasks.reduce((a,t)=>a+t.ethStart,0);
+    /* --- Kiffance panel: restore + perfect --- */
+    function buildKiffPanel(){
+      const wrap = document.createElement("div");
 
-    // reset ethLeft to ethStart? NON : tu n’as pas demandé ça.
-    // Donc on garde l’état actuel des éthorions (sinon c’est un 'restart tasks', pas un reset run).
-    // Si tu veux un bouton “redéployer toutes les tâches à 100%”, on peut l’ajouter après.
+      const c1 = mkCard("Célébrations", `
+        <div class="help">Ces phrases alimentent le grand écran de victoire.</div>
+        <textarea id="kiffCelebrations" placeholder="Une phrase par ligne"></textarea>
+        <div class="row" style="margin-top:10px;">
+          <button class="btn primary" id="btnSaveKiff">Enregistrer</button>
+          <button class="btn" id="btnTestKiff">Tester</button>
+          <button class="btn" id="btnResetKiff">Réinitialiser</button>
+        </div>
+      `);
 
-    state.currentId = null;
-    state.timer = { taskId:null, startedAt:null, elapsedMs:0 };
-    snapshot("reset run");
+      const c2 = mkCard("Encouragements (option)", `
+        <div class="help">Optionnel. (On garde ça prêt, même si affichage désactivé par défaut.)</div>
+        <textarea id="kiffEncouragements" placeholder="Une phrase par ligne"></textarea>
+        <div class="row" style="margin-top:10px;">
+          <input id="kiffFreq" type="number" min="0" step="1" />
+          <div class="help" style="flex:2;">Fréquence (minutes). 0 = off.</div>
+        </div>
+      `);
+
+      wrap.appendChild(c1);
+      wrap.appendChild(c2);
+
+      setTimeout(() => {
+        const taC = document.getElementById("kiffCelebrations");
+        const taE = document.getElementById("kiffEncouragements");
+        const freq = document.getElementById("kiffFreq");
+
+        taC.value = (kiff.celebrations || []).join("\n");
+        taE.value = (kiff.encouragements || []).join("\n");
+        freq.value = String(kiff.encouragementFrequencyMin ?? 0);
+
+        document.getElementById("btnSaveKiff").onclick = () => {
+          kiff.celebrations = (taC.value||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+          kiff.encouragements = (taE.value||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+          kiff.encouragementFrequencyMin = parseInt(freq.value,10) || 0;
+          saveJSON(K.kiff, kiff);
+          showCelebration("Kiffance sauvegardée.");
+        };
+
+        document.getElementById("btnTestKiff").onclick = () => {
+          showCelebration("Test de célébration.");
+        };
+
+        document.getElementById("btnResetKiff").onclick = () => {
+          if(!confirm("Réinitialiser la banque Kiffance ?")) return;
+          kiff = JSON.parse(JSON.stringify(DEFAULT_KIFF));
+          saveJSON(K.kiff, kiff);
+          renderDrawerPanel("kiff");
+          showCelebration("Kiffance réinitialisée.");
+        };
+      }, 0);
+
+      return wrap;
+    }
+
+    /* --- Notes panel (persist even resets) --- */
+    function buildNotesPanel(){
+      const wrap = document.createElement("div");
+
+      const c1 = mkCard("Ajouter une note", `
+        <textarea id="noteText" placeholder="Note persistante (ne disparaît pas au reset)"></textarea>
+        <div class="row" style="margin-top:10px;">
+          <button class="btn primary" id="btnAddNote">Ajouter</button>
+          <button class="btn" id="btnExportNotes">Exporter notes</button>
+          <button class="btn" id="btnClearNotes">Effacer notes</button>
+        </div>
+      `);
+
+      const c2 = mkCard("Notes sauvegardées", `<div class="noteGrid" id="notesGrid"></div>`);
+
+      wrap.appendChild(c1);
+      wrap.appendChild(c2);
+
+      setTimeout(() => {
+        const noteText = document.getElementById("noteText");
+        document.getElementById("btnAddNote").onclick = () => {
+          const txt = (noteText.value||"").trim();
+          if(!txt) return;
+          notes.push({ id: uid(), at: nowISO(), text: txt });
+          saveJSON(K.notes, notes);
+          noteText.value = "";
+          renderDrawerPanel("notes");
+          showCelebration("Note capturée.");
+        };
+
+        document.getElementById("btnClearNotes").onclick = () => {
+          if(!confirm("Effacer toutes les notes ?")) return;
+          notes = [];
+          saveJSON(K.notes, notes);
+          renderDrawerPanel("notes");
+          showCelebration("Notes effacées.");
+        };
+
+        document.getElementById("btnExportNotes").onclick = () => {
+          exportJSON({ exportedAt: nowISO(), notes }, `eliminator_notes_${todayKey()}.json`);
+        };
+
+        const grid = document.getElementById("notesGrid");
+        const arr = [...notes].sort((a,b)=>new Date(b.at)-new Date(a.at));
+        grid.innerHTML = "";
+        for(const n of arr){
+          const d = document.createElement("div");
+          d.className = "note";
+          d.innerHTML = `
+            <div class="stamp">${escapeHTML(new Date(n.at).toLocaleString())}</div>
+            <div class="txt">${escapeHTML(n.text)}</div>
+          `;
+          grid.appendChild(d);
+        }
+        if(arr.length===0){
+          const empty = document.createElement("div");
+          empty.className = "help";
+          empty.textContent = "Aucune note.";
+          grid.appendChild(empty);
+        }
+      }, 0);
+
+      return wrap;
+    }
+
+    /* --- Habits panel: tracked per day + used in report --- */
+    function buildHabitsPanel(){
+      const wrap = document.createElement("div");
+
+      const c1 = mkCard("Paramètres habitudes", `
+        <div class="row">
+          <input id="habitSlots" type="number" min="3" max="20" />
+          <button class="btn primary" id="btnSaveHabitSlots">Enregistrer</button>
+        </div>
+        <div class="help" style="margin-top:10px;">
+          Nombre de cases par habitude et par jour. (ex: 8 verres d’eau)
+        </div>
+      `);
+
+      const c2 = mkCard("Ajouter une habitude", `
+        <div class="row">
+          <input id="habitName" placeholder="Ex: boire des verres d’eau" />
+          <button class="btn primary" id="btnAddHabit">Ajouter</button>
+        </div>
+      `);
+
+      const c3 = mkCard("Aujourd’hui", `<div id="habitsList"></div>`);
+
+      wrap.appendChild(c1);
+      wrap.appendChild(c2);
+      wrap.appendChild(c3);
+
+      setTimeout(() => {
+        ensureDay();
+
+        const slotsInput = document.getElementById("habitSlots");
+        slotsInput.value = String(habits.slots || 8);
+
+        document.getElementById("btnSaveHabitSlots").onclick = () => {
+          const n = parseInt(slotsInput.value,10);
+          habits.slots = clamp(Number.isFinite(n)?n:8, 3, 20);
+          saveJSON(K.habits, habits);
+          renderDrawerPanel("habits");
+          showCelebration("Habitudes paramétrées.");
+        };
+
+        document.getElementById("btnAddHabit").onclick = () => {
+          const nm = (document.getElementById("habitName").value||"").trim();
+          if(!nm) return;
+          habits.habits.push({ id: uid(), name: nm, createdAt: nowISO() });
+          saveJSON(K.habits, habits);
+          renderDrawerPanel("habits");
+          showCelebration("Habitude ajoutée.");
+        };
+
+        const list = document.getElementById("habitsList");
+        list.innerHTML = "";
+
+        const day = todayKey();
+        const marks = habits.marksByDay[day] || (habits.marksByDay[day] = {});
+        const slots = habits.slots || 8;
+
+        for(const h of habits.habits){
+          if(!marks[h.id]) marks[h.id] = Array.from({length: slots}, ()=>0);
+
+          const filled = marks[h.id].reduce((a,x)=>a+(x?1:0),0);
+          const pct = Math.round((filled/slots)*100);
+
+          const item = document.createElement("div");
+          item.className = "habitItem";
+
+          const top = document.createElement("div");
+          top.className = "habitTop";
+          top.innerHTML = `
+            <div>
+              <p class="habitName">${escapeHTML(h.name)}</p>
+            </div>
+            <div class="habitMeta">${filled}/${slots} · ${pct}%</div>
+          `;
+
+          const checks = document.createElement("div");
+          checks.className = "habitChecks";
+
+          for(let i=0;i<slots;i++){
+            const c = document.createElement("div");
+            c.className = "check" + (marks[h.id][i] ? " on" : "");
+            c.textContent = marks[h.id][i] ? "x" : "";
+            c.onclick = () => {
+              marks[h.id][i] = marks[h.id][i] ? 0 : 1;
+              habits.marksByDay[day] = marks;
+              saveJSON(K.habits, habits);
+              renderDrawerPanel("habits");
+            };
+            checks.appendChild(c);
+          }
+
+          const row = document.createElement("div");
+          row.className = "row";
+          row.style.marginTop = "10px";
+          row.innerHTML = `
+            <button class="btn small" id="btnHabitReset_${h.id}">Reset</button>
+            <button class="btn small" id="btnHabitDel_${h.id}">Supprimer</button>
+          `;
+
+          item.appendChild(top);
+          item.appendChild(checks);
+          item.appendChild(row);
+          list.appendChild(item);
+
+          setTimeout(() => {
+            const r = document.getElementById(`btnHabitReset_${h.id}`);
+            const d = document.getElementById(`btnHabitDel_${h.id}`);
+
+            r.onclick = () => {
+              marks[h.id] = Array.from({length: slots}, ()=>0);
+              saveJSON(K.habits, habits);
+              renderDrawerPanel("habits");
+            };
+
+            d.onclick = () => {
+              if(!confirm("Supprimer cette habitude ?")) return;
+              habits.habits = habits.habits.filter(x=>x.id!==h.id);
+              // remove from all days
+              for(const dayKey of Object.keys(habits.marksByDay)){
+                if(habits.marksByDay[dayKey] && habits.marksByDay[dayKey][h.id]){
+                  delete habits.marksByDay[dayKey][h.id];
+                }
+              }
+              saveJSON(K.habits, habits);
+              renderDrawerPanel("habits");
+            };
+          },0);
+        }
+
+        if(habits.habits.length===0){
+          const empty = document.createElement("div");
+          empty.className = "help";
+          empty.textContent = "Aucune habitude. Ajoute-en une ci-dessus.";
+          list.appendChild(empty);
+        }
+      }, 0);
+
+      return wrap;
+    }
+
+    /* --- Historique panel: daily/weekly/monthly views + export done/remaining --- */
+    function buildHistPanel(){
+      const wrap = document.createElement("div");
+
+      const c1 = mkCard("Exports rapides", `
+        <div class="row">
+          <button class="btn primary" id="btnExportToday">Exporter aujourd’hui</button>
+          <button class="btn" id="btnExportRun">Exporter run (faits + restants)</button>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <button class="btn" id="btnExportWeek">Exporter semaine</button>
+          <button class="btn" id="btnExportMonth">Exporter mois</button>
+        </div>
+      `);
+
+      const c2 = mkCard("Résumé (aujourd’hui)", `<div class="help" id="histSummary"></div>`);
+
+      wrap.appendChild(c1);
+      wrap.appendChild(c2);
+
+      setTimeout(() => {
+        ensureDay();
+        const day = todayKey();
+        const h = history[day];
+
+        // Habits summary today
+        const habToday = summarizeHabits(day);
+
+        document.getElementById("histSummary").textContent =
+`Date: ${day}
+Éthorions dégommés: ${h.ethSmashed}
+Tâches terminées: ${h.tasksDone}
+Temps cumulé (approx): ${fmtMMSS(h.msWorked)}
+Habitudes (aujourd’hui):
+${habToday.text}`;
+
+        document.getElementById("btnExportToday").onclick = () => {
+          exportJSON(buildDailyReport(day), `eliminator_journal_${day}.json`);
+        };
+
+        document.getElementById("btnExportRun").onclick = () => {
+          exportJSON(buildRunExport(), `eliminator_run_${todayKey()}.json`);
+        };
+
+        document.getElementById("btnExportWeek").onclick = () => {
+          exportJSON(buildRangeExport(7), `eliminator_semaine_${todayKey()}.json`);
+        };
+
+        document.getElementById("btnExportMonth").onclick = () => {
+          exportJSON(buildRangeExport(30), `eliminator_mois_${todayKey()}.json`);
+        };
+      }, 0);
+
+      return wrap;
+    }
+
+    /* --- Rapport panel: daily/weekly/monthly text view + export --- */
+    function buildRapportPanel(){
+      const wrap = document.createElement("div");
+
+      const c1 = mkCard("Rapport (texte)", `
+        <div class="row">
+          <select id="repRange">
+            <option value="day">Journalier</option>
+            <option value="week">Hebdomadaire</option>
+            <option value="month">Mensuel</option>
+          </select>
+          <button class="btn primary" id="btnGenRep">Générer</button>
+          <button class="btn" id="btnExportRep">Exporter</button>
+        </div>
+        <textarea id="repText" style="margin-top:10px; min-height:240px;"></textarea>
+      `);
+
+      wrap.appendChild(c1);
+
+      setTimeout(() => {
+        const repRange = document.getElementById("repRange");
+        const repText = document.getElementById("repText");
+
+        function gen(){
+          const r = repRange.value;
+          if(r==="day"){
+            const day = todayKey();
+            repText.value = buildReportText([day]);
+          }else if(r==="week"){
+            repText.value = buildReportText(lastNDays(7));
+          }else{
+            repText.value = buildReportText(lastNDays(30));
+          }
+        }
+
+        document.getElementById("btnGenRep").onclick = gen;
+
+        document.getElementById("btnExportRep").onclick = () => {
+          const r = repRange.value;
+          const name = r==="day" ? "journal" : (r==="week" ? "semaine" : "mois");
+          exportText(repText.value || "", `eliminator_rapport_${name}_${todayKey()}.txt`);
+        };
+
+        gen();
+      }, 0);
+
+      return wrap;
+    }
+
+    /* --- Params panel: display modes + eth minutes + sort mode --- */
+    function buildParamsPanel(){
+      const wrap = document.createElement("div");
+
+      const c1 = mkCard("Affichage", `
+        <div class="row">
+          <select id="sortMode">
+            <option value="roulette">Sélection: roulette</option>
+            <option value="order">Sélection: ordre</option>
+            <option value="alpha">Sélection: alpha</option>
+            <option value="chrono">Sélection: chrono</option>
+          </select>
+          <select id="ethMinutesPer">
+            <option value="5">1 éthorion = 5 min</option>
+            <option value="10">1 éthorion = 10 min</option>
+            <option value="15">1 éthorion = 15 min</option>
+          </select>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn small" id="toggleMeta">Meta on/off</button>
+          <button class="btn small" id="toggleCat">Cat on/off</button>
+          <button class="btn small" id="toggleTime">Estimé on/off</button>
+        </div>
+
+        <div class="help" style="margin-top:10px;">
+          Objectif: minimal vitré. (Ici tu choisis ce qui est visible en mode normal.)
+        </div>
+      `);
+
+      const c2 = mkCard("Actions", `
+        <div class="row">
+          <button class="btn" id="btnResetRun">Reset run</button>
+          <button class="btn" id="btnNukeTasks">Tout effacer (tâches + stats) (notes conservées)</button>
+        </div>
+      `);
+
+      wrap.appendChild(c1);
+      wrap.appendChild(c2);
+
+      setTimeout(() => {
+        const sortMode = document.getElementById("sortMode");
+        const ethMinutesPer = document.getElementById("ethMinutesPer");
+
+        sortMode.value = settings.sortMode;
+        ethMinutesPer.value = String(settings.ethMinutesPer || 5);
+
+        sortMode.onchange = () => {
+          settings.sortMode = sortMode.value;
+          saveJSON(K.settings, settings);
+        };
+        ethMinutesPer.onchange = () => {
+          settings.ethMinutesPer = parseInt(ethMinutesPer.value,10) || 5;
+          saveJSON(K.settings, settings);
+          renderAll();
+        };
+
+        document.getElementById("toggleMeta").onclick = () => {
+          settings.showMeta = settings.showMeta ? 0 : 1;
+          taskSub.style.display = settings.showMeta ? "" : "none";
+          saveJSON(K.settings, settings);
+        };
+        document.getElementById("toggleCat").onclick = () => {
+          settings.showCategory = settings.showCategory ? 0 : 1;
+          saveJSON(K.settings, settings);
+          renderAll();
+        };
+        document.getElementById("toggleTime").onclick = () => {
+          settings.showTimeRemaining = settings.showTimeRemaining ? 0 : 1;
+          saveJSON(K.settings, settings);
+          renderAll();
+        };
+
+        document.getElementById("btnResetRun").onclick = resetRun;
+
+        document.getElementById("btnNukeTasks").onclick = () => {
+          if(!confirm("Effacer tâches + stats (notes conservées) ?")) return;
+          state = {
+            tasks: [],
+            done: [],
+            currentId: null,
+            startCounts: { tasks: 0, eth: 0 },
+            timer: { taskId:null, elapsedMs:0, running:false }
+          };
+          history = {};
+          saveJSON(K.state, state);
+          saveJSON(K.history, history);
+          renderAll();
+          showCelebration("Nettoyage total. Notes intactes.");
+        };
+      }, 0);
+
+      return wrap;
+    }
+
+    /* =========================
+       Reports helpers
+       ========================= */
+    function lastNDays(n){
+      const out = [];
+      for(let i=0;i<n;i++){
+        const d = new Date();
+        d.setDate(d.getDate()-i);
+        out.push(d.toISOString().slice(0,10));
+      }
+      return out;
+    }
+
+    function summarizeHabits(day){
+      const slots = habits.slots || 8;
+      const marks = (habits.marksByDay && habits.marksByDay[day]) ? habits.marksByDay[day] : {};
+      if(!habits.habits || habits.habits.length===0){
+        return { text: "- aucune habitude définie", items: [] };
+      }
+      const items = [];
+      for(const h of habits.habits){
+        const arr = marks[h.id] || Array.from({length: slots}, ()=>0);
+        const done = arr.reduce((a,x)=>a+(x?1:0),0);
+        const pct = Math.round((done/slots)*100);
+        items.push({ name:h.name, done, slots, pct });
+      }
+      const text = items.map(it => `- ${it.name}: ${it.done}/${it.slots} (${it.pct}%)`).join("\n");
+      return { text, items };
+    }
+
+    function buildDailyReport(day){
+      ensureDay();
+      const h = history[day] || { ethSmashed:0, tasksDone:0, msWorked:0 };
+      const hab = summarizeHabits(day);
+      return {
+        day,
+        stats: h,
+        habits: hab.items,
+        run_export: buildRunExport()
+      };
+    }
+
+    function buildRunExport(){
+      // Export: tasks done + remaining (what you requested)
+      const doneTasks = [...state.done].map(t => ({
+        title: t.title, cat: t.cat, ethStart: t.ethStart, doneAt: t.doneAt || null
+      }));
+      const remainingTasks = [...state.tasks].map(t => ({
+        title: t.title, cat: t.cat, ethStart: t.ethStart, ethLeft: t.ethLeft, createdAt: t.createdAt
+      }));
+
+      return {
+        exportedAt: nowISO(),
+        tasks_done_count: state.done.length,
+        tasks_remaining_count: state.tasks.length,
+        tasks_done: doneTasks,
+        tasks_remaining: remainingTasks
+      };
+    }
+
+    function buildRangeExport(nDays){
+      const days = lastNDays(nDays);
+      const daily = [];
+      for(const d of days){
+        daily.push(buildDailyReport(d));
+      }
+      return { exportedAt: nowISO(), range_days: days, daily };
+    }
+
+    function buildReportText(days){
+      const lines = [];
+      lines.push(`ELIMINATOR — RAPPORT (${days.length} jour(s))`);
+      lines.push(`Généré: ${new Date().toLocaleString()}`);
+      lines.push("");
+
+      let eth=0, tasks=0, ms=0;
+      for(const d of days){
+        const h = history[d];
+        if(!h) continue;
+        eth += (h.ethSmashed||0);
+        tasks += (h.tasksDone||0);
+        ms += (h.msWorked||0);
+      }
+
+      lines.push(`Total éthorions dégommés: ${eth}`);
+      lines.push(`Total tâches terminées: ${tasks}`);
+      lines.push(`Temps cumulé (approx): ${fmtMMSS(ms)}`);
+      lines.push("");
+
+      // Habits overview (today only detailed; for weekly/monthly give average)
+      if(habits.habits && habits.habits.length>0){
+        lines.push("Habitudes (aperçu):");
+        const slots = habits.slots || 8;
+        for(const h of habits.habits){
+          let doneSum=0, denom=0;
+          for(const d of days){
+            const marks = (habits.marksByDay && habits.marksByDay[d]) ? habits.marksByDay[d][h.id] : null;
+            if(marks){
+              doneSum += marks.reduce((a,x)=>a+(x?1:0),0);
+              denom += marks.length;
+            }
+          }
+          if(denom===0){
+            lines.push(`- ${h.name}: aucun pointage`);
+          }else{
+            const pct = Math.round((doneSum/denom)*100);
+            lines.push(`- ${h.name}: ${doneSum}/${denom} (${pct}%)`);
+          }
+        }
+        lines.push("");
+      }
+
+      // Today detail
+      const today = todayKey();
+      lines.push(`Détail du jour (${today}):`);
+      const h0 = history[today] || {ethSmashed:0,tasksDone:0,msWorked:0};
+      lines.push(`- Éthorions: ${h0.ethSmashed}`);
+      lines.push(`- Tâches: ${h0.tasksDone}`);
+      lines.push(`- Temps: ${fmtMMSS(h0.msWorked)}`);
+      const habToday = summarizeHabits(today);
+      lines.push(`- Habitudes:\n${habToday.text}`);
+      lines.push("");
+
+      // Run (current)
+      lines.push("Run actuel:");
+      lines.push(`- Tâches restantes: ${state.tasks.length}`);
+      lines.push(`- Tâches faites: ${state.done.length}`);
+      lines.push(`- Éthorions restants: ${state.tasks.reduce((a,t)=>a+t.ethLeft,0)}`);
+      lines.push("");
+
+      return lines.join("\n");
+    }
+
+    function exportJSON(obj, filename){
+      const blob = new Blob([JSON.stringify(obj,null,2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportText(text, filename){
+      const blob = new Blob([text], {type:"text/plain"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    /* =========================
+       Wiring main buttons
+       ========================= */
+    btnMenu.onclick = () => openDrawer("inbox");
+    btnBottomMenu.onclick = () => openDrawer("inbox");
+    btnDrawerClose.onclick = closeDrawer;
+
+    themeLight.onclick = () => setTheme("light");
+    themeDark.onclick = () => setTheme("dark");
+
+    btnReset.onclick = resetRun;
+
+    btnFocus.onclick = () => setFocus(!(settings.focus===1));
+    btnBottomFocus.onclick = () => setFocus(!(settings.focus===1));
+    btnExitFocus.onclick = () => setFocus(0);
+
+    btnBottomNote.onclick = () => openDrawer("notes");
+
+    btnRoulette.onclick = roulettePick;
+    btnSmash.onclick = smashOne;
+
+    /* =========================
+       Init
+       ========================= */
+    function applySettings(){
+      setTheme(settings.theme || "light");
+      setFocus(settings.focus===1);
+
+      // apply meta visibility
+      taskSub.style.display = settings.showMeta ? "" : "none";
+    }
+
+    ensureDay();
+    buildDrawer();
+    applySettings();
+    recalcStartCountsIfNeeded();
     ensureCurrent();
-    saveJSON(K.state, state);
     renderAll();
-    celebrateNow("Reset. Nouvelle campagne. Même empire.");
-  }
+    tick();
 
-  function nukeAllButNotes(){
-    if(!confirm("Tout effacer (tâches + stats), mais garder les notes. Confirmer ?")) return;
-
-    state = {
-      tasks: [],
-      done: [],
-      currentId: null,
-      startCounts: { tasks: 0, eth: 0 },
-      timer: { taskId: null, startedAt: null, elapsedMs: 0 }
-    };
-    history = {}; // wipe stats
-    saveJSON(K.state, state);
-    saveJSON(K.history, history);
-    snapshot("nuke");
-    renderAll();
-    celebrateNow("Tout effacé. Les notes ont survécu. Évidemment.");
-  }
-
-  function applySortMode(){
-    settings.sortMode = sortModeSel.value;
-    saveJSON(K.settings, settings);
-
-    // Option “Appliquer” : on réordonne réellement la liste si alpha/chrono/order
-    if(settings.sortMode === "alpha"){
-      state.tasks.sort((a,b)=>a.title.localeCompare(b.title));
-      snapshot("tri alpha");
-    }else if(settings.sortMode === "chrono"){
-      state.tasks.sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
-      snapshot("tri chrono");
-    }else{
-      // "order" and "roulette" don't need reorder
-      snapshot("mode tri changé");
-    }
-    saveJSON(K.state, state);
-    renderAll();
-    celebrateNow("Tri appliqué. La liste obéit.");
-  }
-
-  function addNotes(text){
-    const cleaned = String(text || "").trim();
-    if(!cleaned) return;
-    notes.push({ id: uid(), at: nowISO(), text: cleaned });
-    saveJSON(K.notes, notes);
-    renderNotes();
-    celebrateNow("Note capturée. Dans le bocal.");
-  }
-
-  function quickNote(){
-    openMenu("notes");
-    setTimeout(()=>noteText.focus(), 120);
-  }
-
-  function importInbox(){
-    const lines = inboxText.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-    if(lines.length===0){
-      celebrateNow("Inbox vide.");
-      return;
-    }
-
-    const catDef = defaultCategory.value || "";
-    const ethDef = parseInt(defaultEth.value,10);
-    const ethDefaultSafe = Number.isFinite(ethDef) && ethDef>0 ? ethDef : null;
-
-    const added = [];
-    for(const line of lines){
-      const t = parseLineToTask(line, catDef, ethDefaultSafe);
-      if(t) added.push(t);
-    }
-
-    if(added.length===0){
-      celebrateNow("Rien à importer (format étrange).");
-      return;
-    }
-
-    state.tasks.push(...added);
-
-    // If first time, set startCounts
-    state.startCounts.tasks = state.tasks.length;
-    state.startCounts.eth = state.tasks.reduce((a,t)=>a+t.ethStart,0);
-
-    snapshot("import inbox");
-    ensureCurrent();
-    saveJSON(K.state, state);
-    renderAll();
-    celebrateNow(`${added.length} tâche(s) importée(s)`);
-    burstConfetti();
-  }
-
-  /***********************
-   * Timer tick
-   ***********************/
-  let lastTick = Date.now();
-  function tick(){
-    const now = Date.now();
-    const dt = now - lastTick;
-    lastTick = now;
-
-    const t = currentTask();
-    if(t && state.timer.taskId === t.id && state.timer.startedAt){
-      state.timer.elapsedMs += dt;
-      // We log "work time" continuously (approx)
-      addWorkMs(dt);
-      hudTimer.textContent = formatMMSS(state.timer.elapsedMs);
-    }else{
-      hudTimer.textContent = "00:00";
-    }
-
-    // update HUD counts occasionally without heavy rendering
-    renderHUD();
-    requestAnimationFrame(tick);
-  }
-
-  /***********************
-   * Events
-   ***********************/
-  btnMenu.onclick = () => openMenu("inbox");
-  btnClose.onclick = closeMenu;
-  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) closeMenu(); });
-
-  tabs.forEach(t => t.addEventListener("click", () => selectTab(t.dataset.tab)));
-
-  themeLight.onclick = () => setTheme("light");
-  themeDark.onclick = () => setTheme("dark");
-
-  btnFocus.onclick = () => setFocus(!(settings.focus===1));
-  btnToggleFocusFromMenu.onclick = () => setFocus(!(settings.focus===1));
-
-  btnPure.onclick = () => setPure(!(settings.pure===1));
-  btnTogglePureFromMenu.onclick = () => setPure(!(settings.pure===1));
-
-  btnReset.onclick = resetRun;
-
-  btnRoulette.onclick = roulettePick;
-  btnSmash.onclick = smashOneEth;
-
-  btnPin.onclick = togglePinCurrent;
-  btnUp.onclick = prioritizeCurrent;
-  btnDown.onclick = deprioritizeCurrent;
-  btnEdit.onclick = () => {
-    const t = currentTask();
-    if(!t) return;
-    editTaskPrompt(t.id);
-  };
-  btnDelete.onclick = () => {
-    const t = currentTask();
-    if(!t) return;
-    if(!confirm("Supprimer cette tâche ?")) return;
-    deleteTask(t.id);
-    celebrateNow("Tâche supprimée. Elle ne reviendra pas hanter tes nuits.");
-    renderAll();
-  };
-
-  btnNoteQuick.onclick = quickNote;
-
-  btnImport.onclick = importInbox;
-  btnClearInbox.onclick = () => { inboxText.value=""; };
-
-  btnApplySort.onclick = applySortMode;
-
-  btnAddNote.onclick = () => {
-    addNotes(noteText.value);
-    noteText.value = "";
-    renderAll();
-  };
-
-  btnClearNotes.onclick = () => {
-    if(!confirm("Effacer toutes les notes ? (irréversible)")) return;
-    notes = [];
-    saveJSON(K.notes, notes);
-    renderNotes();
-    celebrateNow("Notes effacées. Mémoire purgée.");
-  };
-
-  ethMinutesPerSel.onchange = () => {
-    settings.ethMinutesPer = parseInt(ethMinutesPerSel.value,10) || 5;
-    saveJSON(K.settings, settings);
-    renderAll();
-  };
-
-  btnExport.onclick = () => {
-    const payload = {
-      exportedAt: nowISO(),
-      settings,
-      state,
-      notes,
-      history
-    };
-    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `eliminator_export_${todayKey()}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    celebrateNow("Exporté. Archive de guerre créée.");
-  };
-
-  btnNuke.onclick = nukeAllButNotes;
-
-  sortModeSel.onchange = () => {
-    // live reflect
-    settings.sortMode = sortModeSel.value;
-    saveJSON(K.settings, settings);
-  };
-
-  /***********************
-   * Init
-   ***********************/
-  function applySettingsToUI(){
-    setTheme(settings.theme);
-    setFocus(settings.focus===1);
-    setPure(settings.pure===1);
-    ethMinutesPerSel.value = String(settings.ethMinutesPer || 5);
-    sortModeSel.value = settings.sortMode || "roulette";
-  }
-
-  applySettingsToUI();
-  ensureDay();
-  recalcStartCountsIfNeeded();
-  ensureCurrent();
-  renderAll();
-  tick();
-
-})();
-</script>
+  })();
+  </script>
 </body>
 </html>
