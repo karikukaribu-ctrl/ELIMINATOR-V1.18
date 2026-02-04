@@ -6,70 +6,83 @@
   <title>ELIMINATOR</title>
 
   <style>
+    /* =========================
+       ELIMINATOR — v2.3 (monochrome glass, fewer tabs, fixed logic)
+       - Thème clair par défaut
+       - Barre globale = 100% remplie puis diminue
+       - Timer fiable
+       - Roulette ronde avec "ROULETTE" qui tourne
+       - Micro-actions = icônes minimalistes
+       - Habitudes restaurées
+       - Kiffance banque beaucoup plus riche
+       - Sets panel à droite (indépendant) masquable
+       ========================= */
+
     :root{
+      --bg:#f4f6fb;
+      --fg:#0f1218;
+      --muted:#5e6776;
+
+      --glass: rgba(255,255,255,.62);
+      --glass2: rgba(255,255,255,.78);
+      --stroke: rgba(16,18,24,.12);
+      --stroke2: rgba(16,18,24,.08);
+
+      --shadow: 0 12px 34px rgba(16,18,24,.12);
+      --shadow2: 0 8px 22px rgba(16,18,24,.10);
+
+      --radius: 20px;
+      --radius2: 16px;
+
+      --barbg: rgba(16,18,24,.10);
+      --barfg: rgba(16,18,24,.65);
+
+      --focusRing: rgba(80,120,255,.18); /* très discret */
+    }
+
+    [data-theme="dark"]{
       --bg:#0f1115;
       --fg:#e9edf5;
       --muted:#a8b0bd;
+
       --glass: rgba(255,255,255,.06);
-      --glass2: rgba(255,255,255,.08);
-      --stroke: rgba(255,255,255,.10);
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 18px;
-      --radius2: 14px;
-      --pad: 14px;
-      --focusGlow: rgba(120,170,255,.16); /* discret */
-      --accent: rgba(120,170,255,.25);    /* discret */
-      --danger: rgba(255,255,255,.12);    /* pas rouge */
-      --barbg: rgba(255,255,255,.10);
-      --barfg: rgba(255,255,255,.65);
-      --barfg2: rgba(255,255,255,.42);
+      --glass2: rgba(255,255,255,.09);
+      --stroke: rgba(255,255,255,.12);
+      --stroke2: rgba(255,255,255,.08);
+
+      --shadow: 0 14px 34px rgba(0,0,0,.38);
+      --shadow2: 0 10px 24px rgba(0,0,0,.30);
+
+      --barbg: rgba(255,255,255,.12);
+      --barfg: rgba(255,255,255,.62);
+
+      --focusRing: rgba(120,170,255,.16);
     }
 
-    [data-theme="light"]{
-      --bg:#f4f6fb;
-      --fg:#101218;
-      --muted:#5d6572;
-      --glass: rgba(255,255,255,.62);
-      --glass2: rgba(255,255,255,.74);
-      --stroke: rgba(20,22,28,.10);
-      --shadow: 0 12px 30px rgba(20,22,28,.12);
-      --focusGlow: rgba(90,130,255,.18);
-      --accent: rgba(90,130,255,.22);
-      --danger: rgba(20,22,28,.08);
-      --barbg: rgba(20,22,28,.10);
-      --barfg: rgba(20,22,28,.70);
-      --barfg2: rgba(20,22,28,.45);
-    }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--fg);
       background:
-        radial-gradient(1200px 700px at 20% -10%, var(--accent), transparent 60%),
-        radial-gradient(900px 600px at 110% 0%, rgba(255,255,255,.06), transparent 55%),
+        radial-gradient(1100px 700px at 15% -10%, var(--focusRing), transparent 60%),
+        radial-gradient(900px 600px at 105% 0%, rgba(255,255,255,.06), transparent 55%),
         var(--bg);
-      color:var(--fg);
       overflow-x:hidden;
     }
 
-    .app{
-      min-height:100%;
-      display:flex;
-      justify-content:center;
-    }
-
+    /* ===== Layout ===== */
     .shell{
-      width:min(980px, 100%);
-      padding: 14px 14px 90px;
+      width:min(980px,100%);
+      margin:0 auto;
+      padding: 12px 14px 96px;
     }
 
-    /* Topbar: jamais de superposition -> wrap + gaps */
     .topbar{
-      position:sticky;
+      position: sticky;
       top:0;
-      z-index:30;
+      z-index:40;
       padding: 10px 0 12px;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
@@ -78,9 +91,9 @@
     .topRow{
       display:flex;
       flex-wrap:wrap;
+      gap: 10px 12px;
       align-items:center;
       justify-content:space-between;
-      gap: 10px 12px;
     }
 
     .leftGroup, .rightGroup{
@@ -93,101 +106,97 @@
     .hud{
       display:flex;
       flex-wrap:wrap;
-      gap: 8px 10px;
+      gap: 8px;
       align-items:center;
       justify-content:flex-end;
       color: var(--muted);
       font-size: 13px;
-      letter-spacing: .01em;
       white-space:nowrap;
     }
-    .hud .pill{
-      padding: 6px 10px;
+    .pill{
+      padding: 7px 10px;
       border-radius: 999px;
-      background: var(--glass);
       border: 1px solid var(--stroke);
-      box-shadow: var(--shadow);
+      background: var(--glass);
+      box-shadow: var(--shadow2);
     }
 
-    /* Boutons: monochrome, élégants */
+    /* ===== Buttons (monochrome, glass) ===== */
     .btn{
       border: 1px solid var(--stroke);
       background: var(--glass);
       color: var(--fg);
       padding: 10px 12px;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
+      border-radius: 14px;
+      box-shadow: var(--shadow2);
       cursor:pointer;
-      line-height:1;
       user-select:none;
-      transition: transform .08s ease, background .2s ease, border-color .2s ease;
-      font-weight:650;
-      letter-spacing: .01em;
+      font-weight: 760;
+      letter-spacing:.01em;
+      transition: transform .08s ease, box-shadow .2s ease, border-color .2s ease;
+      line-height: 1;
     }
     .btn:active{ transform: translateY(1px) }
+    .btn.pressed{
+      box-shadow: 0 0 0 4px var(--focusRing), var(--shadow2);
+    }
     .btn.ghost{
       background: transparent;
       box-shadow:none;
     }
-    .btn.small{
-      padding: 8px 10px;
-      border-radius: 10px;
-      font-weight: 650;
-    }
-    .btn.wide{
-      padding: 12px 16px;
+
+    /* icon-only buttons */
+    .iconBtn{
+      width: 36px;
+      height: 36px;
+      display:grid;
+      place-items:center;
       border-radius: 14px;
+      border: 1px solid var(--stroke);
+      background: var(--glass);
+      box-shadow: var(--shadow2);
+      cursor:pointer;
+      font-weight: 920;
+      line-height:1;
+      user-select:none;
     }
-    .btn.pressed{
-      outline:none;
-      border-color: rgba(255,255,255,.22);
-      box-shadow: 0 0 0 4px var(--focusGlow), var(--shadow);
-    }
-    [data-theme="light"] .btn.pressed{
-      border-color: rgba(20,22,28,.20);
-      box-shadow: 0 0 0 4px var(--focusGlow), var(--shadow);
-    }
+    .iconBtn:active{ transform: translateY(1px) }
+    .iconBtn.pressed{ box-shadow: 0 0 0 4px var(--focusRing), var(--shadow2); }
 
-    .main{
-      margin-top: 10px;
-      display:flex;
-      justify-content:center;
-    }
-
+    /* ===== Main card ===== */
     .card{
-      width:min(860px, 100%);
       border-radius: var(--radius);
       border: 1px solid var(--stroke);
       background: var(--glass2);
       box-shadow: var(--shadow);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-      padding: 18px;
+      padding: 18px 18px 16px;
+      margin-top: 8px;
     }
 
-    /* Titre + tagline */
     .brand{
       text-align:center;
-      margin: 10px 0 18px;
+      margin: 8px 0 16px;
     }
     .brand h1{
-      margin: 0;
-      font-size: clamp(38px, 4.2vw, 64px);
-      letter-spacing: -0.03em;
-      font-weight: 920;
+      margin:0;
+      font-size: clamp(40px, 4.6vw, 68px);
+      letter-spacing: -0.035em;
+      font-weight: 950;
     }
     .brand .tag{
       margin-top: 8px;
-      font-size: 14px;
       color: var(--muted);
+      font-size: 14px;
       letter-spacing:.02em;
     }
 
-    /* Progress zone séparée et grande */
+    /* ===== Progress zone isolated (visually separated) ===== */
     .progressZone{
-      margin: 16px auto 10px;
-      width: min(760px, 100%);
-      padding: 16px 14px 14px;
+      width: min(780px, 100%);
+      margin: 18px auto 18px;
+      padding: 18px 16px 14px;
       border-radius: var(--radius);
       border: 1px solid var(--stroke);
       background: var(--glass);
@@ -196,14 +205,14 @@
 
     .bigbar{
       position:relative;
-      height: 34px;
+      height: 40px;
       border-radius: 999px;
       background: var(--barbg);
       overflow:hidden;
     }
     .bigbar .fill{
       height:100%;
-      width:50%;
+      width:100%;
       background: var(--barfg);
       transition: width .25s ease;
     }
@@ -213,32 +222,40 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      font-weight: 850;
+      font-weight: 900;
       letter-spacing:.02em;
       font-size: 14px;
       color: var(--fg);
-      text-shadow: 0 1px 0 rgba(0,0,0,.08);
       pointer-events:none;
+      text-shadow: 0 1px 0 rgba(0,0,0,.06);
+    }
+
+    .spacer{
+      height: 18px;
     }
 
     .targetWrap{
-      margin: 18px auto 8px;
-      width: min(760px, 100%);
+      width: min(780px, 100%);
+      margin: 0 auto;
       text-align:center;
     }
-
     .targetName{
-      font-size: clamp(22px, 2.2vw, 30px);
-      font-weight: 850;
-      letter-spacing: -0.01em;
-      margin: 0 0 10px;
+      margin: 0 0 12px;
+      font-size: clamp(22px, 2.3vw, 32px);
+      font-weight: 880;
+      letter-spacing: -0.012em;
     }
 
-    /* barre “étorions” (fragments) */
+    .ethRow{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      align-items:center;
+    }
+
     .ethBar{
-      margin: 8px auto 0;
-      width: min(520px, 100%);
-      height: 12px;
+      width: min(560px, 100%);
+      height: 14px;
       border-radius: 999px;
       background: var(--barbg);
       overflow:hidden;
@@ -247,77 +264,104 @@
     .ethBar .fill{
       height:100%;
       width:100%;
-      background: var(--barfg2);
+      background: rgba(255,255,255,.0); /* set by theme below */
       transition: width .25s ease;
     }
+    [data-theme="dark"] .ethBar .fill{ background: rgba(255,255,255,.42); }
+    [data-theme="light"] .ethBar .fill{ background: rgba(16,18,24,.42); }
+
     .ethTicks{
-      width:min(520px,100%);
-      margin: 8px auto 0;
+      width: min(560px, 100%);
       display:flex;
-      gap: 6px;
       justify-content:center;
-      opacity: .9;
+      gap: 6px;
       flex-wrap:wrap;
+      opacity:.95;
     }
     .tick{
-      width: 12px;
-      height: 6px;
+      width: 14px;
+      height: 7px;
       border-radius: 999px;
       border: 1px dashed var(--stroke);
       background: transparent;
     }
     .tick.on{
-      background: var(--barfg2);
       border-style: solid;
       border-color: transparent;
+      background: rgba(255,255,255,.0);
     }
+    [data-theme="dark"] .tick.on{ background: rgba(255,255,255,.32); }
+    [data-theme="light"] .tick.on{ background: rgba(16,18,24,.28); }
 
-    /* Actions principales */
-    .actions{
-      margin: 18px auto 0;
-      width: min(760px, 100%);
-      display:flex;
-      justify-content:center;
-      gap: 10px;
-      flex-wrap:wrap;
-    }
-
-    .rouletteBtn{
-      min-width: 170px;
-      padding: 14px 18px;
-      border-radius: 16px;
-      font-size: 16px;
-    }
-    .rouletteBtn.spin{
-      animation: spinPulse .55s ease;
-    }
-    @keyframes spinPulse{
-      0%{transform:scale(1)}
-      50%{transform:scale(1.04)}
-      100%{transform:scale(1)}
-    }
-
-    .bombBtn{
-      min-width: 220px;
-      padding: 16px 18px;
-      border-radius: 16px;
-      font-size: 16px;
-    }
-
-    /* Micro actions (pin/edit/delete/down) sous la cible */
+    /* ===== Micro actions under target (icons only) ===== */
     .micro{
-      margin: 12px auto 0;
-      width: min(760px, 100%);
+      width:min(780px,100%);
+      margin: 14px auto 0;
       display:flex;
       justify-content:center;
       gap: 8px;
       flex-wrap:wrap;
-      color: var(--muted);
     }
 
-    /* Inline list */
+    /* ===== Primary actions row ===== */
+    .actions{
+      width:min(780px,100%);
+      margin: 16px auto 0;
+      display:flex;
+      justify-content:center;
+      gap: 12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    /* Roulette as circle */
+    .roulette{
+      width: 96px;
+      height: 96px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+      border: 1px solid var(--stroke);
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      cursor:pointer;
+      user-select:none;
+      position:relative;
+      overflow:hidden;
+    }
+    .roulette .ring{
+      position:absolute;
+      inset: 10px;
+      border-radius: 999px;
+      border: 2px solid var(--stroke);
+      opacity:.9;
+    }
+    .roulette .txt{
+      font-weight: 920;
+      letter-spacing:.14em;
+      font-size: 12px;
+      color: var(--fg);
+      text-transform: uppercase;
+    }
+    .roulette.spin{
+      animation: rouletteSpin .65s ease;
+    }
+    @keyframes rouletteSpin{
+      0%{ transform: rotate(0deg) scale(1); }
+      55%{ transform: rotate(290deg) scale(1.04); }
+      100%{ transform: rotate(360deg) scale(1); }
+    }
+
+    .bombBtn{
+      min-width: 260px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      font-size: 16px;
+    }
+
+    /* ===== Inline list (masquable, même en focus) ===== */
     .inlineListWrap{
-      width: min(760px, 100%);
+      width: min(780px, 100%);
       margin: 18px auto 0;
       padding: 12px;
       border-radius: var(--radius);
@@ -327,17 +371,18 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
-    .inlineListHead{
+    .inlineHead{
       display:flex;
       justify-content:space-between;
-      gap: 10px;
       align-items:center;
+      gap: 10px;
       margin-bottom: 10px;
     }
-    .inlineListTitle{
-      font-weight: 850;
+    .inlineTitle{
+      font-weight: 900;
       letter-spacing: -0.01em;
     }
+
     .list{
       display:flex;
       flex-direction:column;
@@ -349,48 +394,32 @@
       justify-content:space-between;
       gap: 10px;
       padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--stroke);
-      background: rgba(255,255,255,.03);
+      border-radius: 16px;
+      border: 1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
     }
-    [data-theme="light"] .item{ background: rgba(20,22,28,.03); }
+    [data-theme="light"] .item{ background: rgba(16,18,24,.03); }
 
     .t{
-      min-width:0;
       flex:1;
+      min-width:0;
     }
     .name{
-      font-weight: 780;
+      font-weight: 820;
       overflow:hidden;
       text-overflow:ellipsis;
       white-space:nowrap;
     }
     .sub{
-      color: var(--muted);
-      font-size: 12px;
       margin-top: 2px;
+      font-size: 12px;
+      color: var(--muted);
       overflow:hidden;
       text-overflow:ellipsis;
       white-space:nowrap;
     }
 
-    .iconBtn{
-      width: 34px;
-      height: 34px;
-      display:grid;
-      place-items:center;
-      border-radius: 12px;
-      border: 1px solid var(--stroke);
-      background: var(--glass);
-      box-shadow: var(--shadow);
-      cursor:pointer;
-      font-weight: 900;
-      line-height:1;
-      user-select:none;
-    }
-    .iconBtn:active{transform:translateY(1px)}
-
-    /* Drawer */
+    /* ===== Drawer ===== */
     .drawerBack{
       position:fixed;
       inset:0;
@@ -398,16 +427,14 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       display:none;
-      z-index:50;
+      z-index:60;
     }
-    [data-theme="light"] .drawerBack{ background: rgba(10,12,16,.18); }
+    [data-theme="light"] .drawerBack{ background: rgba(10,12,16,.16); }
 
     .drawer{
       position:fixed;
-      top:0;
-      bottom:0;
-      left:0;
-      width: min(420px, 92vw);
+      top:0; bottom:0; left:0;
+      width: min(520px, 94vw); /* plus large */
       background: var(--glass2);
       border-right: 1px solid var(--stroke);
       box-shadow: var(--shadow);
@@ -415,48 +442,57 @@
       -webkit-backdrop-filter: blur(18px);
       transform: translateX(-105%);
       transition: transform .22s ease;
-      z-index:60;
+      z-index:70;
       padding: 14px;
       display:flex;
       flex-direction:column;
       gap: 12px;
     }
     .drawer.open{ transform: translateX(0) }
+
     .drawerTop{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
+      gap: 10px;
     }
+    .drawerTitle{
+      font-weight: 950;
+      letter-spacing: -0.02em;
+    }
+
     .tabs{
       display:flex;
-      flex-wrap:wrap;
       gap: 8px;
+      flex-wrap:wrap;
     }
     .tab{
       padding: 10px 12px;
       border-radius: 999px;
-      border:1px solid var(--stroke);
+      border: 1px solid var(--stroke);
       background: var(--glass);
+      box-shadow: var(--shadow2);
       cursor:pointer;
-      font-weight: 750;
+      font-weight: 820;
       font-size: 13px;
-      box-shadow: var(--shadow);
+      user-select:none;
     }
     .tab.active{
-      box-shadow: 0 0 0 4px var(--focusGlow), var(--shadow);
+      box-shadow: 0 0 0 4px var(--focusRing), var(--shadow2);
     }
+
     .view{
       flex:1;
       overflow:auto;
       padding-right: 4px;
     }
+
     .section{
-      border:1px solid var(--stroke);
+      border: 1px solid var(--stroke);
       background: var(--glass);
       border-radius: var(--radius2);
       padding: 12px;
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow2);
       margin-bottom: 10px;
     }
     .section h3{
@@ -467,15 +503,16 @@
     .help{
       color: var(--muted);
       font-size: 13px;
+      line-height: 1.45;
       margin: 8px 0 0;
-      line-height:1.4;
     }
+
     textarea, input, select{
       width:100%;
       border:1px solid var(--stroke);
       background: rgba(255,255,255,.04);
       color: var(--fg);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 10px 12px;
       font: inherit;
       outline:none;
@@ -483,7 +520,7 @@
     [data-theme="light"] textarea,
     [data-theme="light"] input,
     [data-theme="light"] select{
-      background: rgba(20,22,28,.04);
+      background: rgba(16,18,24,.03);
     }
 
     .row{
@@ -495,7 +532,7 @@
     .row > *{ flex: 1 }
     .row .btn, .row .iconBtn{ flex: 0 0 auto }
 
-    /* Notes modal */
+    /* ===== Notes modal ===== */
     .modalBack{
       position:fixed;
       inset:0;
@@ -505,13 +542,13 @@
       display:none;
       z-index:80;
     }
-    [data-theme="light"] .modalBack{ background: rgba(10,12,16,.18); }
+    [data-theme="light"] .modalBack{ background: rgba(10,12,16,.16); }
 
     .modal{
       position:fixed;
       inset: 10% 50% auto 50%;
       transform: translateX(-50%);
-      width: min(720px, 94vw);
+      width: min(760px, 94vw);
       background: var(--glass2);
       border:1px solid var(--stroke);
       border-radius: var(--radius);
@@ -528,47 +565,47 @@
       margin-bottom: 10px;
     }
 
-    /* Celebration overlay */
+    /* ===== Celebration overlay (bigger, previous vibe) ===== */
     .celeBack{
       position:fixed;
       inset:0;
-      background: rgba(0,0,0,.35);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(0,0,0,.38);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       display:none;
-      z-index:100;
+      z-index:95;
     }
-    [data-theme="light"] .celeBack{ background: rgba(10,12,16,.16); }
+    [data-theme="light"] .celeBack{ background: rgba(10,12,16,.18); }
 
     .cele{
       position:fixed;
-      inset: 18% 50% auto 50%;
+      inset: 16% 50% auto 50%;
       transform: translateX(-50%);
-      width: min(760px, 94vw);
-      border-radius: var(--radius);
+      width: min(860px, 94vw);
+      border-radius: 24px;
       border:1px solid var(--stroke);
       background: var(--glass2);
       box-shadow: var(--shadow);
-      padding: 18px;
+      padding: 22px 18px 18px;
       display:none;
-      z-index:110;
+      z-index:96;
       text-align:center;
     }
     .celeTitle{
-      font-weight: 920;
-      letter-spacing: -0.02em;
-      font-size: clamp(24px, 2.4vw, 34px);
       margin: 0 0 10px;
+      font-weight: 980;
+      letter-spacing: -0.02em;
+      font-size: clamp(26px, 2.6vw, 38px);
     }
     .celeMsg{
+      margin: 0 auto 14px;
+      width: min(720px, 100%);
       color: var(--muted);
       font-size: 15px;
-      line-height:1.5;
-      margin: 0 auto 14px;
-      width: min(640px, 100%);
+      line-height: 1.55;
     }
 
-    /* Confetti canvas */
+    /* ===== Confetti canvas ===== */
     #confetti{
       position:fixed;
       inset:0;
@@ -577,20 +614,91 @@
       display:none;
     }
 
-    /* Focus mode: masque presque tout sauf essentials */
+    /* ===== Sets panel (right, independent) ===== */
+    .setsPanel{
+      position: fixed;
+      top: 88px;
+      right: 14px;
+      width: min(360px, 92vw);
+      max-height: calc(100vh - 110px);
+      overflow:auto;
+      border-radius: 20px;
+      border: 1px solid var(--stroke);
+      background: var(--glass2);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 12px;
+      z-index:55;
+      display:none;
+    }
+    .setsPanel.open{ display:block; }
+
+    .setsHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 8px;
+    }
+    .setsHead .ttl{
+      font-weight: 950;
+      letter-spacing: -0.02em;
+    }
+
+    .chkRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 10px 10px;
+      border-radius: 16px;
+      border: 1px solid var(--stroke2);
+      background: rgba(255,255,255,.04);
+      margin-bottom: 8px;
+    }
+    [data-theme="light"] .chkRow{ background: rgba(16,18,24,.03); }
+    .chkLeft{ min-width:0; flex:1; }
+    .chkName{
+      font-weight: 820;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .chkSub{
+      margin-top:2px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .check{
+      width: 22px; height: 22px;
+      border-radius: 8px;
+      border: 1px solid var(--stroke);
+      background: transparent;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      user-select:none;
+      font-weight: 950;
+    }
+    .check.on{
+      background: rgba(255,255,255,.18);
+    }
+    [data-theme="light"] .check.on{
+      background: rgba(16,18,24,.10);
+    }
+
+    /* ===== Focus mode: keep HUD + main + inline list, hide drawer + sets panel ===== */
     .focus .drawerBack,
     .focus .drawer,
-    .focus .inlineListWrap,
-    .focus .micro{
+    .focus .setsPanel{
       display:none !important;
     }
 
-    /* Responsive: topbar -> tout wrap naturellement */
     @media (max-width: 520px){
-      .hud{ justify-content:flex-start; }
-      .rouletteBtn{ min-width: 150px; }
-      .bombBtn{ min-width: 200px; }
-      .progressZone{ padding: 14px 12px; }
+      .roulette{ width: 88px; height: 88px; }
+      .bombBtn{ min-width: 220px; }
+      .setsPanel{ right: 8px; }
     }
   </style>
 </head>
@@ -598,32 +706,34 @@
 <body data-theme="light">
   <canvas id="confetti"></canvas>
 
+  <!-- Drawer -->
   <div class="drawerBack" id="drawerBack"></div>
   <aside class="drawer" id="drawer">
     <div class="drawerTop">
-      <div style="font-weight:900; letter-spacing:-0.02em;">Menu</div>
-      <button class="btn small" id="btnCloseDrawer">Fermer</button>
+      <div class="drawerTitle">Menu</div>
+      <button class="btn" id="btnCloseDrawer">Fermer</button>
     </div>
 
     <div class="tabs" id="tabs"></div>
-
     <div class="view" id="drawerView"></div>
   </aside>
 
+  <!-- Notes modal -->
   <div class="modalBack" id="notesBack"></div>
   <div class="modal" id="notesModal">
     <div class="modalTop">
-      <div style="font-weight:900; letter-spacing:-0.02em;">Notes</div>
-      <button class="btn small" id="btnCloseNotes">Fermer</button>
+      <div style="font-weight:950;letter-spacing:-0.02em;">Notes</div>
+      <button class="btn" id="btnCloseNotes">Fermer</button>
     </div>
+
     <div class="section">
-      <h3>Nouvelle note (persistante)</h3>
+      <h3>Nouvelle note</h3>
       <textarea id="noteInput" rows="3" placeholder="Écris. Ça reste. Même après reset."></textarea>
       <div class="row" style="margin-top:10px;">
         <button class="btn" id="btnAddNote">Ajouter</button>
-        <button class="btn ghost" id="btnClearNotes">Vider (irréversible)</button>
+        <button class="btn ghost" id="btnClearNotes">Vider</button>
       </div>
-      <p class="help">Les notes sont sauvegardées dans la mémoire locale de l’app.</p>
+      <p class="help">Sauvegarde locale (persistant).</p>
     </div>
 
     <div class="section">
@@ -632,79 +742,108 @@
     </div>
   </div>
 
+  <!-- Celebration -->
   <div class="celeBack" id="celeBack"></div>
   <div class="cele" id="celeModal">
     <div class="celeTitle" id="celeTitle">Victoire</div>
     <div class="celeMsg" id="celeMsg">...</div>
     <button class="btn" id="btnCloseCele">OK</button>
-    <p class="help" id="celeHint" style="margin-top:10px;">(Cette célébration peut disparaître automatiquement.)</p>
+    <p class="help" id="celeHint" style="margin-top:10px;">(Surprise. Disparaît aussi toute seule.)</p>
   </div>
 
-  <div class="app">
-    <div class="shell">
-      <div class="topbar">
-        <div class="topRow">
-          <div class="leftGroup">
-            <button class="btn" id="btnMenu">Menu</button>
-            <button class="btn" id="btnTheme">Thème</button>
-            <button class="btn" id="btnFocus">Focus</button>
-            <button class="btn" id="btnInlineList">Liste</button>
-            <button class="btn" id="btnReset">Reset</button>
-          </div>
+  <!-- Sets panel (right) -->
+  <aside class="setsPanel" id="setsPanel">
+    <div class="setsHead">
+      <div class="ttl">Sets</div>
+      <button class="btn" id="btnCloseSets">Fermer</button>
+    </div>
 
-          <div class="rightGroup">
-            <div class="hud" id="hud"></div>
-          </div>
+    <div class="section">
+      <h3>Générateur (indépendant)</h3>
+      <div class="row">
+        <select id="setsType">
+          <option value="hospital">Hôpital</option>
+          <option value="consult">Consult</option>
+        </select>
+        <input id="setsN" type="number" min="1" max="20" value="4" />
+        <button class="btn" id="btnGenSets">Générer</button>
+      </div>
+      <p class="help">Ces checklists ne touchent pas ta liste de tâches. Elles vivent à part, à droite.</p>
+    </div>
+
+    <div class="section">
+      <h3>Checklist</h3>
+      <div id="setsChecklist"></div>
+    </div>
+  </aside>
+
+  <div class="shell">
+    <div class="topbar">
+      <div class="topRow">
+        <div class="leftGroup">
+          <button class="btn" id="btnMenu">Menu</button>
+          <button class="btn" id="btnTheme">Thème</button>
+          <button class="btn" id="btnFocus">Focus</button>
+          <button class="btn" id="btnToggleList">Liste</button>
+          <button class="btn" id="btnSets">Sets</button>
+          <button class="btn" id="btnReset">Reset</button>
+        </div>
+        <div class="rightGroup">
+          <div class="hud" id="hud"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card">
+      <div class="brand">
+        <h1>ELIMINATOR</h1>
+        <div class="tag">Dégomme toutes les tâches. Dégomme tous les étorions en cours.</div>
+      </div>
+
+      <div class="progressZone">
+        <div class="bigbar" aria-label="progression globale">
+          <div class="fill" id="taskFill"></div>
+          <div class="pct" id="taskPct">0%</div>
         </div>
       </div>
 
-      <div class="main">
-        <div class="card" id="card">
-          <div class="brand">
-            <h1>ELIMINATOR</h1>
-            <div class="tag">Dégomme toutes les tâches. Dégomme tous les étorions en cours.</div>
-          </div>
+      <div class="spacer"></div>
 
-          <div class="progressZone">
-            <div class="bigbar" aria-label="progression tâches">
-              <div class="fill" id="taskFill"></div>
-              <div class="pct" id="taskPct">0%</div>
-            </div>
-          </div>
+      <div class="targetWrap">
+        <div class="targetName" id="currentTitle">Aucune tâche</div>
 
-          <div class="targetWrap">
-            <div class="targetName" id="currentTitle">Aucune tâche</div>
-            <div class="ethBar" aria-label="progression étorions">
-              <div class="fill" id="ethFill"></div>
-            </div>
-            <div class="ethTicks" id="ethTicks"></div>
+        <div class="ethRow">
+          <div class="ethBar" aria-label="progression étorions">
+            <div class="fill" id="ethFill"></div>
           </div>
-
-          <div class="micro" id="microActions">
-            <button class="btn small" id="btnPin">Épingler</button>
-            <button class="btn small" id="btnEdit">Éditer</button>
-            <button class="btn small" id="btnDown">Descendre</button>
-            <button class="btn small" id="btnDone">Marquer dégommée</button>
-            <button class="btn small" id="btnDel">Supprimer</button>
-          </div>
-
-          <div class="actions">
-            <button class="btn wide rouletteBtn" id="btnRoulette">Roulette</button>
-            <button class="btn wide bombBtn" id="btnDegomme">💣 Dégommer 1 étorion</button>
-            <button class="btn wide" id="btnNotes">Notes</button>
-          </div>
-
-          <div class="inlineListWrap" id="inlineListWrap" style="display:none;">
-            <div class="inlineListHead">
-              <div class="inlineListTitle">Tâches en cours</div>
-              <div class="row" style="justify-content:flex-end;">
-                <button class="btn small" id="btnInlineListHide">Masquer</button>
-              </div>
-            </div>
-            <div class="list" id="inlineTaskList"></div>
-          </div>
-
+          <div class="ethTicks" id="ethTicks"></div>
         </div>
+      </div>
+
+      <div class="micro" id="microActions" aria-label="actions tâche">
+        <button class="iconBtn" id="btnPin" title="Épingler">⟐</button>
+        <button class="iconBtn" id="btnEdit" title="Éditer">✎</button>
+        <button class="iconBtn" id="btnDown" title="Descendre">↓</button>
+        <button class="iconBtn" id="btnDone" title="Marquer dégommée">✓</button>
+        <button class="iconBtn" id="btnDel" title="Supprimer">✕</button>
+      </div>
+
+      <div class="actions">
+        <div class="roulette" id="btnRoulette" title="Roulette">
+          <div class="ring"></div>
+          <div class="txt">ROULETTE</div>
+        </div>
+
+        <button class="btn bombBtn" id="btnDegomme">💣 Dégommer 1 étorion</button>
+        <button class="btn" id="btnNotes">Notes</button>
+      </div>
+
+      <div class="inlineListWrap" id="inlineListWrap" style="display:none;">
+        <div class="inlineHead">
+          <div class="inlineTitle">Tâches en cours</div>
+          <button class="btn" id="btnHideList">Masquer</button>
+        </div>
+        <div class="list" id="inlineTaskList"></div>
       </div>
     </div>
   </div>
@@ -713,19 +852,22 @@
     // =========================
     // Storage keys
     // =========================
-    const KEY_STATE = "elim_state_v2";
-    const KEY_SETTINGS = "elim_settings_v2";
-    const KEY_NOTES = "elim_notes_v2";
-    const KEY_KIFF = "elim_kiffbank_v2";
-    const KEY_HABITS = "elim_habits_v2";
+    const KEY_STATE    = "elim_state_v23";
+    const KEY_SETTINGS = "elim_settings_v23";
+    const KEY_NOTES    = "elim_notes_v23";
+    const KEY_KIFF     = "elim_kiffbank_v23";
+    const KEY_HABITS   = "elim_habits_v23";
+    const KEY_SETS     = "elim_sets_v23";
 
     // =========================
     // Helpers
     // =========================
     const el = (id)=>document.getElementById(id);
-    const nowISO = ()=> new Date().toISOString();
     const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
     const pad2 = (n)=>String(n).padStart(2,"0");
+    const nowISO = ()=>new Date().toISOString();
+    const dayKey = (d=new Date())=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+    const uniq = ()=>Math.random().toString(16).slice(2)+Date.now().toString(16);
     const fmtTime = (ms)=>{
       const s = Math.floor(ms/1000);
       const m = Math.floor(s/60);
@@ -733,8 +875,6 @@
       return `${m}:${pad2(r)}`;
     };
     const rand = (n)=>Math.floor(Math.random()*n);
-    const uniq = ()=>Math.random().toString(16).slice(2)+Date.now().toString(16);
-
     function downloadText(filename, text){
       const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
       const url = URL.createObjectURL(blob);
@@ -747,66 +887,204 @@
       URL.revokeObjectURL(url);
     }
 
+    function load(key, fallback){
+      try{
+        const raw = localStorage.getItem(key);
+        if(!raw) return structuredClone(fallback);
+        const obj = JSON.parse(raw);
+        // shallow merge fallback -> obj
+        return Object.assign(structuredClone(fallback), obj);
+      }catch{
+        return structuredClone(fallback);
+      }
+    }
+    function save(key, obj){
+      localStorage.setItem(key, JSON.stringify(obj));
+    }
+
     // =========================
-    // Data models
+    // Defaults (IMPORTANT: no preloaded tasks)
     // =========================
-    const DEFAULTS_SETTINGS = {
-      theme: "light",       // light default
+    const DEFAULT_SETTINGS = {
+      theme: "light",
       focus: 0,
-      inlineListVisible: 0,
-      // surprise celebrations
+      listVisible: 0,
+      setsVisible: 0,
+
+      // Surprise celebrations
       fatigue: 2,           // 0..4
       motivation: 2,        // 0..4
-      celeChanceBase: 0.22, // base probability per task completion
+      celeChanceBase: 0.20, // base prob per completed task
       celeAutoCloseSec: 10,
-      // filtering categories
-      activeCats: ["INBOX"], // if empty => all
-      // roulette mode
+
+      // Filtering
+      activeCats: [],       // [] => all
+
+      // Roulette mode
       rouletteMode: "random", // random | ordered
-      // ordered strategy
-      orderedStrategy: "pinnedFirst", // pinnedFirst | alpha | chrono
+      orderedStrategy: "pinnedFirst" // pinnedFirst | alpha | chrono
     };
 
     const DEFAULT_STATE = {
       tasks: [],
-      done: [],      // completed tasks archive (today + past)
+      done: [],
       currentId: null,
-      startCounts: { tasks:0, eth:0 }, // baseline for session
-      timer: { taskId:null, elapsedMs:0, running:false, startedAt:0 },
-      history: [],   // daily snapshots
-      lastSaveDay: "", // YYYY-MM-DD for daily rollover
+
+      // baseline for the current "session" (to make bar decrease correctly)
+      baseline: {
+        setAt: "",
+        totalEth: 0
+      },
+
+      // timer
+      timer: {
+        taskId: null,
+        elapsedMs: 0,
+        running: false,
+        lastTick: 0
+      },
+
+      // streak for celebration gating
       streak: { completedSinceCele: 0 }
     };
+
+    // Right-side sets (independent)
+    const DEFAULT_SETS = {
+      type: "hospital",
+      n: 4,
+      items: [] // {id, label, sub, done}
+    };
+
+    // =========================
+    // State
+    // =========================
+    let settings = load(KEY_SETTINGS, DEFAULT_SETTINGS);
+    let state    = load(KEY_STATE, DEFAULT_STATE);
+    let notes    = load(KEY_NOTES, []);
+    let habits   = load(KEY_HABITS, []);
+    let sets     = load(KEY_SETS, DEFAULT_SETS);
+
+    // Kiff bank: big + 4 buckets
+    function initKiffBank(){
+      return {
+        v: 1,
+        buckets: {
+          "5m": [
+            "Boire un verre d’eau comme si tu scellais un traité de paix.",
+            "Respiration 4-4-4-4 pendant 2 minutes.",
+            "Étirement nuque + épaules 90 secondes.",
+            "Nettoyer une surface (une seule) : bureau / évier / table.",
+            "Fermer 5 onglets inutiles. Exécution chirurgicale.",
+            "Mettre un timer 5 min et faire le « début moche ».",
+            "Écrire une phrase : « Là, je fais X. »",
+            "200 pas dans la pièce, sans téléphone.",
+            "Ranger 10 objets : jeter / classer / ranger.",
+            "Regarder la prochaine micro-étape uniquement (pas le monde entier).",
+            "Décrisper les mains : ouvrir/fermer 20 fois.",
+            "Regarder au loin 30 secondes (repos oculaire).",
+            "Mettre le téléphone face cachée. 5 minutes de silence tactique.",
+            "Micro-scan corporel : front, mâchoire, épaules, ventre (relâcher).",
+            "Aligner 3 objets. Oui. C’est bête. Oui. Ça marche."
+          ],
+          "10m": [
+            "Marche rapide 8 min + 2 min retour calme.",
+            "Ranger un tiroir (un seul) pendant 10 min puis stop.",
+            "Préparer eau + snack simple. Pas d’œuvre d’art.",
+            "Faire un mini plan : 3 puces max.",
+            "Relire une page difficile et noter 3 mots-clés.",
+            "Étirement dos + hanches 10 minutes.",
+            "Nettoyer la zone « entrée » (chaussures, manteaux) 10 min.",
+            "Trier 10 mails/notes: supprimer / archiver / répondre plus tard.",
+            "Préparer « kit reprise » : doc ouvert + stylo + eau + timer.",
+            "Faire 10 min de “brouillon” sur un document pénible.",
+            "S’asseoir droit 2 min, puis reprendre doucement.",
+            "Mettre à jour une seule section d’un dossier.",
+            "Désencombrer le bureau: 1 pile max.",
+            "Ranger le sac / la poche / le badge : 10 min.",
+            "Écrire 5 lignes de décharge mentale puis reprendre."
+          ],
+          "15m": [
+            "Marche 12 min + 3 min respiration lente.",
+            "Mobilité complète (cou/épaules/hanches) 15 min.",
+            "Préparer une mini to-do pour demain (5 lignes max).",
+            "Lecture plaisir 10 min + 5 min retour tâche.",
+            "Nettoyage express 15 min d’une zone (timer strict).",
+            "Préparer 2 repas simples (version minimaliste).",
+            "Batch administratif: 15 minutes de « tri / classer / envoyer ».",
+            "Écrire une page brouillon, puis extraire 3 actions.",
+            "Revoir une tâche compliquée en 3 étapes et s’arrêter là.",
+            "Étirements + respiration : 10 + 5.",
+            "Ranger les documents d’aujourd’hui (pile unique).",
+            "Mettre une pause sensorielle : lumière douce, silence, 15 min.",
+            "Réorganiser l’ordre de 5 tâches (juste 5).",
+            "Petit rangement des vêtements (une seule catégorie).",
+            "Préparer un espace “flow” : distractions dehors."
+          ],
+          "25m+": [
+            "Marche dehors 25–35 min (sans scroll).",
+            "Séance sport douce/modérée 30–40 min.",
+            "Deep-clean zone (25 min) puis arrêt net.",
+            "Cuisine simple pour 2 repas (batch minimaliste).",
+            "Revue hebdo 30 min: ce qui compte / ce qui part / ce qui reste.",
+            "Lecture ciblée 25 min + notes 5 min.",
+            "Session « admin lourde » 25 min puis stop net.",
+            "Organisation du lendemain: agenda + 3 priorités (30 min).",
+            "Réarranger ton poste de travail (câbles / documents) 25 min.",
+            "Tâche de fond: 25 min de concentration, puis pause.",
+            "Faire une lessive + pliage minimaliste (pas parfait).",
+            "Écrire un plan structuré (25 min) pour un gros dossier.",
+            "Préparer ton tour de salle (structure + check) 30 min.",
+            "Visée “flow”: musique off, notif off, 25 min d’action pure.",
+            "Faire une vraie pause (sieste 20 min + retour)."
+          ]
+        }
+      };
+    }
+    let kiffBank = load(KEY_KIFF, null);
+    if(!kiffBank || !kiffBank.buckets){
+      kiffBank = initKiffBank();
+      save(KEY_KIFF, kiffBank);
+    }
+
+    function persist(){
+      save(KEY_SETTINGS, settings);
+      save(KEY_STATE, state);
+      save(KEY_NOTES, notes);
+      save(KEY_HABITS, habits);
+      save(KEY_KIFF, kiffBank);
+      save(KEY_SETS, sets);
+    }
 
     // =========================
     // UI refs
     // =========================
-    const btnMenu = el("btnMenu");
-    const btnTheme = el("btnTheme");
-    const btnFocus = el("btnFocus");
-    const btnInlineList = el("btnInlineList");
-    const btnInlineListHide = el("btnInlineListHide");
-    const btnReset = el("btnReset");
+    const btnMenu       = el("btnMenu");
+    const btnTheme      = el("btnTheme");
+    const btnFocus      = el("btnFocus");
+    const btnToggleList = el("btnToggleList");
+    const btnSets       = el("btnSets");
+    const btnReset      = el("btnReset");
 
-    const hud = el("hud");
-    const taskFill = el("taskFill");
-    const taskPct = el("taskPct");
+    const hud        = el("hud");
+    const taskFill   = el("taskFill");
+    const taskPct    = el("taskPct");
     const currentTitle = el("currentTitle");
-    const ethFill = el("ethFill");
-    const ethTicks = el("ethTicks");
+    const ethFill    = el("ethFill");
+    const ethTicks   = el("ethTicks");
 
     const btnRoulette = el("btnRoulette");
-    const btnDegomme = el("btnDegomme");
-    const btnNotes = el("btnNotes");
+    const btnDegomme  = el("btnDegomme");
+    const btnNotes    = el("btnNotes");
 
     const btnPin = el("btnPin");
     const btnEdit = el("btnEdit");
     const btnDown = el("btnDown");
     const btnDone = el("btnDone");
-    const btnDel = el("btnDel");
+    const btnDel  = el("btnDel");
 
     const inlineListWrap = el("inlineListWrap");
     const inlineTaskList = el("inlineTaskList");
+    const btnHideList = el("btnHideList");
 
     const drawerBack = el("drawerBack");
     const drawer = el("drawer");
@@ -831,207 +1109,304 @@
     const confettiCanvas = el("confetti");
     const ctx = confettiCanvas.getContext("2d");
 
-    // =========================
-    // State
-    // =========================
-    let settings = load(KEY_SETTINGS, DEFAULTS_SETTINGS);
-    let state = load(KEY_STATE, DEFAULT_STATE);
-    let notes = load(KEY_NOTES, []);
-    let kiffBank = load(KEY_KIFF, null);
-    let habits = load(KEY_HABITS, []);
+    const setsPanel = el("setsPanel");
+    const btnCloseSets = el("btnCloseSets");
+    const setsType = el("setsType");
+    const setsN = el("setsN");
+    const btnGenSets = el("btnGenSets");
+    const setsChecklist = el("setsChecklist");
 
     // =========================
-    // Init kiff bank (énorme + catégorisée)
-    // =========================
-    function initKiffBank(){
-      // 4 catégories: 5m, 10m, 15m, 25m+
-      // Banque volontairement très large et “prête à l’emploi”
-      return {
-        v: 1,
-        buckets: {
-          "5m": [
-            "Respiration carrée 4-4-4-4 pendant 2 minutes.",
-            "Ranger une surface (une seule) : table, bureau, évier.",
-            "Boire un verre d’eau. Lentement. Comme un rituel d’empire.",
-            "Étirement nuque/épaules 90 secondes.",
-            "Relire la prochaine micro-étape de ta tâche (juste la prochaine).",
-            "Fermer 3 onglets qui ne servent à rien. Exécution propre.",
-            "Mini marche : 200 pas dans la pièce, sans téléphone.",
-            "Nettoyer l’écran (oui, l’écran).",
-            "Écrire 1 phrase : “Là, je fais X.”",
-            "Mettre un timer 5 min et faire “le début moche”."
-          ],
-          "10m": [
-            "Marche rapide 8 minutes, retour 2 minutes.",
-            "Préparer un snack simple et neutre (pas une œuvre d’art).",
-            "Dégager 10 items : jeter / ranger / classer.",
-            "Douche express ou visage/eau froide 60 secondes + retour calme.",
-            "Écrire un mini plan : 3 puces max.",
-            "Réviser un paragraphe / une page, sans chercher la perfection.",
-            "Ranger la zone “inbox” (mail/notes) pendant 10 minutes puis stop.",
-            "Étirements dos + hanches 10 minutes.",
-            "Faire une petite check de planning (juste la prochaine heure).",
-            "Préparer “kit de reprise” : eau + stylo + page ouverte."
-          ],
-          "15m": [
-            "Pause de marche 12 min + 3 min de respiration lente.",
-            "Micro séance mobilité (cou/épaules/hanches) 15 min.",
-            "Préparer une liste de 5 tâches pour demain (pas plus).",
-            "Lecture plaisir 10 min + 5 min de retour à la tâche.",
-            "Ranger un tiroir (un seul) — fin quand le timer sonne.",
-            "Préparer un espace de travail ultra propre (15 minutes chrono).",
-            "Faire 15 minutes de “brouillon” sur un document pénible.",
-            "Exercices de gainage léger 10 min + étirements 5 min.",
-            "Mettre à jour une seule section d’un dossier/rapport.",
-            "Appeler / message une personne utile (1 seul message)."
-          ],
-          "25m+": [
-            "Sortie courte : marche + air + retour (30 min).",
-            "Session de deep-clean d’une zone (25 min) puis arrêt net.",
-            "Séance sport légère/modérée 30-40 min.",
-            "Cuisine simple pour 2 repas (batch minimaliste).",
-            "Revue hebdo (30 min) : ce qui reste, ce qui part, ce qui compte.",
-            "Lecture ciblée + prise de notes (25 min).",
-            "Réorganisation d’un set (hôpital/consult) + plan du lendemain.",
-            "Écrire une page “décharge mentale” puis classer 3 actions.",
-            "Faire une tâche admin lourde 25 min, stop, célébration intérieure.",
-            "Préparer un environnement “flow” (lumière, sons off, distractions out)."
-          ]
-        }
-      };
-    }
-    if(!kiffBank || !kiffBank.buckets){
-      kiffBank = initKiffBank();
-      save(KEY_KIFF, kiffBank);
-    }
-
-    // =========================
-    // Drawer Tabs + Views
+    // Tabs (fewer, merged)
     // =========================
     const TAB_DEFS = [
-      { key:"inbox",   label:"Inbox" },
-      { key:"liste",   label:"Liste" },
-      { key:"cats",    label:"Cat" },
-      { key:"sets",    label:"Sets" },
-      { key:"mode",    label:"Mode" },
-      { key:"energie", label:"Énergie" },
-      { key:"params",  label:"Param" },
-      { key:"profiles",label:"Profils" },
-      { key:"banks",   label:"Textes" },
-      { key:"kiff",    label:"Kiffance" },
-      { key:"calib",   label:"Calib" },
-      { key:"hist",    label:"Hist" },
-      { key:"rapport", label:"Rapport" }
+      { key:"import", label:"Importer" },
+      { key:"tasks",  label:"Tâches" },
+      { key:"kiff",   label:"Kiffance" },
+      { key:"habits", label:"Habitudes" },
+      { key:"stats",  label:"Stats/Export" },
+      { key:"settings", label:"Réglages" }
     ];
-
-    let activeTab = "inbox";
-
-    // =========================
-    // Load/Save
-    // =========================
-    function load(key, fallback){
-      try{
-        const raw = localStorage.getItem(key);
-        if(!raw) return structuredClone(fallback);
-        return Object.assign(structuredClone(fallback), JSON.parse(raw));
-      }catch{
-        return structuredClone(fallback);
-      }
-    }
-    function save(key, obj){
-      localStorage.setItem(key, JSON.stringify(obj));
-    }
-    function persistAll(){
-      save(KEY_SETTINGS, settings);
-      save(KEY_STATE, state);
-      save(KEY_NOTES, notes);
-      save(KEY_HABITS, habits);
-      save(KEY_KIFF, kiffBank);
-    }
+    let activeTab = "import";
 
     // =========================
-    // Day rollover + history
-    // =========================
-    function dayKey(d=new Date()){
-      return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
-    }
-
-    function rolloverIfNeeded(){
-      const today = dayKey();
-      if(!state.lastSaveDay){
-        state.lastSaveDay = today;
-        persistAll();
-        return;
-      }
-      if(state.lastSaveDay !== today){
-        // snapshot previous day
-        state.history.push(buildDailySnapshot(state.lastSaveDay));
-        // keep history reasonable
-        if(state.history.length > 180) state.history = state.history.slice(-180);
-        // reset only the daily counters if you want; here we just update day marker
-        state.lastSaveDay = today;
-        persistAll();
-      }
-    }
-
-    function buildDailySnapshot(day){
-      const doneThatDay = state.done.filter(x => (x.doneAt||"").startsWith(day));
-      const totalDone = doneThatDay.length;
-      const ethDone = doneThatDay.reduce((a,t)=>a+(t.ethStart||0),0);
-      return {
-        day,
-        totalDone,
-        ethDone,
-        remainingTasks: state.tasks.length,
-        remainingEth: state.tasks.reduce((a,t)=>a+(t.ethLeft||0),0),
-        habits: habits.map(h=>({
-          name: h.name,
-          total: h.total,
-          checked: h.checked || 0
-        }))
-      };
-    }
-
-    // =========================
-    // Theme + focus
+    // Theme / focus / toggles
     // =========================
     function applyTheme(){
       document.body.setAttribute("data-theme", settings.theme);
-      btnTheme.classList.toggle("pressed", settings.theme==="light");
+      btnTheme.classList.toggle("pressed", settings.theme === "light");
     }
     function applyFocus(){
       document.body.classList.toggle("focus", !!settings.focus);
       btnFocus.classList.toggle("pressed", !!settings.focus);
     }
+    function applyListVisible(){
+      inlineListWrap.style.display = settings.listVisible ? "" : "none";
+      btnToggleList.classList.toggle("pressed", !!settings.listVisible);
+      if(settings.listVisible) renderInlineList();
+    }
+    function applySetsVisible(){
+      setsPanel.classList.toggle("open", !!settings.setsVisible);
+      btnSets.classList.toggle("pressed", !!settings.setsVisible);
+      if(settings.setsVisible) renderSetsPanel();
+    }
 
     // =========================
-    // Tasks
+    // Baseline logic (fix progress bar)
+    // - baseline.totalEth set when:
+    //   * first task added
+    //   * reset baseline explicitly in settings
+    //   * if baseline missing/invalid
+    // Progress bar fill = ethLeft / baseline.totalEth
     // =========================
-    function computeStartCountsIfEmpty(){
-      if(!state.startCounts || state.startCounts.tasks===0 && state.startCounts.eth===0){
-        state.startCounts = {
-          tasks: state.tasks.length,
-          eth: state.tasks.reduce((a,t)=>a+(t.ethStart||0),0)
-        };
+    function totalEthLeft(){
+      return state.tasks.reduce((a,t)=>a+(t.ethLeft||0),0);
+    }
+    function totalEthAllStart(){
+      // start eth across active tasks + done (original ethStart)
+      const doneEth = state.done.reduce((a,t)=>a+(t.ethStart||0),0);
+      return totalEthLeft() + doneEth;
+    }
+
+    function ensureBaseline(){
+      const today = dayKey();
+      const left = totalEthLeft();
+      // baseline should reflect the "start of the session" for the global bar
+      // If tasks are empty => baseline resets to 0.
+      if(state.tasks.length === 0){
+        state.baseline = { setAt: today, totalEth: 0 };
+        return;
+      }
+      if(!state.baseline || !state.baseline.totalEth || state.baseline.totalEth < left){
+        // set baseline to current total remaining + done to avoid weird jumps
+        const base = totalEthAllStart();
+        state.baseline = { setAt: today, totalEth: base };
+      }
+      // if new import increases total above baseline, expand baseline to match:
+      const currentAll = totalEthAllStart();
+      if(currentAll > state.baseline.totalEth){
+        state.baseline.totalEth = currentAll;
+        state.baseline.setAt = today;
       }
     }
 
-    function ensureCurrent(){
-      if(state.currentId && state.tasks.some(t=>t.id===state.currentId)) return;
-      // prefer pinned tasks
-      const pinned = state.tasks.find(t=>t.pinned);
-      const next = pinned || state.tasks[0] || null;
-      state.currentId = next ? next.id : null;
-    }
-
+    // =========================
+    // Current task + timer (fix not starting)
+    // =========================
     function currentTask(){
       return state.tasks.find(t=>t.id===state.currentId) || null;
     }
 
+    function ensureCurrent(){
+      if(state.currentId && state.tasks.some(t=>t.id===state.currentId)) return;
+      // prefer pinned
+      const pinned = state.tasks.find(t=>t.pinned);
+      state.currentId = (pinned || state.tasks[0] || null)?.id || null;
+      // reset timer for new current
+      if(state.currentId){
+        state.timer = { taskId: state.currentId, elapsedMs: 0, running: true, lastTick: Date.now() };
+      }else{
+        state.timer = { taskId: null, elapsedMs: 0, running: false, lastTick: 0 };
+      }
+    }
+
+    function setCurrent(id){
+      state.currentId = id;
+      state.timer = { taskId: id, elapsedMs: 0, running: true, lastTick: Date.now() };
+      persist();
+      renderAll();
+    }
+
+    function tickTimer(){
+      const t = state.timer;
+      if(!t || !t.running || !t.taskId) return;
+      const now = Date.now();
+      if(!t.lastTick) t.lastTick = now;
+      const delta = now - t.lastTick;
+      t.elapsedMs += Math.max(0, delta);
+      t.lastTick = now;
+    }
+
+    // =========================
+    // Task model
+    // =========================
+    function makeTask(title, cat="INBOX", eth=1, prio=0){
+      const e = clamp(parseInt(eth||1,10) || 1, 1, 999);
+      return {
+        id: uniq(),
+        title: (title||"").trim(),
+        cat: (cat||"INBOX").trim() || "INBOX",
+        ethStart: e,
+        ethLeft: e,
+        prio: prio ? 1 : 0,
+        pinned: false,
+        createdAt: nowISO(),
+        updatedAt: nowISO()
+      };
+    }
+
+    function deleteTask(id){
+      const idx = state.tasks.findIndex(t=>t.id===id);
+      if(idx<0) return;
+      const wasCurrent = state.currentId===id;
+      state.tasks.splice(idx,1);
+      if(wasCurrent) state.currentId = null;
+      ensureBaseline();
+      ensureCurrent();
+      persist();
+      renderAll();
+    }
+
+    function editTaskTitle(id, newTitle){
+      const t = state.tasks.find(x=>x.id===id);
+      if(!t) return;
+      const nt = (newTitle||"").trim();
+      if(!nt) return;
+      t.title = nt;
+      t.updatedAt = nowISO();
+      persist();
+      renderAll();
+      renderDrawer(); // keep sync
+    }
+
+    function moveTask(id, delta){
+      const i = state.tasks.findIndex(x=>x.id===id);
+      const j = i + delta;
+      if(i<0 || j<0 || j>=state.tasks.length) return;
+      const tmp = state.tasks[j];
+      state.tasks[j] = state.tasks[i];
+      state.tasks[i] = tmp;
+      persist();
+      renderAll();
+      renderDrawer();
+    }
+
+    function pushDownCurrent(){
+      const t = currentTask();
+      if(!t) return;
+      const i = state.tasks.findIndex(x=>x.id===t.id);
+      if(i<0) return;
+      state.tasks.splice(i,1);
+      state.tasks.push(t);
+      persist();
+      renderAll();
+    }
+
+    function pinToggle(){
+      const t = currentTask();
+      if(!t) return;
+      t.pinned = !t.pinned;
+      t.updatedAt = nowISO();
+      persist();
+      renderAll();
+    }
+
+    function markDone(id){
+      const idx = state.tasks.findIndex(t=>t.id===id);
+      if(idx<0) return;
+      const t = state.tasks[idx];
+      t.doneAt = nowISO();
+      state.done.push(t);
+      state.tasks.splice(idx,1);
+
+      // confetti always on task completion
+      burstConfetti();
+
+      // celebration surprise occasionally
+      state.streak.completedSinceCele = (state.streak.completedSinceCele||0) + 1;
+      maybeCelebrate();
+
+      if(state.currentId===id) state.currentId = null;
+      ensureBaseline();
+      ensureCurrent();
+      persist();
+      renderAll();
+    }
+
+    function degommeOneEth(){
+      const t = currentTask();
+      if(!t) return;
+
+      tickTimer();
+
+      t.ethLeft = Math.max(0, (t.ethLeft||0) - 1);
+      t.updatedAt = nowISO();
+
+      if(t.ethLeft===0){
+        markDone(t.id);
+        return;
+      }
+      ensureBaseline();
+      persist();
+      renderAll();
+    }
+
+    // =========================
+    // Parsing inbox (FIXED format)
+    // - UPPERCASE line = category header
+    // - task line: "Nom - 3" OR "Nom 3" at end => eth=3
+    // - optional priority marker "!" (kept, not displayed by default)
+    // =========================
+    function isCategoryHeader(line){
+      if(!line || line.length < 3 || line.length > 46) return false;
+      if(/\d/.test(line)) return false;
+      const hasLetter = /[A-ZÀ-ÖØ-Ý]/.test(line);
+      if(!hasLetter) return false;
+      return line === line.toUpperCase();
+    }
+    function normalizeCat(s){
+      return (s||"").trim().toUpperCase();
+    }
+
+    function parseInbox(text){
+      const lines = (text||"")
+        .split(/\r?\n/)
+        .map(s=>s.trim())
+        .filter(Boolean);
+
+      let cat = "INBOX";
+      const out = [];
+
+      for(const lineRaw of lines){
+        if(isCategoryHeader(lineRaw)){
+          cat = normalizeCat(lineRaw);
+          continue;
+        }
+        let line = lineRaw;
+        let prio = 0;
+        if(line.includes("!")){
+          prio = 1;
+          line = line.replace(/!/g,"").trim();
+        }
+
+        let title = line;
+        let eth = 1;
+
+        const m1 = title.match(/^(.*?)(?:\s*[-–—]\s*)(\d{1,3})$/);
+        const m2 = title.match(/^(.*?)(?:\s+)(\d{1,3})$/);
+
+        if(m1){
+          title = m1[1].trim();
+          eth = parseInt(m1[2],10);
+        }else if(m2){
+          if(m2[1].trim()){
+            title = m2[1].trim();
+            eth = parseInt(m2[2],10);
+          }
+        }
+
+        if(!title) continue;
+        out.push(makeTask(title, cat, eth, prio));
+      }
+      return out;
+    }
+
+    // =========================
+    // Roulette pick
+    // =========================
     function filteredTasks(){
-      // activeCats empty => all
       if(!settings.activeCats || settings.activeCats.length===0) return state.tasks;
-      return state.tasks.filter(t => settings.activeCats.includes((t.cat||"INBOX")));
+      return state.tasks.filter(t => settings.activeCats.includes(t.cat||"INBOX"));
     }
 
     function pickRoulette(){
@@ -1053,417 +1428,80 @@
       }
     }
 
-    function setCurrent(id){
-      state.currentId = id;
-      // restart timer for current task
-      state.timer = { taskId:id, elapsedMs:0, running:true, startedAt: Date.now() };
-      persistAll();
-      renderAll();
-    }
-
-    function tickTimer(){
+    // =========================
+    // HUD (minimal) + rendering
+    // =========================
+    function renderHUD(){
+      // make sure timer keeps moving
       const t = state.timer;
-      if(!t || !t.running || !t.taskId) return;
-      const now = Date.now();
-      t.elapsedMs += (now - (t.startedAt || now));
-      t.startedAt = now;
+      let elapsed = "0:00";
+      if(t && t.taskId === state.currentId) elapsed = fmtTime(t.elapsedMs||0);
+
+      const tasksLeft = state.tasks.length;
+      const tasksDone = state.done.length;
+      const tasksStart = tasksLeft + tasksDone; // session-based, always consistent
+
+      const ethLeft = totalEthLeft();
+      const ethStart = Math.max(0, (state.baseline?.totalEth||0));
+
+      hud.innerHTML = `
+        <div class="pill">${tasksLeft}/${Math.max(0,tasksStart)} tâches</div>
+        <div class="pill">${ethLeft}/${ethStart} étorions</div>
+        <div class="pill">${tasksDone} fait</div>
+        <div class="pill">${elapsed}</div>
+      `;
     }
 
-    function makeTask(title, cat="INBOX", eth=1, prio=0){
-      const e = clamp(parseInt(eth||1,10) || 1, 1, 999);
-      return {
-        id: uniq(),
-        title: (title||"").trim(),
-        cat,
-        ethStart: e,
-        ethLeft: e,
-        prio: prio ? 1 : 0,
-        pinned: false,
-        createdAt: nowISO(),
-        updatedAt: nowISO()
-      };
-    }
+    function renderProgress(){
+      ensureBaseline();
 
-    function deleteTask(id){
-      const idx = state.tasks.findIndex(t=>t.id===id);
-      if(idx<0) return;
-      const wasCurrent = state.currentId===id;
-      state.tasks.splice(idx,1);
-      if(wasCurrent) state.currentId=null;
-      ensureCurrent();
-      persistAll();
-      renderAll();
-    }
+      const base = Math.max(0, state.baseline.totalEth||0);
+      const left = totalEthLeft();
 
-    function markDone(id){
-      const idx = state.tasks.findIndex(t=>t.id===id);
-      if(idx<0) return;
-      const t = state.tasks[idx];
-      t.doneAt = nowISO();
-      state.done.push(t);
-      state.tasks.splice(idx,1);
-      state.streak.completedSinceCele = (state.streak.completedSinceCele||0) + 1;
-
-      // confetti always at task completion
-      burstConfetti();
-
-      // celebration occasionally (surprise)
-      maybeCelebrate(t);
-
-      if(state.currentId===id) state.currentId=null;
-      ensureCurrent();
-      computeStartCountsIfEmpty();
-      persistAll();
-      renderAll();
-    }
-
-    function degommeOneEth(){
-      const t = currentTask();
-      if(!t) return;
-
-      // update timer tick first
-      tickTimer();
-
-      t.ethLeft = Math.max(0, (t.ethLeft||0) - 1);
-      t.updatedAt = nowISO();
-
-      // when eth reaches 0 => task done
-      if(t.ethLeft===0){
-        markDone(t.id);
+      // If base==0 => show 0% done, bar full? better: show 0% with empty? We choose neutral:
+      if(base === 0){
+        taskFill.style.width = "100%";
+        taskPct.textContent = "0%";
         return;
       }
 
-      persistAll();
-      renderAll();
+      // bar fill should represent "remaining": left/base
+      const remaining = clamp((left / base) * 100, 0, 100);
+      const donePct = 100 - remaining;
+
+      taskFill.style.width = `${remaining}%`;
+      taskPct.textContent = `${Math.round(donePct)}%`;
     }
 
-    function pinToggle(){
+    function renderCurrent(){
+      ensureCurrent();
       const t = currentTask();
-      if(!t) return;
-      t.pinned = !t.pinned;
-      t.updatedAt = nowISO();
-      persistAll();
-      renderAll();
-    }
 
-    function pushDownCurrent(){
-      const t = currentTask();
-      if(!t) return;
-      const idx = state.tasks.findIndex(x=>x.id===t.id);
-      if(idx<0) return;
-      state.tasks.splice(idx,1);
-      state.tasks.push(t);
-      persistAll();
-      renderAll();
-    }
+      currentTitle.textContent = t ? t.title : "Aucune tâche";
 
-    function moveTask(taskId, delta){
-      const idx = state.tasks.findIndex(x=>x.id===taskId);
-      if(idx < 0) return;
-      const j = idx + delta;
-      if(j < 0 || j >= state.tasks.length) return;
-      const tmp = state.tasks[j];
-      state.tasks[j] = state.tasks[idx];
-      state.tasks[idx] = tmp;
-      persistAll();
-      renderAll();
-      renderPanel();
-    }
+      // micro actions state
+      btnPin.classList.toggle("pressed", !!t?.pinned);
 
-    function editTaskTitle(id, newTitle){
-      const t = state.tasks.find(x=>x.id===id);
-      if(!t) return;
-      t.title = (newTitle||"").trim() || t.title;
-      t.updatedAt = nowISO();
-      persistAll();
-      renderAll();
-    }
-
-    // =========================
-    // Inbox parsing (MAJUSCULES = catégorie)
-    //  - LIGNES sous la catégorie => tâches
-    //  - format tâche: "Nom - 3" => eth=3
-    //  - priorité: si contient "!": prio=1 (optionnel)
-    // =========================
-    function parseInbox(text){
-      const lines = (text||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-      let cat = "INBOX";
-      const tasks = [];
-      for(const line of lines){
-        // category header: all caps & not too long
-        if(isCategoryHeader(line)){
-          cat = normalizeCat(line);
-          continue;
-        }
-        // parse eth
-        let title = line;
-        let eth = 1;
-        let prio = 0;
-
-        // priority marker optional
-        if(title.includes("!")){
-          prio = 1;
-          title = title.replace(/!/g,"").trim();
-        }
-
-        // eth patterns: " - 3" OR " 3" at end
-        const m1 = title.match(/^(.*?)(?:\s*[-–—]\s*)(\d{1,3})$/);
-        const m2 = title.match(/^(.*?)(?:\s+)(\d{1,3})$/);
-        if(m1){
-          title = m1[1].trim();
-          eth = parseInt(m1[2],10);
-        }else if(m2){
-          // only if last token is number and title part non-empty
-          if(m2[1].trim().length>0){
-            title = m2[1].trim();
-            eth = parseInt(m2[2],10);
-          }
-        }
-
-        if(!title) continue;
-        tasks.push(makeTask(title, cat, eth, prio));
-      }
-      return tasks;
-    }
-
-    function isCategoryHeader(line){
-      // consider header if mostly uppercase letters/spaces and length between 3..40
-      if(line.length<3 || line.length>40) return false;
-      // ignore lines that look like tasks with numbers
-      if(/\d/.test(line)) return false;
-      const hasLetter = /[A-ZÀ-ÖØ-Ý]/.test(line);
-      if(!hasLetter) return false;
-      const upperish = line === line.toUpperCase();
-      return upperish;
-    }
-
-    function normalizeCat(s){
-      return (s||"").trim().toUpperCase();
-    }
-
-    // =========================
-    // Notes
-    // =========================
-    function openNotes(){
-      notesBack.style.display = "block";
-      notesModal.style.display = "block";
-      renderNotes();
-    }
-    function closeNotes(){
-      notesBack.style.display = "none";
-      notesModal.style.display = "none";
-    }
-    function addNote(){
-      const txt = (noteInput.value||"").trim();
-      if(!txt) return;
-      notes.unshift({ id: uniq(), at: nowISO(), text: txt });
-      noteInput.value = "";
-      persistAll();
-      renderNotes();
-    }
-    function renderNotes(){
-      notesList.innerHTML = "";
-      if(!notes.length){
-        const p = document.createElement("p");
-        p.className="help";
-        p.textContent="Aucune note.";
-        notesList.appendChild(p);
+      // eth bar + ticks
+      ethTicks.innerHTML = "";
+      if(!t){
+        ethFill.style.width = "0%";
         return;
       }
-      for(const n of notes){
-        const row = document.createElement("div");
-        row.className="item";
-        const left = document.createElement("div");
-        left.className="t";
-        const name = document.createElement("div");
-        name.className="name";
-        name.textContent = new Date(n.at).toLocaleString();
-        const sub = document.createElement("div");
-        sub.className="sub";
-        sub.textContent = n.text;
-        left.appendChild(name); left.appendChild(sub);
 
-        const del = document.createElement("button");
-        del.className="iconBtn";
-        del.textContent="✕";
-        del.title="Supprimer";
-        del.onclick = ()=>{
-          notes = notes.filter(x=>x.id!==n.id);
-          persistAll();
-          renderNotes();
-        };
+      const start = Math.max(1, t.ethStart||1);
+      const left = clamp(t.ethLeft||0, 0, start);
+      const pct = (left/start)*100;
+      ethFill.style.width = `${pct}%`;
 
-        row.appendChild(left);
-        row.appendChild(del);
-        notesList.appendChild(row);
+      for(let i=0;i<start;i++){
+        const dot = document.createElement("div");
+        dot.className = "tick " + (i < left ? "on" : "");
+        ethTicks.appendChild(dot);
       }
     }
 
-    // =========================
-    // Habits (suivi)
-    // =========================
-    function addHabit(name, total=10){
-      const n = (name||"").trim();
-      if(!n) return;
-      const t = clamp(parseInt(total,10)||10, 1, 30);
-      habits.push({ id: uniq(), name:n, total:t, checked:0, createdAt: nowISO() });
-      persistAll();
-      renderPanel();
-    }
-
-    function habitToggle(id, idx){
-      const h = habits.find(x=>x.id===id);
-      if(!h) return;
-      // toggle bit at position idx (0..total-1) using integer count only (simple)
-      // We'll implement as count-based: clicking one of the boxes sets checked = idx+1 if bigger; else idx
-      const target = idx+1;
-      h.checked = (h.checked===target) ? idx : target;
-      h.checked = clamp(h.checked, 0, h.total);
-      persistAll();
-      renderPanel();
-    }
-
-    function habitReset(id){
-      const h = habits.find(x=>x.id===id);
-      if(!h) return;
-      h.checked = 0;
-      persistAll();
-      renderPanel();
-    }
-
-    function habitDelete(id){
-      habits = habits.filter(x=>x.id!==id);
-      persistAll();
-      renderPanel();
-    }
-
-    // =========================
-    // Celebration (surprise) + phrases
-    // =========================
-    const CELE_POOL = [
-      {t:"Triomphe", m:"Tu viens de gagner une bataille contre l’entropie. L’univers a grogné. Tu as continué."},
-      {t:"Conquête", m:"Tu as pris une forteresse. Les papiers administratifs se sont rendus sans condition."},
-      {t:"Gloire", m:"Un étorion a chuté. Les légendes prennent des notes."},
-      {t:"Domination", m:"La tâche a plié. Tu es officiellement un événement historique."},
-      {t:"Victoire", m:"Le chaos a tenté un coup d’État. Tu as répondu par un geste calme et précis."},
-      {t:"Suprématie", m:"Les procrastinations ont fui. Elles se regroupent probablement ailleurs. Tant pis pour elles."},
-      {t:"Épopée", m:"Un chapitre de plus dans ta saga. L’archiviste des héros hoche la tête."},
-      {t:"Souveraineté", m:"Tu as repris du territoire mental. Frontière sécurisée. Drapeau planté."},
-      {t:"Ascension", m:"Tu montes. C’est pas spectaculaire. C’est mieux : c’est solide."},
-      {t:"Art martial", m:"Tu as frappé exactement au bon endroit : la prochaine action."}
-    ];
-
-    function celebrationProbability(){
-      // plus fatiguée => un peu plus de chance (soutien)
-      // plus motivée => un peu moins (surprise rare)
-      const f = clamp(settings.fatigue,0,4);
-      const m = clamp(settings.motivation,0,4);
-      let p = settings.celeChanceBase;
-      p += (f-2)*0.04;
-      p -= (m-2)*0.03;
-      // also throttle: show roughly every 2-4 tasks
-      const streak = state.streak.completedSinceCele||0;
-      if(streak < 2) p *= 0.35;
-      if(streak >= 3) p *= 1.2;
-      return clamp(p, 0.02, 0.60);
-    }
-
-    function maybeCelebrate(task){
-      const p = celebrationProbability();
-      if(Math.random() > p) return;
-      // reset streak
-      state.streak.completedSinceCele = 0;
-      showCelebration();
-    }
-
-    let celeTimer = null;
-    function showCelebration(){
-      const pick = CELE_POOL[rand(CELE_POOL.length)];
-      celeTitle.textContent = pick.t;
-      celeMsg.textContent = pick.m;
-
-      celeBack.style.display = "block";
-      celeModal.style.display = "block";
-
-      // auto close
-      const sec = clamp(parseInt(settings.celeAutoCloseSec,10)||10, 4, 20);
-      if(celeTimer) clearTimeout(celeTimer);
-      celeTimer = setTimeout(()=>closeCelebration(), sec*1000);
-      persistAll();
-    }
-
-    function closeCelebration(){
-      celeBack.style.display = "none";
-      celeModal.style.display = "none";
-      if(celeTimer) clearTimeout(celeTimer);
-      celeTimer = null;
-    }
-
-    // =========================
-    // Confetti (monochrome)
-    // =========================
-    let confetti = [];
-    function burstConfetti(){
-      const w = confettiCanvas.width = window.innerWidth;
-      const h = confettiCanvas.height = window.innerHeight;
-      confettiCanvas.style.display="block";
-      confetti = [];
-      const n = 120;
-      for(let i=0;i<n;i++){
-        confetti.push({
-          x: w/2 + (Math.random()-0.5)*180,
-          y: h*0.28 + (Math.random()-0.5)*60,
-          vx: (Math.random()-0.5)*6,
-          vy: -Math.random()*6 - 2,
-          g: 0.18 + Math.random()*0.10,
-          r: 2 + Math.random()*3,
-          a: 0.55 + Math.random()*0.35
-        });
-      }
-      const start = performance.now();
-      function anim(t){
-        const dt = (t-start)/1000;
-        ctx.clearRect(0,0,w,h);
-        for(const c of confetti){
-          c.vy += c.g;
-          c.x += c.vx;
-          c.y += c.vy;
-          c.a *= 0.996;
-          ctx.globalAlpha = c.a;
-          ctx.beginPath();
-          ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
-          ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--fg").trim() || "#fff";
-          ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-        if(dt < 1.8){
-          requestAnimationFrame(anim);
-        }else{
-          confettiCanvas.style.display="none";
-        }
-      }
-      requestAnimationFrame(anim);
-    }
-
-    window.addEventListener("resize", ()=>{
-      confettiCanvas.width = window.innerWidth;
-      confettiCanvas.height = window.innerHeight;
-    });
-
-    // =========================
-    // Inline list
-    // =========================
-    function toggleInlineList(force){
-      if(typeof force === "boolean"){
-        settings.inlineListVisible = force ? 1 : 0;
-      }else{
-        settings.inlineListVisible = settings.inlineListVisible ? 0 : 1;
-      }
-      persistAll();
-      renderAll();
-    }
-
-    function renderInlineTaskList(){
+    function renderInlineList(){
       inlineTaskList.innerHTML = "";
       const tasks = filteredTasks();
       if(!tasks.length){
@@ -1476,21 +1514,21 @@
 
       for(const t of tasks){
         const row = document.createElement("div");
-        row.className = "item";
+        row.className="item";
 
         const left = document.createElement("div");
-        left.className = "t";
+        left.className="t";
 
-        const name = document.createElement("div");
-        name.className = "name";
-        name.textContent = t.title;
+        const nm = document.createElement("div");
+        nm.className="name";
+        nm.textContent = t.title + (t.id===state.currentId ? " (en cours)" : "");
 
-        const sub = document.createElement("div");
-        sub.className = "sub";
-        sub.textContent = `${t.cat || "INBOX"} · ${t.ethLeft}/${t.ethStart}` + (t.pinned ? " · épinglée" : "");
+        const sb = document.createElement("div");
+        sb.className="sub";
+        sb.textContent = `${t.cat||"INBOX"} · ${t.ethLeft}/${t.ethStart}` + (t.pinned ? " · épinglée" : "");
 
-        left.appendChild(name);
-        left.appendChild(sub);
+        left.appendChild(nm);
+        left.appendChild(sb);
 
         const up = document.createElement("button");
         up.className="iconBtn";
@@ -1516,98 +1554,24 @@
       }
     }
 
-    // =========================
-    // HUD rendering (minimal)
-    // - restantes/départ tâches
-    // - étorions restants/départ
-    // - fait
-    // - temps écoulé (tâche en cours)
-    // =========================
-    function renderHUD(){
-      computeStartCountsIfEmpty();
-      const tasksLeft = state.tasks.length;
-      const tasksStart = Math.max(state.startCounts.tasks, tasksLeft + state.done.length);
-      const ethLeft = state.tasks.reduce((a,t)=>a+(t.ethLeft||0),0);
-      const ethStart = Math.max(state.startCounts.eth, ethLeft + state.done.reduce((a,t)=>a+(t.ethStart||0),0));
-      const doneCount = state.done.length;
-
-      // timer elapsed
-      const t = state.timer;
-      let elapsed = "0:00";
-      if(t && t.taskId === state.currentId){
-        elapsed = fmtTime(t.elapsedMs||0);
-      }
-
-      hud.innerHTML = `
-        <div class="pill">${tasksLeft}/${tasksStart} tâches</div>
-        <div class="pill">${ethLeft}/${ethStart} étorions</div>
-        <div class="pill">${doneCount} fait</div>
-        <div class="pill">${elapsed}</div>
-      `;
-    }
-
-    // =========================
-    // Main rendering
-    // =========================
-    function renderMain(){
-      ensureCurrent();
-      const t = currentTask();
-
-      // title
-      currentTitle.textContent = t ? t.title : "Aucune tâche";
-
-      // big progress: inverse (bar full -> empties as you progress)
-      computeStartCountsIfEmpty();
-      const totalStartEth = Math.max(1, state.startCounts.eth || 1);
-      const ethLeft = state.tasks.reduce((a,x)=>a+(x.ethLeft||0),0);
-      const doneEth = totalStartEth - ethLeft;
-      const pct = clamp((doneEth / totalStartEth) * 100, 0, 100);
-
-      // bar shows "remaining fill": full at start -> empty at 100%
-      const remainingPct = 100 - pct;
-      taskFill.style.width = `${remainingPct}%`;
-      taskPct.textContent = `${Math.round(pct)}%`;
-
-      // eth bar for current task
-      if(!t){
-        ethFill.style.width = `0%`;
-        ethTicks.innerHTML = "";
-      }else{
-        const left = t.ethLeft||0;
-        const start = Math.max(1, t.ethStart||1);
-        const ethPct = (left/start)*100;
-        ethFill.style.width = `${ethPct}%`;
-
-        ethTicks.innerHTML = "";
-        for(let i=0;i<start;i++){
-          const dot = document.createElement("div");
-          dot.className = "tick " + ((i < left) ? "on" : "");
-          ethTicks.appendChild(dot);
-        }
-
-        btnPin.classList.toggle("pressed", !!t.pinned);
-      }
-    }
-
     function renderAll(){
-      rolloverIfNeeded();
       applyTheme();
       applyFocus();
+      ensureBaseline();
       renderHUD();
-      renderMain();
-
-      // inline list
-      inlineListWrap.style.display = settings.inlineListVisible ? "" : "none";
-      if(settings.inlineListVisible) renderInlineTaskList();
+      renderProgress();
+      renderCurrent();
+      applyListVisible();
+      applySetsVisible();
     }
 
     // =========================
-    // Drawer rendering
+    // Drawer: open/close/render
     // =========================
     function openDrawer(){
       drawerBack.style.display="block";
       drawer.classList.add("open");
-      renderPanel();
+      renderDrawer();
     }
     function closeDrawer(){
       drawerBack.style.display="none";
@@ -1620,76 +1584,39 @@
         const b = document.createElement("button");
         b.className = "tab" + (t.key===activeTab ? " active" : "");
         b.textContent = t.label;
-        b.onclick = ()=>{ activeTab = t.key; renderTabs(); renderPanel(); };
+        b.onclick = ()=>{ activeTab = t.key; renderTabs(); renderDrawer(); };
         tabsEl.appendChild(b);
       }
     }
 
-    function renderPanel(){
+    function renderDrawer(){
       drawerView.innerHTML = "";
-      const view = document.createElement("div");
-
-      if(activeTab==="inbox"){
-        view.appendChild(viewInbox());
-      }else if(activeTab==="liste"){
-        view.appendChild(viewList());
-      }else if(activeTab==="cats"){
-        view.appendChild(viewCats());
-      }else if(activeTab==="sets"){
-        view.appendChild(viewSets());
-      }else if(activeTab==="mode"){
-        view.appendChild(viewMode());
-      }else if(activeTab==="energie"){
-        view.appendChild(viewEnergie());
-      }else if(activeTab==="params"){
-        view.appendChild(viewParams());
-      }else if(activeTab==="profiles"){
-        view.appendChild(viewProfiles());
-      }else if(activeTab==="banks"){
-        view.appendChild(viewBanks());
-      }else if(activeTab==="kiff"){
-        view.appendChild(viewKiffance());
-      }else if(activeTab==="calib"){
-        view.appendChild(viewCalib());
-      }else if(activeTab==="hist"){
-        view.appendChild(viewHist());
-      }else if(activeTab==="rapport"){
-        view.appendChild(viewRapport());
-      }else{
-        view.appendChild(section("Info","(onglet non implémenté)"));
-      }
-
-      drawerView.appendChild(view);
+      if(activeTab==="import") drawerView.appendChild(viewImport());
+      else if(activeTab==="tasks") drawerView.appendChild(viewTasks());
+      else if(activeTab==="kiff") drawerView.appendChild(viewKiff());
+      else if(activeTab==="habits") drawerView.appendChild(viewHabits());
+      else if(activeTab==="stats") drawerView.appendChild(viewStats());
+      else if(activeTab==="settings") drawerView.appendChild(viewSettings());
     }
 
-    function section(title, inner){
+    function section(title){
       const s = document.createElement("div");
       s.className="section";
       const h = document.createElement("h3");
       h.textContent = title;
       s.appendChild(h);
-      if(typeof inner === "string"){
-        const p = document.createElement("div");
-        p.innerHTML = inner;
-        s.appendChild(p);
-      }else{
-        s.appendChild(inner);
-      }
       return s;
     }
 
-    // Inbox view
-    function viewInbox(){
+    // =========================
+    // Views
+    // =========================
+    function viewImport(){
       const wrap = document.createElement("div");
 
-      const s1 = document.createElement("div");
-      s1.className="section";
-      const h = document.createElement("h3");
-      h.textContent = "Importer une liste";
-      s1.appendChild(h);
-
+      const s = section("Importer une liste");
       const ta = document.createElement("textarea");
-      ta.rows = 8;
+      ta.rows = 9;
       ta.placeholder =
 `CATEGORIE
 Tâche A - 3
@@ -1697,66 +1624,56 @@ Tâche B 2
 AUTRE CATEGORIE
 Tâche C - 1
 Tâche D ! - 4`;
-      s1.appendChild(ta);
+      s.appendChild(ta);
 
       const row = document.createElement("div");
       row.className="row";
       row.style.marginTop="10px";
 
-      const b = document.createElement("button");
-      b.className="btn";
-      b.textContent="Ajouter à la liste active";
-      b.onclick = ()=>{
+      const add = document.createElement("button");
+      add.className="btn";
+      add.textContent="Ajouter";
+      add.onclick = ()=>{
         const added = parseInbox(ta.value);
         if(!added.length) return;
         state.tasks.push(...added);
-        // update categories selection if needed
-        const cats = new Set(state.tasks.map(t=>t.cat||"INBOX"));
-        if(!settings.activeCats || settings.activeCats.length===0){
-          settings.activeCats = ["INBOX"];
-        }else{
-          // keep existing; ensure INBOX exists
-          if(!settings.activeCats.includes("INBOX")) settings.activeCats.push("INBOX");
-        }
-        // set baseline only if empty
-        if(state.startCounts.tasks===0 && state.startCounts.eth===0){
-          state.startCounts = {
-            tasks: state.tasks.length,
-            eth: state.tasks.reduce((a,t)=>a+(t.ethStart||0),0)
-          };
-        }
+
+        // baseline expands automatically in ensureBaseline()
         ensureCurrent();
-        persistAll();
+        ensureBaseline();
+
+        // categories list (for filter tab)
+        const cats = Array.from(new Set(state.tasks.map(t=>t.cat||"INBOX")));
+        // if user had activeCats, keep; else none => all. Don't force INBOX.
+
+        persist();
         renderAll();
+        renderDrawer();
       };
 
-      const b2 = document.createElement("button");
-      b2.className="btn ghost";
-      b2.textContent="Vider le champ";
-      b2.onclick = ()=>{ ta.value=""; };
+      const clear = document.createElement("button");
+      clear.className="btn ghost";
+      clear.textContent="Vider";
+      clear.onclick = ()=>ta.value="";
 
-      row.appendChild(b);
-      row.appendChild(b2);
-      s1.appendChild(row);
+      row.appendChild(add);
+      row.appendChild(clear);
+      s.appendChild(row);
 
       const help = document.createElement("p");
       help.className="help";
-      help.textContent = "Ligne en MAJUSCULES = catégorie. Tâche avec '- 3' ou ' 3' en fin = étorions. '!' = priorité (optionnel).";
-      s1.appendChild(help);
+      help.textContent = "MAJUSCULES = catégorie. “- 3” ou “ 3” en fin = étorions. “!” = priorité (optionnel).";
+      s.appendChild(help);
 
-      wrap.appendChild(s1);
+      wrap.appendChild(s);
       return wrap;
     }
 
-    // List view
-    function viewList(){
+    function viewTasks(){
       const wrap = document.createElement("div");
-      const s = document.createElement("div");
-      s.className="section";
-      const h = document.createElement("h3");
-      h.textContent="Liste (actions minimales)";
-      s.appendChild(h);
 
+      // Task list (minimal actions)
+      const s = section("Liste (actions minimales)");
       const lst = document.createElement("div");
       lst.className="list";
 
@@ -1772,13 +1689,17 @@ Tâche D ! - 4`;
 
           const left = document.createElement("div");
           left.className="t";
-          const name = document.createElement("div");
-          name.className="name";
-          name.textContent = t.title + (t.id===state.currentId ? " (en cours)" : "");
-          const sub = document.createElement("div");
-          sub.className="sub";
-          sub.textContent = `${t.cat||"INBOX"} · ${t.ethLeft}/${t.ethStart}` + (t.pinned ? " · épinglée" : "");
-          left.appendChild(name); left.appendChild(sub);
+
+          const nm = document.createElement("div");
+          nm.className="name";
+          nm.textContent = t.title + (t.id===state.currentId ? " (en cours)" : "");
+
+          const sb = document.createElement("div");
+          sb.className="sub";
+          sb.textContent = `${t.cat||"INBOX"} · ${t.ethLeft}/${t.ethStart}` + (t.pinned ? " · épinglée" : "");
+
+          left.appendChild(nm);
+          left.appendChild(sb);
 
           const up = document.createElement("button");
           up.className="iconBtn";
@@ -1824,186 +1745,100 @@ Tâche D ! - 4`;
 
       wrap.appendChild(s);
 
-      // categories filter quick
-      wrap.appendChild(viewCats(true));
-      return wrap;
-    }
-
-    // Categories filter view
-    function viewCats(embed=false){
+      // Category filter (merged here)
+      const s2 = section("Catégories actives");
       const cats = Array.from(new Set(state.tasks.map(t=>t.cat||"INBOX"))).sort();
-      const box = document.createElement("div");
-      box.className = embed ? "section" : "section";
-      const h = document.createElement("h3");
-      h.textContent = embed ? "Catégories actives" : "Catégories";
-      box.appendChild(h);
-
       if(!cats.length){
         const p = document.createElement("p");
         p.className="help";
-        p.textContent="Aucune catégorie (ajoute des tâches).";
-        box.appendChild(p);
-        return box;
-      }
+        p.textContent="Aucune catégorie (importe des tâches).";
+        s2.appendChild(p);
+      }else{
+        for(const c of cats){
+          const row = document.createElement("div");
+          row.className="row";
+          row.style.justifyContent="space-between";
 
-      // checkboxes
-      for(const c of cats){
-        const row = document.createElement("div");
-        row.className="row";
-        row.style.justifyContent="space-between";
+          const label = document.createElement("div");
+          label.textContent = c;
 
-        const label = document.createElement("div");
-        label.textContent = c;
+          const cb = document.createElement("input");
+          cb.type="checkbox";
+          cb.style.width="18px";
+          cb.style.height="18px";
+          cb.checked = settings.activeCats.length ? settings.activeCats.includes(c) : true;
+          cb.onchange = ()=>{
+            if(settings.activeCats.length===0){
+              // if previously "all", start from all and then remove
+              settings.activeCats = [...cats];
+            }
+            if(cb.checked){
+              if(!settings.activeCats.includes(c)) settings.activeCats.push(c);
+            }else{
+              settings.activeCats = settings.activeCats.filter(x=>x!==c);
+              // if user unchecked all, interpret as "all" (less annoying)
+              if(settings.activeCats.length===0){
+                settings.activeCats = [];
+              }
+            }
+            persist();
+            renderAll();
+            renderDrawer();
+          };
 
-        const cb = document.createElement("input");
-        cb.type="checkbox";
-        cb.style.width="18px";
-        cb.style.height="18px";
-        cb.checked = settings.activeCats && settings.activeCats.includes(c);
-        cb.onchange = ()=>{
-          settings.activeCats = settings.activeCats || [];
-          if(cb.checked){
-            if(!settings.activeCats.includes(c)) settings.activeCats.push(c);
-          }else{
-            settings.activeCats = settings.activeCats.filter(x=>x!==c);
-          }
-          persistAll();
+          row.appendChild(label);
+          row.appendChild(cb);
+          s2.appendChild(row);
+        }
+
+        const row2 = document.createElement("div");
+        row2.className="row";
+        row2.style.marginTop="10px";
+
+        const all = document.createElement("button");
+        all.className="btn";
+        all.textContent="Tout";
+        all.onclick = ()=>{
+          settings.activeCats = [];
+          persist();
           renderAll();
-          renderPanel();
+          renderDrawer();
         };
 
-        row.appendChild(label);
-        row.appendChild(cb);
-        box.appendChild(row);
-      }
-
-      const row2 = document.createElement("div");
-      row2.className="row";
-      row2.style.marginTop="10px";
-
-      const all = document.createElement("button");
-      all.className="btn";
-      all.textContent="Tout";
-      all.onclick = ()=>{
-        settings.activeCats = Array.from(new Set(state.tasks.map(t=>t.cat||"INBOX")));
-        persistAll();
-        renderAll();
-        renderPanel();
-      };
-
-      const none = document.createElement("button");
-      none.className="btn ghost";
-      none.textContent="Aucun filtre (tout)";
-      none.onclick = ()=>{
-        settings.activeCats = [];
-        persistAll();
-        renderAll();
-        renderPanel();
-      };
-
-      row2.appendChild(all);
-      row2.appendChild(none);
-      box.appendChild(row2);
-
-      return box;
-    }
-
-    // Sets view (pré-définis + générateurs)
-    function viewSets(){
-      const wrap = document.createElement("div");
-
-      // prebuilt: Hospital tour + Consult
-      const s1 = document.createElement("div");
-      s1.className="section";
-      s1.innerHTML = `
-        <h3>Sets (pré-définis)</h3>
-        <p class="help">Objectif: tâches systématiques. Tu peux générer un set et l’ajouter à la liste active (prioritaire, dans l’ordre).</p>
-      `;
-
-      const row = document.createElement("div");
-      row.className="row";
-
-      const sel = document.createElement("select");
-      sel.innerHTML = `
-        <option value="hospital">Hôpital (tour de salle)</option>
-        <option value="consult">Consultations</option>
-      `;
-
-      const nb = document.createElement("input");
-      nb.type="number";
-      nb.min="1"; nb.max="20";
-      nb.value="4";
-      nb.placeholder="Nb patients";
-
-      const add = document.createElement("button");
-      add.className="btn";
-      add.textContent="Générer + Prioriser";
-      add.onclick = ()=>{
-        const n = clamp(parseInt(nb.value,10)||4, 1, 20);
-        const type = sel.value;
-        const pack = [];
-
-        if(type==="hospital"){
-          for(let i=1;i<=n;i++){
-            const base = `Patient ${i}`;
-            pack.push(makeTask(`${base} — voir`, "HOPITAL", 1));
-            pack.push(makeTask(`${base} — note`, "HOPITAL", 1));
-            pack.push(makeTask(`${base} — traitement`, "HOPITAL", 1));
-            pack.push(makeTask(`${base} — dossier`, "HOPITAL", 1));
-          }
-        }else{
-          for(let i=1;i<=n;i++){
-            const base = `Consult ${i}`;
-            pack.push(makeTask(`${base} — accueil`, "CONSULT", 1));
-            pack.push(makeTask(`${base} — clinique`, "CONSULT", 2));
-            pack.push(makeTask(`${base} — plan`, "CONSULT", 1));
-            pack.push(makeTask(`${base} — note`, "CONSULT", 1));
-          }
-        }
-
-        // add pack at top in order + pin first
-        if(pack.length){
-          pack[0].pinned = true;
-          state.tasks = [...pack, ...state.tasks];
-          // update baseline if empty
-          if(state.startCounts.tasks===0 && state.startCounts.eth===0){
-            state.startCounts = {
-              tasks: state.tasks.length,
-              eth: state.tasks.reduce((a,t)=>a+(t.ethStart||0),0)
-            };
-          }
-          ensureCurrent();
-          persistAll();
+        const none = document.createElement("button");
+        none.className="btn ghost";
+        none.textContent="Sélectionner";
+        none.onclick = ()=>{
+          // switch to explicit selection mode (all checked)
+          settings.activeCats = [...cats];
+          persist();
           renderAll();
-          renderPanel();
-        }
-      };
+          renderDrawer();
+        };
 
-      row.appendChild(sel);
-      row.appendChild(nb);
-      row.appendChild(add);
-      s1.appendChild(row);
+        row2.appendChild(all);
+        row2.appendChild(none);
+        s2.appendChild(row2);
 
-      wrap.appendChild(s1);
-      return wrap;
-    }
+        const help = document.createElement("p");
+        help.className="help";
+        help.textContent="Si aucune catégorie n’est cochée, ça veut dire: tout (pour éviter le piège du vide).";
+        s2.appendChild(help);
+      }
+      wrap.appendChild(s2);
 
-    // Mode view (roulette settings etc.)
-    function viewMode(){
-      const s = document.createElement("div");
-      s.className="section";
-      s.innerHTML = `<h3>Mode</h3>`;
+      // Quick mode (merged)
+      const s3 = section("Roulette");
+      const row3 = document.createElement("div");
+      row3.className="row";
 
-      const row1 = document.createElement("div");
-      row1.className="row";
-
-      const sel = document.createElement("select");
-      sel.innerHTML = `
-        <option value="random">Roulette aléatoire</option>
+      const mode = document.createElement("select");
+      mode.innerHTML = `
+        <option value="random">Aléatoire</option>
         <option value="ordered">Dans l’ordre</option>
       `;
-      sel.value = settings.rouletteMode;
-      sel.onchange = ()=>{ settings.rouletteMode = sel.value; persistAll(); };
+      mode.value = settings.rouletteMode;
+      mode.onchange = ()=>{ settings.rouletteMode = mode.value; persist(); };
 
       const strat = document.createElement("select");
       strat.innerHTML = `
@@ -2012,173 +1847,21 @@ Tâche D ! - 4`;
         <option value="chrono">Chronologique</option>
       `;
       strat.value = settings.orderedStrategy;
-      strat.onchange = ()=>{ settings.orderedStrategy = strat.value; persistAll(); };
+      strat.onchange = ()=>{ settings.orderedStrategy = strat.value; persist(); };
 
-      row1.appendChild(sel);
-      row1.appendChild(strat);
-      s.appendChild(row1);
+      row3.appendChild(mode);
+      row3.appendChild(strat);
+      s3.appendChild(row3);
 
-      const help = document.createElement("p");
-      help.className="help";
-      help.textContent="Le mode 'Dans l’ordre' ignore le hasard. Utile quand tu veux une exécution systématique.";
-      s.appendChild(help);
+      wrap.appendChild(s3);
 
-      return s;
+      return wrap;
     }
 
-    // Energie view (fatigue/motivation affects celebration surprise)
-    function viewEnergie(){
-      const s = document.createElement("div");
-      s.className="section";
-      s.innerHTML = `<h3>Énergie</h3><p class="help">La célébration reste une surprise. Ici tu règles le comportement global.</p>`;
-
-      const row1 = document.createElement("div");
-      row1.className="row";
-
-      const fat = document.createElement("select");
-      fat.innerHTML = `
-        <option value="0">Fatigue: très basse</option>
-        <option value="1">Fatigue: basse</option>
-        <option value="2">Fatigue: moyenne</option>
-        <option value="3">Fatigue: haute</option>
-        <option value="4">Fatigue: très haute</option>
-      `;
-      fat.value = String(settings.fatigue);
-      fat.onchange = ()=>{ settings.fatigue = parseInt(fat.value,10); persistAll(); };
-
-      const mot = document.createElement("select");
-      mot.innerHTML = `
-        <option value="0">Motivation: très basse</option>
-        <option value="1">Motivation: basse</option>
-        <option value="2">Motivation: moyenne</option>
-        <option value="3">Motivation: haute</option>
-        <option value="4">Motivation: très haute</option>
-      `;
-      mot.value = String(settings.motivation);
-      mot.onchange = ()=>{ settings.motivation = parseInt(mot.value,10); persistAll(); };
-
-      row1.appendChild(fat);
-      row1.appendChild(mot);
-      s.appendChild(row1);
-
-      const row2 = document.createElement("div");
-      row2.className="row";
-      row2.style.marginTop="10px";
-
-      const auto = document.createElement("input");
-      auto.type="number";
-      auto.min="4"; auto.max="20";
-      auto.value = String(settings.celeAutoCloseSec||10);
-      auto.placeholder="Auto-close (sec)";
-      auto.onchange = ()=>{ settings.celeAutoCloseSec = clamp(parseInt(auto.value,10)||10,4,20); persistAll(); };
-
-      const chance = document.createElement("input");
-      chance.type="number";
-      chance.min="0.05"; chance.max="0.60";
-      chance.step="0.01";
-      chance.value = String(settings.celeChanceBase||0.22);
-      chance.onchange = ()=>{ settings.celeChanceBase = clamp(parseFloat(chance.value)||0.22,0.05,0.60); persistAll(); };
-
-      row2.appendChild(auto);
-      row2.appendChild(chance);
-      s.appendChild(row2);
-
-      return s;
-    }
-
-    // Params view (visual display options minimal)
-    function viewParams(){
-      const s = document.createElement("div");
-      s.className="section";
-      s.innerHTML = `<h3>Paramètres</h3>`;
-
-      const row = document.createElement("div");
-      row.className="row";
-
-      const theme = document.createElement("select");
-      theme.innerHTML = `
-        <option value="light">Thème clair</option>
-        <option value="dark">Thème sombre</option>
-      `;
-      theme.value = settings.theme;
-      theme.onchange = ()=>{ settings.theme = theme.value; applyTheme(); persistAll(); };
-
-      const focus = document.createElement("select");
-      focus.innerHTML = `
-        <option value="0">Focus: non</option>
-        <option value="1">Focus: oui</option>
-      `;
-      focus.value = String(settings.focus||0);
-      focus.onchange = ()=>{ settings.focus = parseInt(focus.value,10); applyFocus(); persistAll(); renderAll(); };
-
-      row.appendChild(theme);
-      row.appendChild(focus);
-      s.appendChild(row);
-
-      const help = document.createElement("p");
-      help.className="help";
-      help.textContent="Le mode focus masque ce qui n’est pas nécessaire, mais conserve les compteurs essentiels.";
-      s.appendChild(help);
-
-      return s;
-    }
-
-    // Profiles (placeholder, keeps door open)
-    function viewProfiles(){
-      const s = document.createElement("div");
-      s.className="section";
-      s.innerHTML = `
-        <h3>Profils</h3>
-        <p class="help">Espace prévu pour des presets complets (affichage, énergie, mode, filtres) sans surcharger l’interface. (Implémentation minimale ici.)</p>
-      `;
-      return s;
-    }
-
-    // Banks (export/import)
-    function viewBanks(){
-      const s = document.createElement("div");
-      s.className="section";
-      s.innerHTML = `<h3>Textes / Export</h3>`;
-
-      const row = document.createElement("div");
-      row.className="row";
-
-      const exp1 = document.createElement("button");
-      exp1.className="btn";
-      exp1.textContent="Exporter (JSON complet)";
-      exp1.onclick = ()=>{
-        const payload = { settings, state, notes, habits, kiffBank, exportedAt: nowISO() };
-        downloadText(`eliminator_export_${dayKey()}.json`, JSON.stringify(payload, null, 2));
-      };
-
-      const exp2 = document.createElement("button");
-      exp2.className="btn";
-      exp2.textContent="Exporter rapport (TXT)";
-      exp2.onclick = ()=>{
-        downloadText(`eliminator_rapport_${dayKey()}.txt`, buildReportText());
-      };
-
-      row.appendChild(exp1);
-      row.appendChild(exp2);
-      s.appendChild(row);
-
-      const help = document.createElement("p");
-      help.className="help";
-      help.textContent="Export utile pour récupérer: tâches faites, tâches restantes, habitudes, stats.";
-      s.appendChild(help);
-
-      return s;
-    }
-
-    // Kiffance view (4 buckets + add)
-    function viewKiffance(){
+    function viewKiff(){
       const wrap = document.createElement("div");
 
-      // quick pick
-      const s0 = document.createElement("div");
-      s0.className="section";
-      s0.innerHTML = `<h3>Kiffance</h3><p class="help">Banco: 4 durées. Tu peux rafraîchir une suggestion et l’ajouter à la liste active si tu veux.</p>`;
-
+      const s = section("Kiffance (banque + suggestion)");
       const row = document.createElement("div");
       row.className="row";
 
@@ -2189,15 +1872,16 @@ Tâche D ! - 4`;
         <option value="15m">15 min</option>
         <option value="25m+">25 min+</option>
       `;
-      const out = document.createElement("input");
-      out.type="text";
+
+      const out = document.createElement("textarea");
+      out.rows = 3;
       out.readOnly = true;
-      out.placeholder="Suggestion…";
+      out.placeholder = "Suggestion…";
 
       function refresh(){
-        const k = sel.value;
-        const arr = (kiffBank.buckets[k] || []);
-        out.value = arr.length ? arr[rand(arr.length)] : "Banque vide";
+        const key = sel.value;
+        const arr = kiffBank.buckets[key] || [];
+        out.value = arr.length ? arr[rand(arr.length)] : "Banque vide.";
       }
       refresh();
 
@@ -2208,135 +1892,196 @@ Tâche D ! - 4`;
       refreshBtn.textContent="Rafraîchir";
       refreshBtn.onclick = refresh;
 
-      const addBtn = document.createElement("button");
-      addBtn.className="btn";
-      addBtn.textContent="Ajouter en tâche";
-      addBtn.onclick = ()=>{
-        const k = sel.value;
+      const addTaskBtn = document.createElement("button");
+      addTaskBtn.className="btn";
+      addTaskBtn.textContent="Ajouter en tâche";
+      addTaskBtn.onclick = ()=>{
         const txt = (out.value||"").trim();
         if(!txt) return;
-        const eth = (k==="5m")?1:(k==="10m")?2:(k==="15m")?3:5;
+        const eth = (sel.value==="5m") ? 1 : (sel.value==="10m") ? 2 : (sel.value==="15m") ? 3 : 5;
         state.tasks.unshift(makeTask(txt, "KIFFANCE", eth));
         ensureCurrent();
-        persistAll();
+        ensureBaseline();
+        persist();
         renderAll();
+        renderDrawer();
       };
 
       row.appendChild(sel);
       row.appendChild(refreshBtn);
-      s0.appendChild(row);
-      s0.appendChild(out);
+      row.appendChild(addTaskBtn);
+      s.appendChild(row);
+      s.appendChild(out);
 
+      const help = document.createElement("p");
+      help.className="help";
+      help.textContent="Pas de célébration à l’ajout. La célébration est un animal sauvage: elle apparaît quand elle veut.";
+      s.appendChild(help);
+
+      wrap.appendChild(s);
+
+      // Add to bank
+      const s2 = section("Ajouter à la banque");
+      const txt = document.createElement("input");
+      txt.placeholder = "Nouvelle kiffance (texte)";
       const row2 = document.createElement("div");
       row2.className="row";
-      row2.style.marginTop="10px";
-      row2.appendChild(addBtn);
-      s0.appendChild(row2);
-
-      wrap.appendChild(s0);
-
-      // add to bank
-      const s1 = document.createElement("div");
-      s1.className="section";
-      s1.innerHTML = `<h3>Ajouter à la banque</h3>`;
-      const t = document.createElement("input");
-      t.placeholder="Nouvelle kiffance (texte)";
-      const rowA = document.createElement("div");
-      rowA.className="row";
       const sel2 = document.createElement("select");
       sel2.innerHTML = sel.innerHTML;
+
+      const addBankBtn = document.createElement("button");
+      addBankBtn.className="btn";
+      addBankBtn.textContent="Ajouter";
+      addBankBtn.onclick = ()=>{
+        const v = (txt.value||"").trim();
+        if(!v) return;
+        const key = sel2.value;
+        kiffBank.buckets[key] = kiffBank.buckets[key] || [];
+        kiffBank.buckets[key].push(v);
+        txt.value="";
+        persist();
+        renderDrawer();
+      };
+
+      row2.appendChild(sel2);
+      row2.appendChild(addBankBtn);
+      s2.appendChild(txt);
+      s2.appendChild(row2);
+
+      wrap.appendChild(s2);
+      return wrap;
+    }
+
+    function viewHabits(){
+      const wrap = document.createElement("div");
+
+      const s = section("Suivi des habitudes");
+      const row = document.createElement("div");
+      row.className="row";
+
+      const name = document.createElement("input");
+      name.placeholder = "Nom d’habitude";
+      const total = document.createElement("input");
+      total.type="number"; total.min="1"; total.max="30"; total.value="10";
 
       const add = document.createElement("button");
       add.className="btn";
       add.textContent="Ajouter";
       add.onclick = ()=>{
-        const txt = (t.value||"").trim();
-        if(!txt) return;
-        const k = sel2.value;
-        kiffBank.buckets[k] = kiffBank.buckets[k] || [];
-        kiffBank.buckets[k].push(txt);
-        t.value="";
-        persistAll();
-        renderPanel();
+        const n = (name.value||"").trim();
+        if(!n) return;
+        const t = clamp(parseInt(total.value,10)||10, 1, 30);
+        habits.push({ id: uniq(), name:n, total:t, checked:0, createdAt: nowISO() });
+        name.value="";
+        persist();
+        renderDrawer();
       };
 
-      rowA.appendChild(sel2);
-      rowA.appendChild(add);
-      s1.appendChild(t);
-      s1.appendChild(rowA);
-      s1.appendChild(Object.assign(document.createElement("p"), {className:"help", textContent:"La banque est sauvegardée. Pas de célébration ici (ça reste une surprise, pas une machine à confettis)."}));
-      wrap.appendChild(s1);
-
-      return wrap;
-    }
-
-    // Calib (baseline reset)
-    function viewCalib(){
-      const s = document.createElement("div");
-      s.className="section";
-      s.innerHTML = `<h3>Calibrage</h3><p class="help">Recalibre les compteurs de départ (utile si tu importes beaucoup en cours de route).</p>`;
-
-      const b = document.createElement("button");
-      b.className="btn";
-      b.textContent="Recalibrer départ (tâches + étorions)";
-      b.onclick = ()=>{
-        state.startCounts = {
-          tasks: state.tasks.length,
-          eth: state.tasks.reduce((a,t)=>a+(t.ethStart||0),0)
-        };
-        persistAll();
-        renderAll();
-      };
-
-      s.appendChild(b);
-      return s;
-    }
-
-    // Hist (daily snapshots)
-    function viewHist(){
-      const s = document.createElement("div");
-      s.className="section";
-      s.innerHTML = `<h3>Historique</h3><p class="help">Snapshots journaliers (auto). Export via “Textes”.</p>`;
+      row.appendChild(name);
+      row.appendChild(total);
+      row.appendChild(add);
+      s.appendChild(row);
 
       const lst = document.createElement("div");
       lst.className="list";
+      lst.style.marginTop="10px";
 
-      const combined = [...state.history, buildDailySnapshot(dayKey())].slice(-30).reverse();
-      for(const it of combined){
-        const row = document.createElement("div");
-        row.className="item";
-        const left = document.createElement("div");
-        left.className="t";
-        const name = document.createElement("div");
-        name.className="name";
-        name.textContent = it.day;
-        const sub = document.createElement("div");
-        sub.className="sub";
-        sub.textContent = `${it.totalDone} fait · ${it.ethDone} étorions · reste ${it.remainingTasks} / ${it.remainingEth}`;
-        left.appendChild(name); left.appendChild(sub);
-        row.appendChild(left);
-        lst.appendChild(row);
+      if(!habits.length){
+        const p = document.createElement("p");
+        p.className="help";
+        p.textContent="Aucune habitude.";
+        lst.appendChild(p);
+      }else{
+        for(const h of habits){
+          const r = document.createElement("div");
+          r.className="item";
+
+          const left = document.createElement("div");
+          left.className="t";
+          const nm = document.createElement("div");
+          nm.className="name";
+          nm.textContent = h.name;
+          left.appendChild(nm);
+
+          const boxes = document.createElement("div");
+          boxes.style.display="flex";
+          boxes.style.gap="6px";
+          boxes.style.alignItems="center";
+          boxes.style.flexWrap="nowrap";
+
+          for(let i=0;i<h.total;i++){
+            const b = document.createElement("div");
+            b.className = "tick " + (i < (h.checked||0) ? "on" : "");
+            b.style.width="14px";
+            b.style.height="8px";
+            b.style.cursor="pointer";
+            b.title = `${i+1}/${h.total}`;
+            b.onclick = ()=>{
+              const target = i+1;
+              // toggle count logic: clicking same target decreases by 1
+              h.checked = (h.checked === target) ? i : target;
+              h.checked = clamp(h.checked, 0, h.total);
+              persist();
+              renderDrawer();
+            };
+            boxes.appendChild(b);
+          }
+
+          const reset = document.createElement("button");
+          reset.className="iconBtn";
+          reset.textContent="↺";
+          reset.title="Reset";
+          reset.onclick = ()=>{
+            h.checked = 0;
+            persist();
+            renderDrawer();
+          };
+
+          const del = document.createElement("button");
+          del.className="iconBtn";
+          del.textContent="✕";
+          del.title="Supprimer";
+          del.onclick = ()=>{
+            habits = habits.filter(x=>x.id!==h.id);
+            persist();
+            renderDrawer();
+          };
+
+          r.appendChild(left);
+          r.appendChild(boxes);
+          r.appendChild(reset);
+          r.appendChild(del);
+          lst.appendChild(r);
+        }
       }
 
       s.appendChild(lst);
-      return s;
+
+      const help = document.createElement("p");
+      help.className="help";
+      help.textContent="Les habitudes apparaissent aussi dans le rapport export.";
+      s.appendChild(help);
+
+      wrap.appendChild(s);
+      return wrap;
     }
 
-    // Rapport (includes habits)
     function buildReportText(){
       const today = dayKey();
-      const snap = buildDailySnapshot(today);
-
-      const remaining = state.tasks.map(t=>`- ${t.title} (${t.cat||"INBOX"} · ${t.ethLeft}/${t.ethStart})`).join("\n") || "- (aucune)";
       const doneToday = state.done
         .filter(t => (t.doneAt||"").startsWith(today))
-        .map(t=>`- ${t.title} (${t.cat||"INBOX"} · ${t.ethStart})`)
-        .join("\n") || "- (aucune)";
+        .map(t=>`- ${t.title} (${t.cat||"INBOX"} · ${t.ethStart})`).join("\n") || "- (aucune)";
 
-      const hab = habits.map(h=>{
-        const boxes = `${h.checked}/${h.total}`;
-        return `- ${h.name} : ${boxes}`;
-      }).join("\n") || "- (aucune)";
+      const remaining = state.tasks
+        .map(t=>`- ${t.title} (${t.cat||"INBOX"} · ${t.ethLeft}/${t.ethStart})`).join("\n") || "- (aucune)";
+
+      const hab = habits
+        .map(h=>`- ${h.name} : ${h.checked}/${h.total}`).join("\n") || "- (aucune)";
+
+      const lastNotes = notes.slice(0,6)
+        .map(n=>`- ${new Date(n.at).toLocaleString()} : ${n.text}`).join("\n") || "- (aucune)";
+
+      const base = state.baseline?.totalEth||0;
 
       return [
         `ELIMINATOR — Rapport du ${today}`,
@@ -2351,153 +2096,405 @@ Tâche D ! - 4`;
         hab,
         ``,
         `Stats:`,
-        `- tâches faites: ${snap.totalDone}`,
-        `- étorions faits: ${snap.ethDone}`,
-        `- tâches restantes: ${snap.remainingTasks}`,
-        `- étorions restants: ${snap.remainingEth}`,
+        `- tâches restantes: ${state.tasks.length}`,
+        `- tâches faites (total): ${state.done.length}`,
+        `- étorions restants: ${totalEthLeft()}`,
+        `- baseline (session): ${base}`,
         ``,
         `Notes (dernieres):`,
-        (notes.slice(0,6).map(n=>`- ${new Date(n.at).toLocaleString()} : ${n.text}`).join("\n") || "- (aucune)")
+        lastNotes
       ].join("\n");
     }
 
-    function viewRapport(){
-      const s = document.createElement("div");
-      s.className="section";
-      s.innerHTML = `<h3>Rapport</h3><p class="help">Rapport texte exportable. Inclut habitudes + fait + reste.</p>`;
+    function viewStats(){
+      const wrap = document.createElement("div");
 
-      const pre = document.createElement("textarea");
-      pre.rows = 16;
-      pre.value = buildReportText();
-
-      const row = document.createElement("div");
-      row.className="row";
-      row.style.marginTop="10px";
-
-      const b = document.createElement("button");
-      b.className="btn";
-      b.textContent="Exporter en TXT";
-      b.onclick = ()=>downloadText(`eliminator_rapport_${dayKey()}.txt`, buildReportText());
-
-      row.appendChild(b);
-
-      s.appendChild(pre);
-      s.appendChild(row);
-      return s;
-    }
-
-    // =========================
-    // Habit tracker tab lives in "rapport" and "hist" snapshots already.
-    // We'll add it under "energie" or "params"? Better: under "rapport" but user asked an onglet.
-    // We'll embed it in "profiles" via quick, AND also include in "rapport".
-    // Minimal: put it in "params" view? Non: they asked separate.
-    // We'll add an additional section inside "profiles" view to keep tabs list unchanged (no new tab).
-    // =========================
-    function habitsSection(){
-      const s = document.createElement("div");
-      s.className="section";
-      s.innerHTML = `<h3>Suivi des habitudes</h3><p class="help">Chaque habitude est sur une ligne: cases + reset + supprimer. Pas de célébration ici.</p>`;
-
-      // add form
+      const s = section("Export");
       const row = document.createElement("div");
       row.className="row";
 
-      const name = document.createElement("input");
-      name.placeholder="Nom d’habitude";
+      const expReport = document.createElement("button");
+      expReport.className="btn";
+      expReport.textContent="Exporter rapport (TXT)";
+      expReport.onclick = ()=>downloadText(`eliminator_rapport_${dayKey()}.txt`, buildReportText());
 
-      const total = document.createElement("input");
-      total.type="number";
-      total.min="1"; total.max="30";
-      total.value="10";
-
-      const add = document.createElement("button");
-      add.className="btn";
-      add.textContent="Ajouter";
-      add.onclick = ()=>{
-        addHabit(name.value, total.value);
-        name.value="";
+      const expJson = document.createElement("button");
+      expJson.className="btn";
+      expJson.textContent="Exporter (JSON complet)";
+      expJson.onclick = ()=>{
+        const payload = { settings, state, notes, habits, kiffBank, sets, exportedAt: nowISO() };
+        downloadText(`eliminator_export_${dayKey()}.json`, JSON.stringify(payload, null, 2));
       };
 
-      row.appendChild(name);
-      row.appendChild(total);
-      row.appendChild(add);
+      row.appendChild(expReport);
+      row.appendChild(expJson);
       s.appendChild(row);
 
-      // list
-      const lst = document.createElement("div");
-      lst.className="list";
-      lst.style.marginTop="10px";
+      const pre = document.createElement("textarea");
+      pre.rows = 14;
+      pre.value = buildReportText();
+      pre.style.marginTop = "10px";
+      s.appendChild(pre);
 
-      if(!habits.length){
-        const p = document.createElement("p");
-        p.className="help";
-        p.textContent="Aucune habitude.";
-        lst.appendChild(p);
-      }else{
-        for(const h of habits){
-          const rowH = document.createElement("div");
-          rowH.className="item";
+      const s2 = section("Baseline (progression globale)");
+      const bRow = document.createElement("div");
+      bRow.className="row";
 
-          const left = document.createElement("div");
-          left.className="t";
-          const nm = document.createElement("div");
-          nm.className="name";
-          nm.textContent = h.name;
-          left.appendChild(nm);
+      const recal = document.createElement("button");
+      recal.className="btn";
+      recal.textContent="Recalibrer baseline maintenant";
+      recal.onclick = ()=>{
+        // set baseline to current total (left+done), to avoid weird decreases
+        state.baseline.totalEth = totalEthAllStart();
+        state.baseline.setAt = dayKey();
+        persist();
+        renderAll();
+        renderDrawer();
+      };
 
-          // boxes
-          const boxes = document.createElement("div");
-          boxes.style.display="flex";
-          boxes.style.gap="6px";
-          boxes.style.flexWrap="nowrap";
-          boxes.style.alignItems="center";
+      const note = document.createElement("p");
+      note.className="help";
+      note.textContent="Si tu ajoutes beaucoup de tâches en cours de route, la baseline peut s’agrandir automatiquement. Recalibrer = figer la nouvelle baseline proprement.";
+      s2.appendChild(recal);
+      s2.appendChild(note);
 
-          for(let i=0;i<h.total;i++){
-            const b = document.createElement("div");
-            b.className = "tick " + (i < (h.checked||0) ? "on" : "");
-            b.style.width="14px";
-            b.style.height="8px";
-            b.style.cursor="pointer";
-            b.onclick = ()=>habitToggle(h.id, i);
-            boxes.appendChild(b);
-          }
-
-          const reset = document.createElement("button");
-          reset.className="iconBtn";
-          reset.textContent="↺";
-          reset.title="Reset";
-          reset.onclick = ()=>habitReset(h.id);
-
-          const del = document.createElement("button");
-          del.className="iconBtn";
-          del.textContent="✕";
-          del.title="Supprimer";
-          del.onclick = ()=>habitDelete(h.id);
-
-          rowH.appendChild(left);
-          rowH.appendChild(boxes);
-          rowH.appendChild(reset);
-          rowH.appendChild(del);
-
-          lst.appendChild(rowH);
-        }
-      }
-
-      s.appendChild(lst);
-      return s;
+      wrap.appendChild(s);
+      wrap.appendChild(s2);
+      return wrap;
     }
 
-    // Patch profiles view to include habits section
-    const _viewProfiles = viewProfiles;
-    function viewProfiles(){
+    function viewSettings(){
       const wrap = document.createElement("div");
-      wrap.appendChild(_viewProfiles());
-      wrap.appendChild(habitsSection());
+
+      const s = section("Affichage");
+      const row = document.createElement("div");
+      row.className="row";
+
+      const theme = document.createElement("select");
+      theme.innerHTML = `
+        <option value="light">Thème clair</option>
+        <option value="dark">Thème sombre</option>
+      `;
+      theme.value = settings.theme;
+      theme.onchange = ()=>{
+        settings.theme = theme.value;
+        persist();
+        renderAll();
+        renderDrawer();
+      };
+
+      const focus = document.createElement("select");
+      focus.innerHTML = `
+        <option value="0">Focus: non</option>
+        <option value="1">Focus: oui</option>
+      `;
+      focus.value = String(settings.focus||0);
+      focus.onchange = ()=>{
+        settings.focus = parseInt(focus.value,10);
+        persist();
+        renderAll();
+      };
+
+      row.appendChild(theme);
+      row.appendChild(focus);
+      s.appendChild(row);
+
+      const s2 = section("Célébrations (surprise)");
+      const row2 = document.createElement("div");
+      row2.className="row";
+
+      const fatigue = document.createElement("select");
+      fatigue.innerHTML = `
+        <option value="0">Fatigue: très basse</option>
+        <option value="1">Fatigue: basse</option>
+        <option value="2">Fatigue: moyenne</option>
+        <option value="3">Fatigue: haute</option>
+        <option value="4">Fatigue: très haute</option>
+      `;
+      fatigue.value = String(settings.fatigue||2);
+      fatigue.onchange = ()=>{ settings.fatigue = parseInt(fatigue.value,10); persist(); };
+
+      const motiv = document.createElement("select");
+      motiv.innerHTML = `
+        <option value="0">Motivation: très basse</option>
+        <option value="1">Motivation: basse</option>
+        <option value="2">Motivation: moyenne</option>
+        <option value="3">Motivation: haute</option>
+        <option value="4">Motivation: très haute</option>
+      `;
+      motiv.value = String(settings.motivation||2);
+      motiv.onchange = ()=>{ settings.motivation = parseInt(motiv.value,10); persist(); };
+
+      row2.appendChild(fatigue);
+      row2.appendChild(motiv);
+
+      const row3 = document.createElement("div");
+      row3.className="row";
+      row3.style.marginTop = "10px";
+
+      const chance = document.createElement("input");
+      chance.type="number";
+      chance.min="0.05"; chance.max="0.60"; chance.step="0.01";
+      chance.value = String(settings.celeChanceBase||0.20);
+      chance.onchange = ()=>{ settings.celeChanceBase = clamp(parseFloat(chance.value)||0.20, 0.05, 0.60); persist(); };
+
+      const auto = document.createElement("input");
+      auto.type="number";
+      auto.min="4"; auto.max="20";
+      auto.value = String(settings.celeAutoCloseSec||10);
+      auto.onchange = ()=>{ settings.celeAutoCloseSec = clamp(parseInt(auto.value,10)||10, 4, 20); persist(); };
+
+      row3.appendChild(chance);
+      row3.appendChild(auto);
+
+      s2.appendChild(row2);
+      s2.appendChild(row3);
+
+      const help = document.createElement("p");
+      help.className="help";
+      help.textContent="Confettis: toujours à la fin d’une tâche. Message: parfois. Pas d’effet “machine à compliments”.";
+      s2.appendChild(help);
+
+      wrap.appendChild(s);
+      wrap.appendChild(s2);
       return wrap;
     }
 
     // =========================
-    // Wire events
+    // Notes
+    // =========================
+    function openNotes(){
+      notesBack.style.display="block";
+      notesModal.style.display="block";
+      renderNotes();
+    }
+    function closeNotes(){
+      notesBack.style.display="none";
+      notesModal.style.display="none";
+    }
+
+    function renderNotes(){
+      notesList.innerHTML = "";
+      if(!notes.length){
+        const p = document.createElement("p");
+        p.className="help";
+        p.textContent="Aucune note.";
+        notesList.appendChild(p);
+        return;
+      }
+      for(const n of notes){
+        const row = document.createElement("div");
+        row.className="item";
+
+        const left = document.createElement("div");
+        left.className="t";
+        const nm = document.createElement("div");
+        nm.className="name";
+        nm.textContent = new Date(n.at).toLocaleString();
+        const sb = document.createElement("div");
+        sb.className="sub";
+        sb.textContent = n.text;
+
+        left.appendChild(nm);
+        left.appendChild(sb);
+
+        const del = document.createElement("button");
+        del.className="iconBtn";
+        del.textContent="✕";
+        del.title="Supprimer";
+        del.onclick = ()=>{
+          notes = notes.filter(x=>x.id!==n.id);
+          persist();
+          renderNotes();
+        };
+
+        row.appendChild(left);
+        row.appendChild(del);
+        notesList.appendChild(row);
+      }
+    }
+
+    // =========================
+    // Celebration (better “conquistador absurd”)
+    // =========================
+    const CELE_POOL = [
+      {t:"Gloire administrative", m:"Tu viens de terrasser un monstre bureaucratique sans lever la voix. L’élégance d’un duel au ralenti."},
+      {t:"Conquête", m:"La tâche a capitulé. Tu n’as pas crié. Tu as simplement avancé. Terrifiant."},
+      {t:"Triomphe", m:"Tu viens d’inscrire ton nom dans les archives sacrées du « je fais ce que j’ai dit »."},
+      {t:"Suprématie calme", m:"Le chaos a tenté un regard appuyé. Tu l’as ignoré. Il a compris."},
+      {t:"Victoire tactique", m:"Un étorion de moins. L’univers a été légèrement réorganisé. À ton avantage."},
+      {t:"Épopée", m:"Un pas de plus dans ta saga. Les statues ne sont pas prêtes, mais elles prennent rendez-vous."},
+      {t:"Domination", m:"La procrastination a reculé de trois mètres. Elle reviendra. Elle a tort."},
+      {t:"Règne intérieur", m:"Tu as repris du territoire mental. Frontière sécurisée. Drapeau planté."},
+      {t:"Mécanique divine", m:"Tu avances par fragments, comme une horloge de guerre. Efficace. Inéluctable."},
+      {t:"Légende locale", m:"Les gens vont dire: « cette personne… elle dégomme. » Et ils auront raison."}
+    ];
+
+    function celebrationProbability(){
+      const f = clamp(settings.fatigue,0,4);
+      const m = clamp(settings.motivation,0,4);
+      let p = clamp(settings.celeChanceBase||0.20, 0.05, 0.60);
+      p += (f-2)*0.04;
+      p -= (m-2)*0.03;
+
+      // throttle: avoid too frequent
+      const streak = state.streak.completedSinceCele||0;
+      if(streak < 2) p *= 0.35;
+      if(streak >= 3) p *= 1.15;
+
+      return clamp(p, 0.02, 0.60);
+    }
+
+    let celeTimer = null;
+    function maybeCelebrate(){
+      const p = celebrationProbability();
+      if(Math.random() > p) return;
+      state.streak.completedSinceCele = 0;
+      showCelebration();
+    }
+
+    function showCelebration(){
+      const pick = CELE_POOL[rand(CELE_POOL.length)];
+      celeTitle.textContent = pick.t;
+      celeMsg.textContent = pick.m;
+
+      celeBack.style.display="block";
+      celeModal.style.display="block";
+
+      const sec = clamp(parseInt(settings.celeAutoCloseSec,10)||10, 4, 20);
+      if(celeTimer) clearTimeout(celeTimer);
+      celeTimer = setTimeout(closeCelebration, sec*1000);
+    }
+
+    function closeCelebration(){
+      celeBack.style.display="none";
+      celeModal.style.display="none";
+      if(celeTimer) clearTimeout(celeTimer);
+      celeTimer = null;
+    }
+
+    // =========================
+    // Confetti (monochrome)
+    // =========================
+    function burstConfetti(){
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+      confettiCanvas.style.display="block";
+
+      const w = confettiCanvas.width, h = confettiCanvas.height;
+      const fg = getComputedStyle(document.body).getPropertyValue("--fg").trim() || "#fff";
+
+      const parts = [];
+      const n = 140;
+      for(let i=0;i<n;i++){
+        parts.push({
+          x: w/2 + (Math.random()-0.5)*220,
+          y: h*0.28 + (Math.random()-0.5)*80,
+          vx: (Math.random()-0.5)*7,
+          vy: -Math.random()*7 - 2,
+          g: 0.18 + Math.random()*0.12,
+          r: 2 + Math.random()*3,
+          a: 0.55 + Math.random()*0.35
+        });
+      }
+
+      const start = performance.now();
+      function anim(t){
+        const dt = (t-start)/1000;
+        ctx.clearRect(0,0,w,h);
+        for(const p of parts){
+          p.vy += p.g;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.a *= 0.996;
+          ctx.globalAlpha = p.a;
+          ctx.beginPath();
+          ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+          ctx.fillStyle = fg;
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        if(dt < 1.9) requestAnimationFrame(anim);
+        else confettiCanvas.style.display="none";
+      }
+      requestAnimationFrame(anim);
+    }
+
+    window.addEventListener("resize", ()=>{
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    });
+
+    // =========================
+    // Sets panel (right) — independent checklist
+    // =========================
+    function generateSets(type, n){
+      const items = [];
+      const N = clamp(parseInt(n,10)||4, 1, 20);
+
+      if(type==="hospital"){
+        for(let i=1;i<=N;i++){
+          const p = `Patient ${i}`;
+          items.push({id:uniq(), label:`${p} — voir`, sub:"", done:false});
+          items.push({id:uniq(), label:`${p} — note`, sub:"", done:false});
+          items.push({id:uniq(), label:`${p} — traitement`, sub:"", done:false});
+          items.push({id:uniq(), label:`${p} — dossier`, sub:"", done:false});
+        }
+      }else{
+        for(let i=1;i<=N;i++){
+          const p = `Consult ${i}`;
+          items.push({id:uniq(), label:`${p} — accueil`, sub:"", done:false});
+          items.push({id:uniq(), label:`${p} — clinique`, sub:"", done:false});
+          items.push({id:uniq(), label:`${p} — plan`, sub:"", done:false});
+          items.push({id:uniq(), label:`${p} — note`, sub:"", done:false});
+        }
+      }
+      return items;
+    }
+
+    function renderSetsPanel(){
+      setsType.value = sets.type || "hospital";
+      setsN.value = String(sets.n || 4);
+
+      setsChecklist.innerHTML = "";
+      if(!sets.items || !sets.items.length){
+        const p = document.createElement("p");
+        p.className="help";
+        p.textContent="Aucune checklist. Génère un set.";
+        setsChecklist.appendChild(p);
+        return;
+      }
+
+      for(const it of sets.items){
+        const row = document.createElement("div");
+        row.className="chkRow";
+
+        const left = document.createElement("div");
+        left.className="chkLeft";
+
+        const nm = document.createElement("div");
+        nm.className="chkName";
+        nm.textContent = it.label;
+
+        left.appendChild(nm);
+
+        const c = document.createElement("div");
+        c.className = "check " + (it.done ? "on" : "");
+        c.textContent = it.done ? "✓" : "";
+        c.onclick = ()=>{
+          it.done = !it.done;
+          persist();
+          renderSetsPanel();
+        };
+
+        row.appendChild(left);
+        row.appendChild(c);
+        setsChecklist.appendChild(row);
+      }
+    }
+
+    // =========================
+    // Events wiring
     // =========================
     btnMenu.onclick = openDrawer;
     btnCloseDrawer.onclick = closeDrawer;
@@ -2505,31 +2502,45 @@ Tâche D ! - 4`;
 
     btnTheme.onclick = ()=>{
       settings.theme = (settings.theme==="light") ? "dark" : "light";
-      persistAll();
+      persist();
       renderAll();
-      renderPanel();
+      renderDrawer();
     };
 
     btnFocus.onclick = ()=>{
       settings.focus = settings.focus ? 0 : 1;
-      persistAll();
+      persist();
       renderAll();
     };
 
-    btnInlineList.onclick = ()=>toggleInlineList();
-    btnInlineListHide.onclick = ()=>toggleInlineList(false);
-
-    btnReset.onclick = ()=>{
-      // reset tasks only (notes/habits stay)
-      state.tasks = [];
-      state.done = [];
-      state.currentId = null;
-      state.startCounts = { tasks:0, eth:0 };
-      state.timer = { taskId:null, elapsedMs:0, running:false, startedAt:0 };
-      state.streak = { completedSinceCele: 0 };
-      persistAll();
+    btnToggleList.onclick = ()=>{
+      settings.listVisible = settings.listVisible ? 0 : 1;
+      persist();
       renderAll();
-      renderPanel();
+    };
+    btnHideList.onclick = ()=>{
+      settings.listVisible = 0;
+      persist();
+      renderAll();
+    };
+
+    btnSets.onclick = ()=>{
+      settings.setsVisible = settings.setsVisible ? 0 : 1;
+      persist();
+      renderAll();
+    };
+    btnCloseSets.onclick = ()=>{
+      settings.setsVisible = 0;
+      persist();
+      renderAll();
+    };
+
+    btnGenSets.onclick = ()=>{
+      sets.type = setsType.value;
+      sets.n = clamp(parseInt(setsN.value,10)||4, 1, 20);
+      sets.items = generateSets(sets.type, sets.n);
+      persist();
+      renderSetsPanel();
     };
 
     btnRoulette.onclick = ()=>{
@@ -2547,11 +2558,18 @@ Tâche D ! - 4`;
     btnCloseNotes.onclick = closeNotes;
     notesBack.onclick = closeNotes;
 
-    btnAddNote.onclick = addNote;
+    btnAddNote.onclick = ()=>{
+      const txt = (noteInput.value||"").trim();
+      if(!txt) return;
+      notes.unshift({ id: uniq(), at: nowISO(), text: txt });
+      noteInput.value = "";
+      persist();
+      renderNotes();
+    };
     btnClearNotes.onclick = ()=>{
       if(confirm("Vider toutes les notes ?")){
         notes = [];
-        persistAll();
+        persist();
         renderNotes();
       }
     };
@@ -2571,29 +2589,39 @@ Tâche D ! - 4`;
     btnCloseCele.onclick = closeCelebration;
     celeBack.onclick = closeCelebration;
 
+    btnReset.onclick = ()=>{
+      // reset tasks + done + baseline + timer (notes/habits/kiff/sets remain)
+      state.tasks = [];
+      state.done = [];
+      state.currentId = null;
+      state.baseline = { setAt: dayKey(), totalEth: 0 };
+      state.timer = { taskId:null, elapsedMs:0, running:false, lastTick:0 };
+      state.streak = { completedSinceCele: 0 };
+
+      persist();
+      renderAll();
+      if(drawer.classList.contains("open")) renderDrawer();
+    };
+
     // =========================
-    // Timer loop
+    // Timer loop (reliable)
     // =========================
     setInterval(()=>{
       tickTimer();
-      // only update HUD/timer frequently (cheap)
-      renderHUD();
-      persistAll();
+      renderHUD(); // cheap
+      persist();   // keeps timer stable even on reload
     }, 1000);
 
     // =========================
     // Boot
     // =========================
     function boot(){
-      // migrate theme value
+      // sanitize theme
       if(settings.theme!=="light" && settings.theme!=="dark") settings.theme="light";
-
-      // default active cats
-      if(!settings.activeCats || !Array.isArray(settings.activeCats)) settings.activeCats=["INBOX"];
 
       renderTabs();
       renderAll();
-      renderPanel();
+      renderDrawer();
     }
 
     boot();
