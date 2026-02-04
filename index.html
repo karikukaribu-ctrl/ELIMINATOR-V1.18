@@ -6,2369 +6,2894 @@
   <title>ELIMINATOR</title>
 
   <style>
-    /* =========================================================
-       THEME — vitre / futuriste soft (2 thèmes uniquement)
-       ========================================================= */
     :root{
-      --bg:#0b0f17;
-      --fg:#eaf0ff;
-      --muted:#a7b0c6;
-
-      --line: rgba(255,255,255,.12);
-      --glass: rgba(18,22,36,.62);
-      --glass2: rgba(18,22,36,.38);
-
-      --shadow: 0 18px 70px rgba(0,0,0,.50);
-      --blur: blur(16px);
-
-      --accent: #7db9ff;   /* bleu doux */
-      --accent2:#7cffc7;   /* mint doux */
-
-      --radius: 22px;
-      --radius2: 30px;
-
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
-      --centerMax: 980px;
-
-      --barH: 58px;
-      --ethH: 18px;
-    }
-
-    [data-theme="light"]{
-      --bg:#f4f7ff;
-      --fg:#0b1324;
-      --muted:#5b667d;
-
-      --line: rgba(11,19,36,.12);
-      --glass: rgba(255,255,255,.72);
+      /* Light (par défaut) — élégant, vitré, sobre */
+      --bg: #f6f8fc;
+      --fg: #0f172a;
+      --muted: rgba(15,23,42,.60);
+      --muted2: rgba(15,23,42,.42);
+      --glass: rgba(255,255,255,.60);
       --glass2: rgba(255,255,255,.46);
+      --stroke: rgba(15,23,42,.10);
+      --shadow: 0 18px 50px rgba(15,23,42,.12);
+      --shadow2: 0 10px 26px rgba(15,23,42,.10);
+      --accent: rgba(70, 140, 255, .95);
+      --accent2: rgba(40, 200, 160, .85);
 
-      --shadow: 0 16px 60px rgba(15,25,45,.18);
+      --radius: 18px;
+      --radius2: 26px;
 
-      --accent:#2a67ff;
-      --accent2:#16c784;
+      --topbarH: 64px;
+
+      --titleSize: 48px;
+      --subtitleSize: 14px;
+
+      --progressH: 34px; /* grande barre */
+      --ethH: 14px;      /* mini barre */
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
+    /* Dark */
+    [data-theme="dark"]{
+      --bg:#0b1020;
+      --fg:#eaf0ff;
+      --muted: rgba(234,240,255,.64);
+      --muted2: rgba(234,240,255,.40);
+      --glass: rgba(255,255,255,.07);
+      --glass2: rgba(255,255,255,.05);
+      --stroke: rgba(255,255,255,.11);
+      --shadow: 0 22px 60px rgba(0,0,0,.45);
+      --shadow2: 0 12px 30px rgba(0,0,0,.35);
+      --accent: rgba(120, 170, 255, .95);
+      --accent2: rgba(124,255,199,.78);
+    }
+
+    html, body{
+      height:100%;
       margin:0;
-      font-family: var(--sans);
-      color: var(--fg);
-      background:
-        radial-gradient(1000px 700px at 10% -10%, rgba(125,185,255,.10), transparent 60%),
-        radial-gradient(900px 650px at 90% 0%, rgba(124,255,199,.08), transparent 55%),
-        var(--bg);
+      background: radial-gradient(1200px 700px at 50% -10%, rgba(70,140,255,.18), transparent 60%),
+                  radial-gradient(900px 520px at 90% 0%, rgba(40,200,160,.14), transparent 62%),
+                  var(--bg);
+      color:var(--fg);
+      font-family:var(--font);
       overflow-x:hidden;
     }
 
-    /* =========================================================
-       CENTERED LAYOUT (vertical center)
-       ========================================================= */
-    .wrap{
-      min-height: 100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;   /* <<< centrage vertical réel */
-      gap: 18px;
-      max-width: var(--centerMax);
-      margin: 0 auto;
-      padding: 24px 14px 38px;
-    }
-
-    .topRow{
-      width:100%;
+    /* Top bar: tout ce qui est actionnable / HUD au-dessus */
+    .topbar{
+      position:fixed;
+      top:0; left:0; right:0;
+      height:var(--topbarH);
       display:flex;
       align-items:center;
-      justify-content:space-between;
-      gap: 10px;
+      gap:12px;
+      padding: 10px 12px;
+      z-index: 40;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: linear-gradient(to bottom, var(--glass), rgba(255,255,255,0));
+      border-bottom:1px solid var(--stroke);
     }
 
-    .group{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .topbar .left, .topbar .right{
+      display:flex; align-items:center; gap:10px;
+      min-width: 0;
+    }
+    .topbar .left{ flex:1; }
+    .topbar .right{ flex:1; justify-content:flex-end; }
 
     .btn{
-      border:1px solid var(--line);
-      background: var(--glass);
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
-      color: var(--fg);
+      appearance:none;
+      border:1px solid var(--stroke);
+      background: var(--glass2);
+      color:var(--fg);
       border-radius: 999px;
       padding: 10px 12px;
-      font-weight: 900;
+      font-size: 13px;
+      line-height: 1;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
       cursor:pointer;
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       user-select:none;
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
-      transition: transform .08s ease, background .2s ease, border-color .2s ease;
     }
-    .btn:active{ transform: translateY(1px) scale(.99); }
-    .btn.small{ padding: 8px 10px; background: var(--glass2); box-shadow:none; }
-    .btn.ghost{ background:transparent; box-shadow:none; }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0px); }
     .btn.primary{
-      border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
-      background: color-mix(in oklab, var(--accent) 10%, var(--glass));
+      border-color: rgba(70,140,255,.35);
+      background: linear-gradient(180deg, rgba(70,140,255,.18), rgba(255,255,255,0));
     }
+    .btn.danger{
+      border-color: rgba(255,90,90,.30);
+      background: linear-gradient(180deg, rgba(255,90,90,.12), rgba(255,255,255,0));
+    }
+    .btn.ghost{
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: var(--glass2);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .chip b{ color: var(--fg); font-weight: 700; }
 
     .toggle{
       display:inline-flex;
-      border:1px solid var(--line);
-      border-radius:999px;
-      overflow:hidden;
-      background:var(--glass);
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      gap:6px;
+      border:1px solid var(--stroke);
+      background: var(--glass2);
+      padding: 5px;
+      border-radius: 999px;
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
     .toggle button{
       border:0;
-      background:transparent;
-      color:var(--muted);
-      padding: 9px 12px;
+      background: transparent;
+      color: var(--muted);
+      padding: 7px 10px;
+      border-radius: 999px;
       cursor:pointer;
-      font-weight: 950;
-      font-family: var(--mono);
-      letter-spacing:.4px;
+      font-size: 12px;
     }
     .toggle button.active{
-      color:var(--fg);
-      background: color-mix(in oklab, var(--accent) 12%, transparent);
+      background: linear-gradient(180deg, rgba(70,140,255,.22), rgba(255,255,255,0));
+      color: var(--fg);
+      border: 1px solid rgba(70,140,255,.25);
     }
 
-    .hud{
-      border:1px solid var(--line);
-      background:var(--glass);
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
-      border-radius:999px;
-      padding: 9px 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    /* Main layout: top controls remain above, main content centered vertically but under topbar */
+    .main{
+      min-height: 100vh;
+      padding-top: calc(var(--topbarH) + 18px);
+      padding-bottom: 24px;
       display:flex;
-      gap: 14px;
-      align-items:center;
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      white-space:nowrap;
+      justify-content:center;
     }
-    .hud b{ color: var(--fg); font-weight: 950; }
 
-    .titleBlock{
-      width:100%;
+    .stage{
+      width: min(920px, calc(100vw - 22px));
       display:flex;
       flex-direction:column;
       align-items:center;
-      text-align:center;
-      gap: 8px;
-      margin-top: 2px;
+      gap: 16px;
+    }
+
+    /* Keep a big clean central zone */
+    .hero{
+      width: 100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap: 6px;
+      margin-top: 14px;
     }
     .title{
+      font-size: var(--titleSize);
+      letter-spacing: -0.02em;
+      font-weight: 860;
       margin:0;
-      font-weight: 980;
-      letter-spacing: .6px;
-      font-size: clamp(44px, 6vw, 86px);
-      line-height: .96;
-      text-shadow: 0 18px 50px rgba(0,0,0,.14);
+      line-height: 1.02;
+      text-align:center;
     }
     .subtitle{
       margin:0;
+      font-size: var(--subtitleSize);
       color: var(--muted);
-      font-weight: 900;
-      letter-spacing: .2px;
-      font-size: 14px;
+      text-align:center;
     }
 
-    .block{
+    /* Progress area: minimal framing (no boxes everywhere) */
+    .progressWrap{
       width:100%;
-      border:1px solid var(--line);
-      border-radius: var(--radius2);
-      background: var(--glass);
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
-      box-shadow: var(--shadow);
-      padding: 16px;
+      margin-top: 8px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap: 10px;
     }
 
-    /* Progress block is distinct, and we add spacing below */
-    .progressBlock{ margin-top: 6px; }
-    .gapAfterProgress{ margin-top: 22px; } /* <<< plus d’espace */
-
-    .barTrack{
-      height: var(--barH);
+    .progressBar{
+      width: 100%;
+      height: var(--progressH);
       border-radius: 999px;
-      border:1px solid color-mix(in oklab, var(--line) 90%, transparent);
-      background: color-mix(in oklab, var(--line) 20%, transparent);
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.15);
       overflow:hidden;
       position:relative;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
     }
-    .barFill{
+    [data-theme="dark"] .progressBar{
+      background: rgba(255,255,255,.05);
+    }
+    .progressFill{
       height:100%;
-      transform-origin:left center;
-      transform: scaleX(1);
-      background: linear-gradient(90deg,
-        color-mix(in oklab, var(--accent) 70%, transparent),
-        color-mix(in oklab, var(--accent2) 55%, transparent)
-      );
-      transition: transform .18s ease;
+      width:0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(70,140,255,.85), rgba(40,200,160,.72));
+      transition: width .30s ease;
     }
-    .barPct{
+    .progressText{
       position:absolute;
       inset:0;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-family: var(--mono);
-      font-weight: 980;
-      letter-spacing: .6px;
+      font-weight: 750;
+      font-size: 13px;
       color: rgba(255,255,255,.92);
-      text-shadow: 0 10px 30px rgba(0,0,0,.35);
+      text-shadow: 0 2px 10px rgba(0,0,0,.30);
+      mix-blend-mode: normal;
       pointer-events:none;
     }
-    [data-theme="light"] .barPct{
-      color: rgba(255,255,255,.96);
-      text-shadow: 0 12px 30px rgba(0,0,0,.34);
-    }
 
-    .taskName{
-      margin: 0;
+    .targetTitle{
+      width: 100%;
       text-align:center;
-      font-size: clamp(18px, 2.8vw, 28px);
-      font-weight: 980;
-      letter-spacing: .2px;
+      font-size: 20px;
+      font-weight: 780;
+      letter-spacing: -0.01em;
+      margin-top: 4px;
+      padding: 0 4px;
+    }
+    .targetMeta{
+      width:100%;
+      display:flex;
+      justify-content:center;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      flex-wrap: wrap;
     }
 
-    /* Etherions */
-    .ethBox{
-      margin-top: 16px;
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--glass2);
-      padding: 12px;
-    }
-    .ethTop{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin-bottom: 10px;
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .ethTop b{ color: var(--fg); }
-    .ethTrack{
+    /* Eth fragments bar (dotted segments) */
+    .ethBar{
+      width: 100%;
       height: var(--ethH);
       border-radius: 999px;
-      border:1px solid color-mix(in oklab, var(--line) 90%, transparent);
-      background: color-mix(in oklab, var(--line) 18%, transparent);
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.10);
       overflow:hidden;
       position:relative;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow2);
+    }
+    [data-theme="dark"] .ethBar{
+      background: rgba(255,255,255,.04);
     }
     .ethFill{
       height:100%;
-      transform-origin:left center;
-      transform: scaleX(1);
-      background: linear-gradient(90deg,
-        color-mix(in oklab, var(--accent) 55%, transparent),
-        color-mix(in oklab, var(--accent2) 45%, transparent)
-      );
-      transition: transform .18s ease;
+      width:0%;
+      border-radius: 999px;
+      background: rgba(70,140,255,.40);
+      transition: width .20s ease;
     }
-    .ethTicks{
+    .ethDots{
       position:absolute;
       inset:0;
-      display:flex;
-      opacity:.6;
+      background-image: radial-gradient(circle at 1px 50%, rgba(255,255,255,.55) 1px, transparent 1.5px);
+      background-size: 10px 100%;
+      opacity: .18;
       pointer-events:none;
     }
-    .ethTicks span{
-      flex:1;
-      border-right:1px dashed rgba(255,255,255,.20);
-    }
-    [data-theme="light"] .ethTicks span{
-      border-right:1px dashed rgba(11,19,36,.14);
-    }
 
-    /* Actions */
-    .actionRow{
-      margin-top: 18px;
+    .actions{
+      width:100%;
       display:flex;
-      gap: 16px;
       justify-content:center;
-      align-items:center;
-      flex-wrap:wrap;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
     }
 
-    /* Roulette bigger */
     .rouletteBtn{
-      width: 156px;
-      height: 156px;
-      border-radius: 30px;
-      border:1px solid var(--line);
-      background: var(--glass);
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
-      box-shadow: 0 18px 60px rgba(0,0,0,.18);
-      cursor:pointer;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 760;
+      border-radius: 999px;
+      border: 1px solid rgba(70,140,255,.30);
+      background: linear-gradient(180deg, rgba(70,140,255,.15), rgba(255,255,255,0));
+      box-shadow: var(--shadow);
+      min-width: 160px;
+      display:inline-flex;
       justify-content:center;
       gap: 10px;
-      user-select:none;
     }
     .rouletteWheel{
-      width: 96px;
-      height: 96px;
-      border-radius: 999px;
-      border:2px solid color-mix(in oklab, var(--accent) 55%, var(--line));
-      background:
-        conic-gradient(
-          from 0deg,
-          color-mix(in oklab, var(--accent) 22%, transparent),
-          color-mix(in oklab, var(--accent2) 20%, transparent),
-          color-mix(in oklab, var(--accent) 22%, transparent)
-        );
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.10);
-      transform: rotate(0deg);
-      position:relative;
-      display:grid;
-      place-items:center;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--fg);
+      opacity: .85;
+      position: relative;
     }
-    .rouletteWheel span{
-      font-family: var(--mono);
-      font-weight: 980;
-      letter-spacing: .9px;
-      font-size: 12px;
-      color: rgba(255,255,255,.92);
-      text-shadow: 0 10px 26px rgba(0,0,0,.35);
-      text-transform: uppercase;
-      user-select:none;
+    .rouletteWheel:after{
+      content:"";
+      position:absolute;
+      width: 2px; height: 8px;
+      background: var(--fg);
+      left: 50%;
+      top: 1px;
+      transform: translateX(-50%);
+      opacity: .85;
     }
-    [data-theme="light"] .rouletteWheel span{
-      color: rgba(255,255,255,.96);
-      text-shadow: 0 10px 26px rgba(0,0,0,.35);
+    .spin{
+      animation: spin .65s ease-in-out;
     }
-    .rouletteBtn.spinning .rouletteWheel{
-      animation: spin 900ms cubic-bezier(.2,.8,.2,1);
-    }
-    @keyframes spin{
-      0%{ transform: rotate(0deg); }
-      100%{ transform: rotate(1080deg); }
-    }
+    @keyframes spin{ from{ transform: rotate(0deg);} to{ transform: rotate(720deg);} }
 
-    /* Smash button */
     .smashBtn{
-      border:1px solid color-mix(in oklab, var(--accent) 55%, var(--line));
-      background: color-mix(in oklab, var(--accent) 8%, var(--glass));
-      border-radius: 30px;
-      padding: 18px 22px;
-      font-weight: 980;
-      letter-spacing: .2px;
-      cursor:pointer;
-      box-shadow: 0 18px 60px rgba(0,0,0,.18);
-      user-select:none;
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      font-size: 18px;
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 780;
+      border-radius: 999px;
+      border: 1px solid rgba(40,200,160,.28);
+      background: linear-gradient(180deg, rgba(40,200,160,.14), rgba(255,255,255,0));
+      box-shadow: var(--shadow);
+      min-width: 220px;
+      justify-content:center;
     }
-    .smashBtn:active{ transform: translateY(1px); }
 
-    .bottomBar{
-      margin-top: 16px;
+    /* bottom mini actions (menu + notes) near smash as user asked before */
+    .miniRow{
+      width:100%;
       display:flex;
       justify-content:center;
       gap: 10px;
-      flex-wrap:wrap;
+      margin-top: 6px;
     }
 
-    /* =========================================================
-       Drawer (wider)
-       ========================================================= */
+    /* Drawer (menu latéral) */
     .drawerOverlay{
       position:fixed;
       inset:0;
-      background: rgba(0,0,0,.26);
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 60;
       display:none;
-      z-index:60;
     }
-    [data-theme="light"] .drawerOverlay{ background: rgba(0,0,0,.12); }
-    .drawerOverlay.show{ display:block; }
-
     .drawer{
       position:fixed;
       top:0;
+      bottom:0;
       left:0;
-      height:100%;
-      width: min(560px, 94vw); /* <<< plus large */
+      width: min(420px, 92vw);
       background: var(--glass);
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
-      border-right:1px solid var(--line);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-right: 1px solid var(--stroke);
       box-shadow: var(--shadow);
-      transform: translateX(-102%);
-      transition: transform .22s ease;
-      z-index:70;
+      z-index: 61;
+      transform: translateX(-110%);
+      transition: transform .24s ease;
       display:flex;
       flex-direction:column;
     }
-    .drawerOverlay.show .drawer{ transform: translateX(0); }
+    .drawer.open{ transform: translateX(0); }
+    .drawerOverlay.open{ display:block; }
 
-    .drawerTop{
-      padding: 14px 14px 10px;
+    .drawerHead{
+      height: var(--topbarH);
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
-      border-bottom:1px solid var(--line);
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--stroke);
     }
-
-    .drawerTabs{
-      padding: 10px 14px 0;
+    .drawerHead .h{
+      font-weight: 820;
+      letter-spacing:-0.01em;
+    }
+    .tabs{
       display:flex;
-      gap:8px;
-      flex-wrap:wrap;
+      gap: 6px;
+      padding: 10px 10px 0 10px;
+      flex-wrap: wrap;
     }
     .tab{
-      border:1px solid var(--line);
+      border:1px solid var(--stroke);
       background: var(--glass2);
+      color: var(--muted);
       border-radius: 999px;
       padding: 8px 10px;
-      font-weight: 980;
-      color: var(--muted);
+      font-size: 12px;
       cursor:pointer;
       user-select:none;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .6px;
-      font-family: var(--mono);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
     .tab.active{
       color: var(--fg);
-      border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
-      background: color-mix(in oklab, var(--accent) 10%, var(--glass2));
+      border-color: rgba(70,140,255,.25);
+      background: linear-gradient(180deg, rgba(70,140,255,.18), rgba(255,255,255,0));
     }
-
-    .drawerBody{
-      padding: 12px 14px 16px;
+    .panel{
+      padding: 12px 12px 16px 12px;
       overflow:auto;
+      flex:1;
     }
 
+    /* Cards inside menu (keep minimal) */
     .card{
-      border:1px solid var(--line);
-      border-radius: var(--radius);
+      border: 1px solid var(--stroke);
       background: var(--glass2);
+      border-radius: var(--radius);
       padding: 12px;
-      margin-bottom: 12px;
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      margin-bottom: 10px;
     }
-    .cardTitle{
-      margin:0 0 10px;
-      font-weight: 980;
-      letter-spacing:.2px;
+    .card h3{
+      margin:0 0 8px 0;
+      font-size: 14px;
+      letter-spacing:-0.01em;
+    }
+    .help{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
     }
 
     textarea, input, select{
       width:100%;
-      border:1px solid var(--line);
-      background: color-mix(in oklab, var(--glass) 70%, transparent);
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      padding: 10px 10px;
+      background: rgba(255,255,255,.25);
       color: var(--fg);
-      border-radius: 16px;
-      padding: 10px 12px;
       outline:none;
-      font-family: var(--sans);
+      font-size: 13px;
+      font-family: var(--font);
+      box-sizing: border-box;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
-    textarea{ min-height: 130px; resize: vertical; }
+    [data-theme="dark"] textarea,
+    [data-theme="dark"] input,
+    [data-theme="dark"] select{
+      background: rgba(255,255,255,.07);
+    }
+    textarea{ min-height: 140px; resize: vertical; font-family: var(--mono); }
 
     .row{
       display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .row > *{ flex:1; min-width: 160px; }
-
-    .help{
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.35;
-      font-family: var(--mono);
-    }
-
-    /* Task list items */
-    .taskItem{
-      border:1px solid var(--line);
-      background: color-mix(in oklab, var(--glass) 60%, transparent);
-      border-radius: 18px;
-      padding: 10px 10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 8px;
-    }
-    .taskLeft .name{ font-weight: 980; line-height: 1.15; }
-    .taskLeft .sub{
-      margin-top: 3px;
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .taskAct{ display:flex; gap: 8px; align-items:center; flex-wrap:wrap; }
-    .iconBtn{
-      border:1px solid var(--line);
-      background: var(--glass2);
-      border-radius: 14px;
-      padding: 8px 10px;
-      cursor:pointer;
-      font-weight: 980;
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--fg);
-      user-select:none;
-    }
-    .iconBtn:active{ transform: translateY(1px); }
-
-    /* =========================================================
-       Celebration (auto-hide 15s)
-       ========================================================= */
-    .celebrateOverlay{
-      position:fixed;
-      inset:0;
-      display:none;
-      z-index:90;
-      background: rgba(0,0,0,.24);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    [data-theme="light"] .celebrateOverlay{ background: rgba(0,0,0,.10); }
-    .celebrateOverlay.show{ display:block; }
-
-    .celebrateBox{
-      position:absolute;
-      inset: 0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
-    }
-    .celebrateCard{
-      width: min(820px, 92vw);
-      border:1px solid var(--line);
-      border-radius: 34px;
-      background: var(--glass);
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
-      box-shadow: var(--shadow);
-      padding: 28px 22px;
-      text-align:center;
-    }
-    .celebrateTitle{
-      margin:0;
-      font-size: clamp(28px, 4.2vw, 52px);
-      font-weight: 990;
-      letter-spacing: .7px;
-      line-height: 1.02;
-    }
-    .celebrateSub{
-      margin: 12px 0 0;
-      font-family: var(--mono);
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 900;
-      letter-spacing: .3px;
-    }
-    .celebrateHint{
-      margin: 18px 0 0;
-      font-family: var(--mono);
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    /* =========================================================
-       Notes modal (central, not in menu)
-       ========================================================= */
-    .modalOverlay{
-      position:fixed;
-      inset:0;
-      display:none;
-      z-index:88;
-      background: rgba(0,0,0,.22);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    [data-theme="light"] .modalOverlay{ background: rgba(0,0,0,.10); }
-    .modalOverlay.show{ display:block; }
-
-    .modalBox{
-      position:absolute;
-      inset: 0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
-    }
-    .modalCard{
-      width: min(860px, 92vw);
-      border:1px solid var(--line);
-      border-radius: 34px;
-      background: var(--glass);
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
-      box-shadow: var(--shadow);
-      padding: 18px 18px 16px;
-    }
-    .modalTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom: 10px;
-    }
-    .modalTop h3{
-      margin:0;
-      font-weight: 980;
-      letter-spacing:.3px;
-    }
-    .noteGrid{
-      margin-top: 12px;
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 10px;
-    }
-    .note{
-      border:1px solid var(--line);
-      border-radius: 18px;
-      background: color-mix(in oklab, var(--glass2) 85%, transparent);
-      padding: 12px;
-    }
-    .note .stamp{
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    .note .txt{ white-space: pre-wrap; font-weight: 850; }
-
-    /* =========================================================
-       Habits — single line layout
-       ========================================================= */
-    .habitLine{
-      border:1px solid var(--line);
-      border-radius: 18px;
-      background: color-mix(in oklab, var(--glass) 60%, transparent);
-      padding: 10px;
-      margin-bottom: 10px;
-
-      display:flex;
       align-items:center;
-      gap: 10px;
-      overflow-x:auto;
     }
-    .habitName{
-      font-weight: 980;
-      white-space:nowrap;
-      min-width: 220px;
-    }
-    .habitChecks{
-      display:flex;
-      gap: 8px;
-      align-items:center;
-      flex-wrap:nowrap;
-    }
-    .check{
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
-      border:1px solid var(--line);
-      background: var(--glass2);
-      cursor:pointer;
-      display:grid;
-      place-items:center;
-      user-select:none;
-      font-family: var(--mono);
-      font-weight: 980;
-      color: var(--fg);
-      flex:0 0 auto;
-    }
-    .check.on{
-      background: color-mix(in oklab, var(--accent) 12%, var(--glass2));
-      border-color: color-mix(in oklab, var(--accent) 40%, var(--line));
-    }
-    .habitBtns{
-      margin-left:auto;
-      display:flex;
-      gap:8px;
-      flex:0 0 auto;
-    }
+    .row > *{ flex:1; }
 
-    /* =========================================================
-       Calendar view
-       ========================================================= */
-    .calWrap{
-      display:grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-    }
-    .calCell{
-      border:1px solid var(--line);
-      border-radius: 16px;
-      background: color-mix(in oklab, var(--glass) 55%, transparent);
-      padding: 10px;
-      min-height: 76px;
+    .list{
       display:flex;
       flex-direction:column;
       gap: 6px;
+      margin-top: 8px;
     }
-    .calDay{
-      font-family: var(--mono);
-      color: var(--muted);
-      font-size: 12px;
+    .item{
       display:flex;
-      justify-content:space-between;
       align-items:center;
-      gap:8px;
+      gap: 10px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.22);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
-    .calStats{
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      line-height:1.35;
+    [data-theme="dark"] .item{ background: rgba(255,255,255,.06); }
+    .item .t{
+      flex:1;
+      min-width:0;
     }
-    .calBadge{
-      font-family: var(--mono);
+    .item .t .name{
+      font-size: 13px;
+      font-weight: 720;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+    .item .t .sub{
       font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border:1px solid var(--line);
-      background: var(--glass2);
-      color: var(--fg);
-      white-space:nowrap;
+      color: var(--muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
     }
 
-    /* =========================================================
-       Focus mode: keep HUD (your request)
-       ========================================================= */
-    [data-focus="1"] .subtitle{ display:none; }
-    [data-focus="1"] .bottomBar{ display:none; }
-    [data-focus="1"] .drawerOverlay.show{ display:none; } /* optional safety */
-    [data-focus="1"] .focusExit{ display:flex; justify-content:center; margin-top: 14px; }
-    .focusExit{ display:none; }
+    .iconBtn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.18);
+      color: var(--fg);
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      box-shadow: none;
+      user-select:none;
+      font-size: 13px;
+    }
+    [data-theme="dark"] .iconBtn{ background: rgba(255,255,255,.06); }
 
-    /* Mobile tightening */
+    /* Focus mode: hide everything except essentials but keep HUD */
+    .focus .drawerOverlay,
+    .focus .drawer{
+      display:none !important;
+    }
+    .focus .miniRow{ display:none; } /* optional; you said keep HUD; menu can remain top */
+    .focus .topbar .left .btn.menuBtn{ display:none; } /* keep top minimal */
+    .focus .topbar .right .btn.resetBtn{ display:none; } /* you can comment this if you want */
+    .focus .subtitle{ display:none; }
+
+    /* Notes modal */
+    .modalOverlay{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 80;
+      display:none;
+    }
+    .modal{
+      position:fixed;
+      left:50%;
+      top:50%;
+      transform: translate(-50%, -50%);
+      width: min(680px, 92vw);
+      max-height: 82vh;
+      overflow:auto;
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      z-index: 81;
+      display:none;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .modalHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .modalHead .mh{
+      font-weight: 840;
+      letter-spacing:-0.01em;
+    }
+
+    /* Celebration overlay */
+    .celebrateOverlay{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 90;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+    }
+    .celebrateBox{
+      width: min(720px, 92vw);
+      border-radius: var(--radius2);
+      border: 1px solid var(--stroke);
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      padding: 18px 16px;
+      text-align:center;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    .celebrateBox .big{
+      font-size: 18px;
+      font-weight: 880;
+      letter-spacing:-0.01em;
+      margin:0 0 8px 0;
+    }
+    .celebrateBox .small{
+      margin:0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* Confetti canvas */
+    #confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index: 89;
+      display:none;
+    }
+
+    /* Calendar */
+    .calGrid{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .calCell{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.18);
+      border-radius: 14px;
+      padding: 8px;
+      min-height: 52px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display:flex;
+      flex-direction:column;
+      gap: 4px;
+    }
+    [data-theme="dark"] .calCell{ background: rgba(255,255,255,.05); }
+    .calCell .d{
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .calCell .k{
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* responsive */
     @media (max-width: 520px){
-      :root{ --barH: 52px; }
-      .rouletteBtn{ width: 148px; height: 148px; }
-      .rouletteWheel{ width: 90px; height: 90px; }
-      .smashBtn{ width:100%; justify-content:center; }
-      .topRow{ justify-content:center; }
-      .hud{ gap: 10px; }
-      .habitName{ min-width: 180px; }
+      :root{
+        --titleSize: 36px;
+        --progressH: 30px;
+      }
+      .rouletteBtn{ min-width: 150px; }
+      .smashBtn{ min-width: 200px; }
+      .topbar{ padding: 10px 10px; }
+      .chip{ display:none; } /* keep top clean on small screens */
     }
   </style>
 </head>
 
-<body data-theme="light" data-focus="0">
+<body data-theme="light">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="left">
+      <button class="btn menuBtn" id="btnMenu">Menu</button>
 
-  <!-- Celebration -->
-  <div class="celebrateOverlay" id="celebrateOverlay" aria-hidden="true">
-    <div class="celebrateBox">
-      <div class="celebrateCard">
-        <h2 class="celebrateTitle" id="celebrateTitle">VICTOIRE</h2>
-        <p class="celebrateSub" id="celebrateSub">+1 éthorion</p>
-        <p class="celebrateHint">Clique pour fermer (auto: 15s).</p>
+      <div class="toggle" title="Thème">
+        <button id="btnLight" class="active">Clair</button>
+        <button id="btnDark">Sombre</button>
       </div>
+
+      <button class="btn" id="btnFocus">Focus</button>
+      <button class="btn resetBtn danger" id="btnReset">Reset</button>
+    </div>
+
+    <div class="right">
+      <div class="chip" id="hudTasks"></div>
+      <div class="chip" id="hudEth"></div>
+      <div class="chip" id="hudDone"></div>
+      <div class="chip" id="hudTimer"></div>
     </div>
   </div>
 
-  <!-- Notes modal -->
-  <div class="modalOverlay" id="notesOverlay" aria-hidden="true">
-    <div class="modalBox">
-      <div class="modalCard">
-        <div class="modalTop">
-          <h3>Notes</h3>
-          <div class="group">
-            <button class="btn small" id="btnExportNotes">Exporter</button>
-            <button class="btn small" id="btnCloseNotes">Fermer</button>
-          </div>
-        </div>
-        <textarea id="noteText" placeholder="Écris ici. (Persistant : ne disparaît pas au reset)"></textarea>
-        <div class="row" style="margin-top:10px;">
-          <button class="btn primary" id="btnAddNote">Ajouter</button>
-          <button class="btn" id="btnClearNotes">Effacer toutes</button>
-        </div>
-        <div class="noteGrid" id="notesGrid"></div>
+  <!-- DRAWER -->
+  <div class="drawerOverlay" id="drawerOverlay"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawerHead">
+      <div class="h">ELIMINATOR</div>
+      <button class="btn ghost" id="btnCloseDrawer">Fermer</button>
+    </div>
+
+    <div class="tabs" id="tabs"></div>
+    <div class="panel" id="panel"></div>
+  </aside>
+
+  <!-- NOTES MODAL -->
+  <div class="modalOverlay" id="notesOverlay"></div>
+  <div class="modal" id="notesModal">
+    <div class="modalHead">
+      <div class="mh">Notes</div>
+      <div class="row" style="flex:0; gap:8px;">
+        <button class="btn" id="btnExportNotes">Exporter</button>
+        <button class="btn danger" id="btnCloseNotes">Fermer</button>
       </div>
+    </div>
+
+    <div class="card">
+      <h3>Ajouter une note</h3>
+      <textarea id="noteInput" placeholder="Écris ici. (Conservé même si tu reset les tâches.)"></textarea>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn primary" id="btnAddNote">Ajouter</button>
+        <button class="btn" id="btnClearNoteInput">Effacer</button>
+      </div>
+      <p class="help" style="margin-top:10px;">
+        Les notes sont datées automatiquement et restent en mémoire.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Historique des notes</h3>
+      <div class="list" id="notesList"></div>
     </div>
   </div>
 
-  <!-- Drawer -->
-  <div class="drawerOverlay" id="drawerOverlay">
-    <aside class="drawer" role="dialog" aria-modal="true">
-      <div class="drawerTop">
-        <button class="btn small" id="btnDrawerClose">Fermer</button>
-        <div class="toggle" title="Thème">
-          <button id="themeLight" class="active">Clair</button>
-          <button id="themeDark">Sombre</button>
-        </div>
-      </div>
-
-      <div class="drawerTabs" id="drawerTabs"></div>
-
-      <div class="drawerBody">
-        <div id="drawerPanels"></div>
-      </div>
-    </aside>
+  <!-- CELEBRATION -->
+  <canvas id="confetti"></canvas>
+  <div class="celebrateOverlay" id="celebrateOverlay">
+    <div class="celebrateBox" id="celebrateBox">
+      <p class="big" id="celebrateBig">Victoire</p>
+      <p class="small" id="celebrateSmall">…</p>
+    </div>
   </div>
 
-  <div class="wrap">
-    <div class="topRow">
-      <div class="group">
-        <button class="btn" id="btnMenu">Menu</button>
-        <button class="btn" id="btnReset">Reset</button>
-        <button class="btn" id="btnFocus">Focus</button>
+  <!-- MAIN -->
+  <div class="main">
+    <div class="stage">
+
+      <div class="hero">
+        <h1 class="title">ELIMINATOR</h1>
+        <p class="subtitle">Dégomme toutes les tâches. Dégomme tous les éthorions en cours.</p>
       </div>
 
-      <div class="group">
-        <div class="hud" id="hud">
-          <span>Tâches <b id="hudTasks">0/0</b></span>
-          <span>Éthorions <b id="hudEth">0/0</b></span>
-          <span>Faits <b id="hudDone">0</b></span>
-          <span>Temps <b id="hudTimer">00:00</b></span>
+      <div class="progressWrap">
+        <div class="progressBar" aria-label="Progression tâches">
+          <div class="progressFill" id="taskFill"></div>
+          <div class="progressText" id="taskPct">—</div>
         </div>
-      </div>
-    </div>
 
-    <div class="titleBlock">
-      <h1 class="title">ELIMINATOR</h1>
-      <p class="subtitle">Dégomme toutes les tâches • Dégomme tous les éthorions en cours</p>
-    </div>
+        <div style="height:10px;"></div>
 
-    <section class="block progressBlock" aria-label="Barre de progression globale">
-      <div class="barTrack">
-        <div class="barFill" id="bigFill"></div>
-        <div class="barPct" id="bigPct">100%</div>
-      </div>
-    </section>
+        <div class="targetTitle" id="currentTitle">Aucune tâche</div>
+        <div class="targetMeta" id="currentMeta"></div>
 
-    <div class="gapAfterProgress"></div>
-
-    <section class="block" aria-label="Tâche en cours">
-      <h2 class="taskName" id="taskName">Aucune tâche</h2>
-
-      <div class="ethBox" id="ethBox">
-        <div class="ethTop">
-          <div>Éthorions <b id="ethNow">0</b>/<b id="ethStart">0</b></div>
-          <div>Temps restant <b id="ethMinutes">0</b> min</div>
-        </div>
-        <div class="ethTrack">
+        <div class="ethBar" aria-label="Éthorions">
           <div class="ethFill" id="ethFill"></div>
-          <div class="ethTicks" id="ethTicks"></div>
+          <div class="ethDots"></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn rouletteBtn" id="btnRoulette">
+            <span class="rouletteWheel" id="wheel"></span>
+            <span>Roulette</span>
+          </button>
+
+          <button class="btn smashBtn" id="btnSmash">🧨 Dégommer 1 éthorion</button>
+        </div>
+
+        <div class="miniRow">
+          <button class="btn" id="btnNotes">Notes</button>
+          <button class="btn" id="btnQuickMenu">Menu</button>
         </div>
       </div>
 
-      <div class="actionRow">
-        <button class="rouletteBtn" id="btnRoulette" aria-label="Roulette">
-          <div class="rouletteWheel" id="rouletteWheel"><span>ROULETTE</span></div>
-        </button>
-
-        <button class="smashBtn" id="btnSmash" aria-label="Dégommer un éthorion">
-          <span>🧨</span>
-          <span>Dégommer 1 éthorion</span>
-        </button>
-      </div>
-
-      <div class="bottomBar">
-        <button class="btn small" id="btnBottomMenu">Menu</button>
-        <button class="btn small" id="btnBottomNote">Note</button>
-        <button class="btn small ghost" id="btnBottomFocus">Focus</button>
-      </div>
-
-      <div class="focusExit" id="focusExit">
-        <button class="btn primary" id="btnExitFocus">Quitter Focus</button>
-      </div>
-    </section>
+    </div>
   </div>
 
-  <script>
-  (() => {
-    /* =========================
-       Storage keys
-       ========================= */
-    const K = {
-      state: "ELIMINATOR_STATE_V4",
-      settings: "ELIMINATOR_SETTINGS_V4",
-      notes: "ELIMINATOR_NOTES_V4",
-      history: "ELIMINATOR_HISTORY_V4",
-      habits: "ELIMINATOR_HABITS_V4",
-      qf: "ELIMINATOR_QUI_FONCE_V4"
-    };
+<script>
+/* ============================================================
+   ELIMINATOR — Single file, tout inclus
+   - Thème clair par défaut + toggle rapide en topbar
+   - Menu latéral masquable + onglets
+   - Interface principale épurée + centrée (sous topbar)
+   - Progression (barre tasks + barre éthorions)
+   - Roulette (gros bouton + animation)
+   - Smash (🧨) + confettis toujours en fin de tâche
+   - Célébration popup surprise (pilotée fatigue/motivation)
+   - Inbox import: catégorie = ligne en MAJUSCULES
+     tâches sous la catégorie; option "- N" pour éthorions
+   - Liste: éditer / monter / descendre / supprimer / marquer "déjà dégommé"
+   - Kiffance (banque) 4 catégories: 5, 10, 15, 25+ minutes + refresh
+   - Habitudes: lignes + cases (10) + reset/suppr + report
+   - Notes: modal central, persistantes (même si reset tâches)
+   - Sets: prédéfinis Hôpital / Consultation + N patients, ordre strict, priorité
+   - Historique + Rapport + export (JSON)
+============================================================ */
 
-    /* =========================
-       Tabs (drawer) — regrouped
-       ========================= */
-    const TAB_DEFS = [
-      { key:"inbox",   label:"Inbox" },
-      { key:"liste",   label:"Liste" },
-      { key:"qf",      label:"Qui fonce" },
-      { key:"habits",  label:"Habitudes" },
-      { key:"hist",    label:"Hist" },
-      { key:"rapport", label:"Rapport" },
-      { key:"params",  label:"Param" }
-    ];
+/* =========================
+   Storage keys + Defaults
+   ========================= */
+const K = {
+  state: "ELIMINATOR_STATE_V5",
+  settings: "ELIMINATOR_SETTINGS_V5",
+  notes: "ELIMINATOR_NOTES_V5",
+  history: "ELIMINATOR_HISTORY_V5",
+  habits: "ELIMINATOR_HABITS_V5",
+  kiff: "ELIMINATOR_KIFFANCE_V5",
+  sets: "ELIMINATOR_SETS_V5"
+};
 
-    /* =========================
-       Defaults
-       ========================= */
-    const DEFAULTS = {
-      theme: "light",
-      focus: 0,
-      ethMinutesPer: 5,
-      sortMode: "roulette",      // roulette | order | alpha | chrono
-      activeCats: null
-    };
+const DEFAULTS = {
+  theme: "light",        // light default
+  focus: 0,
+  ethMinutesPer: 5,
+  sortMode: "roulette",  // roulette | order
+  activeCats: null,      // null => toutes
 
-    const DEFAULT_HABITS = {
-      slots: 8,
-      habits: [],
-      marksByDay: {}
-    };
+  // Célébrations (surprise)
+  celebrationMode: "surprise",   // off | surprise | frequent
+  motivation: "normal",          // low | normal | high
+  fatigue: "medium",             // low | medium | high
+  celebrationMinGapTasks: 2,
+  celebrationMaxGapTasks: 3,
+  celebrationAutoHideMs: 9000,
+  celebrationChanceMin: 0.10,
+  celebrationChanceMax: 0.55
+};
 
-    /* =========================
-       Qui fonce — preloaded bank + user additions
-       - preloaded is "hidden": UI shows only rotating suggestions.
-       ========================= */
-    const PRELOADED_QF = {
-      now: [
-        {t:"Boire un verre d’eau", e:1},
-        {t:"Respirer 60 secondes", e:1},
-        {t:"Ouvrir la fenêtre 2 minutes", e:1},
-        {t:"Ranger 10 objets visibles", e:2},
-        {t:"Écrire 1 phrase de plan", e:1},
-        {t:"Mettre un minuteur 5 min et démarrer", e:1},
-        {t:"Supprimer 5 notifications", e:1},
-        {t:"Nettoyer l’écran (micro-rituel)", e:1}
-      ],
-      today: [
-        {t:"Préparer un mail important (brouillon)", e:3},
-        {t:"Appeler une personne clé", e:2},
-        {t:"Faire 10 minutes de tri (docs / bureau)", e:2},
-        {t:"Planifier 3 blocs de 20 minutes", e:2},
-        {t:"Remplir une tâche administrative rapide", e:2},
-        {t:"Préparer une micro-liste de demain", e:2}
-      ],
-      week: [
-        {t:"Définir 1 objectif clair de la semaine", e:2},
-        {t:"Bloquer 2 créneaux focus calendrier", e:2},
-        {t:"Faire un nettoyage de liste (supprimer/archiver)", e:3},
-        {t:"Mettre à jour un document central (résumé)", e:3}
-      ],
-      month: [
-        {t:"Choisir 1 projet et 1 anti-projet (ce mois)", e:3},
-        {t:"Faire une rétrospective 15 minutes", e:3},
-        {t:"Préparer une amélioration de ton workflow", e:3}
-      ]
-    };
+const DEFAULT_SETS = [
+  {
+    id:"set_hosp",
+    name:"Hôpital — tour de salle",
+    type:"hospital",
+    steps:[
+      { label:"Voir patient", eth:1 },
+      { label:"Note", eth:1 },
+      { label:"Traitement", eth:1 },
+      { label:"Dossier (encoder/réviser)", eth:2 }
+    ]
+  },
+  {
+    id:"set_cons",
+    name:"Consultation — flow",
+    type:"consult",
+    steps:[
+      { label:"Accueil / objectif", eth:1 },
+      { label:"Anamnèse ciblée", eth:2 },
+      { label:"Plan / traitement", eth:2 },
+      { label:"Note / dossier", eth:2 }
+    ]
+  }
+];
 
-    const DEFAULT_CELEBRATIONS = [
-      "TRIOMPHE ABSURDE. L’HISTOIRE TE REGARDE.",
-      "VICTOIRE IMPÉRIALE. LA LISTE A PEUR.",
-      "CONQUÊTE TOTALE. LA PRODUCTIVITÉ PLEURE DE JOIE.",
-      "TU ES UN CONQUISTADOR DU QUOTIDIEN.",
-      "RÈGNE ABSOLU. LES TÂCHES SE RENDENT SANS CONDITIONS.",
-      "DÉMOLITION NOBLE. ON T’INSCRIT DANS LA LÉGENDE.",
-      "GLOIRE. HONNEUR. ET UN BRIN DE DÉMESURE.",
-      "C’EST TROP EFFICACE POUR ÊTRE LÉGAL (MAIS ON NE DIT RIEN).",
-      "LE CHAOS RECULE. TU AVANCES. MAGISTRAL.",
-      "TON NOM SERA CHUCHOTÉ PAR LES CHECKLISTS ANCIENNES."
-    ];
+const DEFAULT_KIFF = {
+  "5": [
+    "Boire un verre d’eau. Respiration lente 60 secondes.",
+    "Ranger une surface (30 secondes chrono).",
+    "Écrire 1 phrase: ce que je fais maintenant."
+  ],
+  "10": [
+    "Marche 5 minutes. Retour. Hydratation.",
+    "Micro-étirement nuque/épaules (sans violence).",
+    "Nettoyer le bureau (version minimaliste)."
+  ],
+  "15": [
+    "Pause active: marche + lumière + eau.",
+    "Mini-reset mental: 3 priorités, 1 action.",
+    "Organisation éclair: ouvrir le doc, préparer la page."
+  ],
+  "25": [
+    "Pause longue: bouger, respirer, manger un truc simple.",
+    "Récupération: musique + marche + eau.",
+    "Reset posture + planning rapide (sans perfectionnisme)."
+  ]
+};
 
-    /* =========================
-       Utils
-       ========================= */
-    const uid = () => Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
-    const nowISO = () => new Date().toISOString();
-    const todayKey = () => new Date().toISOString().slice(0,10);
-    const clamp = (n,a,b) => Math.max(a, Math.min(b, n));
-    const fmtMMSS = (ms) => {
-      const s = Math.floor(ms/1000);
-      const m = Math.floor(s/60);
-      const r = s % 60;
-      return String(m).padStart(2,"0")+":"+String(r).padStart(2,"0");
-    };
-    const escapeHTML = (s)=>String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+/* =========================
+   State model
+   ========================= */
+let settings = loadJSON(K.settings, null) || {...DEFAULTS};
+settings = {...DEFAULTS, ...settings};
 
-    function loadJSON(key, fallback){
-      try{
-        const raw = localStorage.getItem(key);
-        if(!raw) return fallback;
-        return JSON.parse(raw);
-      }catch(e){ return fallback; }
+let state = loadJSON(K.state, null);
+if(!state){
+  state = {
+    tasks: [],
+    done: [],
+    currentId: null,
+    startCounts: { tasks: 0, eth: 0 },
+    timer: { taskId: null, elapsedMs: 0, running: false, startedAt: null },
+    streak: { tasksSincePopup: 0, tasksSinceStart: 0 },
+    activeSet: null, // { setId, setName, queueTaskIds, startedAt }
+    dayStartISO: todayISO()
+  };
+}
+state.timer = state.timer || { taskId:null, elapsedMs:0, running:false, startedAt:null };
+state.streak = state.streak || { tasksSincePopup:0, tasksSinceStart:0 };
+state.activeSet = state.activeSet || null;
+state.startCounts = state.startCounts || { tasks:0, eth:0 };
+state.done = state.done || [];
+state.tasks = state.tasks || [];
+state.dayStartISO = state.dayStartISO || todayISO();
+
+let notes = loadJSON(K.notes, []) || [];
+let history = loadJSON(K.history, []) || [];
+let habits = loadJSON(K.habits, []) || []; // {id,name,boxes:[bool*10], dayISO}
+let kiffBank = loadJSON(K.kiff, null) || structuredClone(DEFAULT_KIFF);
+let sets = loadJSON(K.sets, null) || structuredClone(DEFAULT_SETS);
+
+persistAll();
+
+/* =========================
+   DOM refs
+   ========================= */
+const el = (id)=>document.getElementById(id);
+
+const drawer = el("drawer");
+const drawerOverlay = el("drawerOverlay");
+const btnMenu = el("btnMenu");
+const btnQuickMenu = el("btnQuickMenu");
+const btnCloseDrawer = el("btnCloseDrawer");
+
+const tabsEl = el("tabs");
+const panelEl = el("panel");
+
+const btnLight = el("btnLight");
+const btnDark = el("btnDark");
+const btnFocus = el("btnFocus");
+const btnReset = el("btnReset");
+
+const hudTasks = el("hudTasks");
+const hudEth = el("hudEth");
+const hudDone = el("hudDone");
+const hudTimer = el("hudTimer");
+
+const taskFill = el("taskFill");
+const taskPct = el("taskPct");
+const currentTitle = el("currentTitle");
+const currentMeta = el("currentMeta");
+const ethFill = el("ethFill");
+
+const btnRoulette = el("btnRoulette");
+const wheel = el("wheel");
+const btnSmash = el("btnSmash");
+
+const btnNotes = el("btnNotes");
+const notesOverlay = el("notesOverlay");
+const notesModal = el("notesModal");
+const btnCloseNotes = el("btnCloseNotes");
+const btnAddNote = el("btnAddNote");
+const btnClearNoteInput = el("btnClearNoteInput");
+const btnExportNotes = el("btnExportNotes");
+const noteInput = el("noteInput");
+const notesList = el("notesList");
+
+const celebrateOverlay = el("celebrateOverlay");
+const celebrateBig = el("celebrateBig");
+const celebrateSmall = el("celebrateSmall");
+const confettiCanvas = el("confetti");
+const confettiCtx = confettiCanvas.getContext("2d");
+
+let celebrateTimer = null;
+let tickTimer = null;
+
+/* =========================
+   Drawer Tabs
+   ========================= */
+const TAB_DEFS = [
+  { key:"inbox",   label:"Inbox" },
+  { key:"liste",   label:"Liste" },
+  { key:"sets",    label:"Sets" },
+  { key:"kiff",    label:"Kiffance" },
+  { key:"habits",  label:"Habitudes" },
+  { key:"hist",    label:"Hist" },
+  { key:"rapport", label:"Rapport" },
+  { key:"params",  label:"Param" }
+];
+
+let activeTab = "inbox";
+
+/* =========================
+   Utilities
+   ========================= */
+function nowISO(){ return new Date().toISOString(); }
+function todayISO(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const da = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${da}`;
+}
+function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+function uid(){
+  return Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2);
+}
+function saveJSON(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+function loadJSON(k, fallback){
+  try{
+    const raw = localStorage.getItem(k);
+    if(!raw) return fallback;
+    return JSON.parse(raw);
+  }catch(e){ return fallback; }
+}
+function persistAll(){
+  saveJSON(K.settings, settings);
+  saveJSON(K.state, state);
+  saveJSON(K.notes, notes);
+  saveJSON(K.history, history);
+  saveJSON(K.habits, habits);
+  saveJSON(K.kiff, kiffBank);
+  saveJSON(K.sets, sets);
+}
+function minutesFromEth(eth){ return (eth||0) * (settings.ethMinutesPer || 5); }
+function fmtMin(min){
+  min = Math.round(min);
+  if(min < 60) return `${min} min`;
+  const h = Math.floor(min/60);
+  const m = min%60;
+  return `${h}h${String(m).padStart(2,"0")}`;
+}
+function fmtTime(ms){
+  const s = Math.floor(ms/1000);
+  const mm = Math.floor(s/60);
+  const ss = s%60;
+  return `${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+}
+function isAllCaps(line){
+  const t = (line||"").trim();
+  if(!t) return false;
+  const hasLetter = /[A-ZÀ-ÖØ-Ý]/.test(t);
+  const hasLower = /[a-zà-öø-ÿ]/.test(t);
+  return hasLetter && !hasLower && t.length>=3;
+}
+function parseTaskLine(line){
+  // "Tâche - 3" => ethStart=3
+  // Also accept: "Tâche 3" at end (space number)
+  let t = line.trim();
+  if(!t) return null;
+
+  let eth = null;
+  // match "- N"
+  let m = t.match(/\s*-\s*(\d+)\s*$/);
+  if(m){
+    eth = parseInt(m[1],10);
+    t = t.replace(/\s*-\s*\d+\s*$/,"").trim();
+  }else{
+    // match " ... N" at end
+    m = t.match(/\s+(\d+)\s*$/);
+    if(m){
+      eth = parseInt(m[1],10);
+      // only treat as eth if preceding char isn't part of an ID like "A1"
+      t = t.replace(/\s+\d+\s*$/,"").trim();
     }
-    function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+  }
 
-    function shuffle(arr){
-      const a = [...arr];
-      for(let i=a.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [a[i],a[j]] = [a[j],a[i]];
-      }
-      return a;
-    }
+  eth = clamp((Number.isFinite(eth)?eth:1), 1, 999);
+  return { title: t, eth };
+}
+function uniq(arr){
+  return [...new Set(arr)];
+}
+function safeText(s){
+  return (s||"").replace(/[<>]/g, "");
+}
 
-    /* =========================
-       State
-       ========================= */
-    let settings = { ...DEFAULTS, ...(loadJSON(K.settings, null) || {}) };
+/* =========================
+   Theme + Focus
+   ========================= */
+function applyTheme(){
+  document.body.setAttribute("data-theme", settings.theme);
+  btnLight.classList.toggle("active", settings.theme==="light");
+  btnDark.classList.toggle("active", settings.theme==="dark");
+}
+btnLight.onclick = () => { settings.theme="light"; persistAll(); applyTheme(); renderAll(); };
+btnDark.onclick = () => { settings.theme="dark"; persistAll(); applyTheme(); renderAll(); };
 
-    // task: {id,title,cat,ethStart,ethLeft,createdAt,pinned,doneAt?}
-    let state = loadJSON(K.state, null);
-    if(!state){
-      state = {
-        tasks: [],
-        done: [],
-        currentId: null,
-        startCounts: { tasks: 0, eth: 0 },
-        timer: { taskId: null, elapsedMs: 0, running: false }
-      };
-    }
+function applyFocus(){
+  document.body.classList.toggle("focus", !!settings.focus);
+  btnFocus.textContent = settings.focus ? "Quitter focus" : "Focus";
+}
+btnFocus.onclick = () => {
+  settings.focus = settings.focus ? 0 : 1;
+  persistAll();
+  applyFocus();
+};
 
-    let notes = loadJSON(K.notes, []);
-    let history = loadJSON(K.history, {});
-    let habits = { ...DEFAULT_HABITS, ...(loadJSON(K.habits, null) || {}) };
+/* =========================
+   Drawer
+   ========================= */
+function openDrawer(){
+  drawer.classList.add("open");
+  drawerOverlay.classList.add("open");
+}
+function closeDrawer(){
+  drawer.classList.remove("open");
+  drawerOverlay.classList.remove("open");
+}
+btnMenu.onclick = openDrawer;
+btnQuickMenu.onclick = openDrawer;
+btnCloseDrawer.onclick = closeDrawer;
+drawerOverlay.onclick = closeDrawer;
 
-    // Qui fonce additions (user can add, but preloaded exists anyway)
-    let qfUser = loadJSON(K.qf, null);
-    if(!qfUser){
-      qfUser = { now:[], today:[], week:[], month:[] };
-    }
+/* =========================
+   Notes modal
+   ========================= */
+function openNotes(){
+  notesOverlay.style.display = "block";
+  notesModal.style.display = "block";
+  renderNotes();
+}
+function closeNotes(){
+  notesOverlay.style.display = "none";
+  notesModal.style.display = "none";
+}
+btnNotes.onclick = openNotes;
+btnCloseNotes.onclick = closeNotes;
+notesOverlay.onclick = closeNotes;
 
-    function ensureDay(){
-      const k = todayKey();
-      if(!history[k]) history[k] = { ethSmashed:0, tasksDone:0, msWorked:0 };
-      if(!habits.marksByDay[k]) habits.marksByDay[k] = {};
-    }
+btnAddNote.onclick = () => {
+  const txt = (noteInput.value||"").trim();
+  if(!txt) return;
+  notes.unshift({ id: uid(), ts: nowISO(), text: txt });
+  noteInput.value = "";
+  persistAll();
+  renderNotes();
+};
+btnClearNoteInput.onclick = () => { noteInput.value=""; };
 
-    /* =========================
-       DOM
-       ========================= */
-    const body = document.body;
+btnExportNotes.onclick = () => {
+  downloadJSON(`eliminator-notes-${todayISO()}.json`, notes);
+};
 
-    const btnMenu = document.getElementById("btnMenu");
-    const btnBottomMenu = document.getElementById("btnBottomMenu");
-    const btnBottomNote = document.getElementById("btnBottomNote");
-    const btnBottomFocus = document.getElementById("btnBottomFocus");
+function renderNotes(){
+  notesList.innerHTML = "";
+  if(!notes.length){
+    const p = document.createElement("p");
+    p.className = "help";
+    p.textContent = "Aucune note.";
+    notesList.appendChild(p);
+    return;
+  }
+  for(const n of notes){
+    const d = document.createElement("div");
+    d.className = "item";
+    const left = document.createElement("div");
+    left.className = "t";
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = new Date(n.ts).toLocaleString();
+    const sub = document.createElement("div");
+    sub.className = "sub";
+    sub.textContent = n.text;
+    left.appendChild(name);
+    left.appendChild(sub);
 
-    const btnReset = document.getElementById("btnReset");
-    const btnFocus = document.getElementById("btnFocus");
-    const btnExitFocus = document.getElementById("btnExitFocus");
-
-    const hudTasks = document.getElementById("hudTasks");
-    const hudEth = document.getElementById("hudEth");
-    const hudDone = document.getElementById("hudDone");
-    const hudTimer = document.getElementById("hudTimer");
-
-    const bigFill = document.getElementById("bigFill");
-    const bigPct = document.getElementById("bigPct");
-
-    const taskNameEl = document.getElementById("taskName");
-
-    const ethNowEl = document.getElementById("ethNow");
-    const ethStartEl = document.getElementById("ethStart");
-    const ethMinutesEl = document.getElementById("ethMinutes");
-    const ethFill = document.getElementById("ethFill");
-    const ethTicks = document.getElementById("ethTicks");
-
-    const btnRoulette = document.getElementById("btnRoulette");
-    const rouletteWheel = document.getElementById("rouletteWheel");
-    const btnSmash = document.getElementById("btnSmash");
-
-    const drawerOverlay = document.getElementById("drawerOverlay");
-    const btnDrawerClose = document.getElementById("btnDrawerClose");
-    const drawerTabs = document.getElementById("drawerTabs");
-    const drawerPanels = document.getElementById("drawerPanels");
-
-    const themeLight = document.getElementById("themeLight");
-    const themeDark = document.getElementById("themeDark");
-
-    // Celebration
-    const celebrateOverlay = document.getElementById("celebrateOverlay");
-    const celebrateTitle = document.getElementById("celebrateTitle");
-    const celebrateSub = document.getElementById("celebrateSub");
-    let celebrateTimer = null;
-
-    // Notes modal
-    const notesOverlay = document.getElementById("notesOverlay");
-    const btnCloseNotes = document.getElementById("btnCloseNotes");
-    const btnAddNote = document.getElementById("btnAddNote");
-    const btnClearNotes = document.getElementById("btnClearNotes");
-    const btnExportNotes = document.getElementById("btnExportNotes");
-    const noteText = document.getElementById("noteText");
-    const notesGrid = document.getElementById("notesGrid");
-
-    /* =========================
-       Theme / Focus
-       ========================= */
-    function setTheme(theme){
-      settings.theme = theme;
-      body.setAttribute("data-theme", theme);
-      themeLight.classList.toggle("active", theme==="light");
-      themeDark.classList.toggle("active", theme==="dark");
-      saveJSON(K.settings, settings);
-    }
-    function setFocus(on){
-      settings.focus = on ? 1 : 0;
-      body.setAttribute("data-focus", settings.focus);
-      saveJSON(K.settings, settings);
-    }
-
-    /* =========================
-       Drawer
-       ========================= */
-    function buildDrawer(){
-      drawerTabs.innerHTML = "";
-      drawerPanels.innerHTML = "";
-
-      for(const t of TAB_DEFS){
-        const tab = document.createElement("div");
-        tab.className = "tab";
-        tab.textContent = t.label;
-        tab.dataset.key = t.key;
-        tab.onclick = () => selectDrawerTab(t.key);
-        drawerTabs.appendChild(tab);
-
-        const panel = document.createElement("div");
-        panel.id = "panel-"+t.key;
-        panel.style.display = "none";
-        drawerPanels.appendChild(panel);
-      }
-      selectDrawerTab("inbox");
-    }
-
-    function selectDrawerTab(key){
-      [...drawerTabs.children].forEach(el => el.classList.toggle("active", el.dataset.key===key));
-      [...drawerPanels.children].forEach(p => p.style.display = (p.id==="panel-"+key) ? "" : "none");
-      renderDrawerPanel(key);
-    }
-
-    function openDrawer(tabKey="inbox"){
-      drawerOverlay.classList.add("show");
-      selectDrawerTab(tabKey);
-    }
-    function closeDrawer(){
-      drawerOverlay.classList.remove("show");
-    }
-    drawerOverlay.addEventListener("click", (e)=>{ if(e.target===drawerOverlay) closeDrawer(); });
-
-    /* =========================
-       Notes modal
-       ========================= */
-    function openNotes(){
-      notesOverlay.classList.add("show");
-      notesOverlay.setAttribute("aria-hidden","false");
-      renderNotes();
-      setTimeout(()=>noteText.focus(), 50);
-    }
-    function closeNotes(){
-      notesOverlay.classList.remove("show");
-      notesOverlay.setAttribute("aria-hidden","true");
-    }
-    notesOverlay.addEventListener("click",(e)=>{ if(e.target===notesOverlay) closeNotes(); });
-
-    function renderNotes(){
-      const arr = [...notes].sort((a,b)=>new Date(b.at)-new Date(a.at));
-      notesGrid.innerHTML = "";
-      for(const n of arr){
-        const d = document.createElement("div");
-        d.className = "note";
-        d.innerHTML = `
-          <div class="stamp">${escapeHTML(new Date(n.at).toLocaleString())}</div>
-          <div class="txt">${escapeHTML(n.text)}</div>
-        `;
-        notesGrid.appendChild(d);
-      }
-      if(arr.length===0){
-        const empty = document.createElement("div");
-        empty.className = "help";
-        empty.textContent = "Aucune note.";
-        notesGrid.appendChild(empty);
-      }
-    }
-
-    /* =========================
-       Celebration — only on smash/finish + auto 15s
-       ========================= */
-    function showCelebration(subText){
-      const phrase = DEFAULT_CELEBRATIONS[Math.floor(Math.random()*DEFAULT_CELEBRATIONS.length)] || "VICTOIRE";
-      celebrateTitle.textContent = phrase;
-      celebrateSub.textContent = subText || "";
-      celebrateOverlay.classList.add("show");
-      celebrateOverlay.setAttribute("aria-hidden","false");
-
-      if(celebrateTimer) clearTimeout(celebrateTimer);
-      celebrateTimer = setTimeout(() => hideCelebration(), 15000);
-    }
-    function hideCelebration(){
-      if(celebrateTimer) clearTimeout(celebrateTimer);
-      celebrateTimer = null;
-      celebrateOverlay.classList.remove("show");
-      celebrateOverlay.setAttribute("aria-hidden","true");
-    }
-    celebrateOverlay.addEventListener("click", hideCelebration);
-
-    /* =========================
-       Parsing Inbox: MAJ = catégorie, "tâche - 3" ou "tâche 3"
-       ========================= */
-    function isAllCapsHeading(line){
-      const s = line.trim();
-      if(!s) return false;
-      const hasLetter = /[A-ZÀ-ÖØ-Þ]/.test(s);
-      const hasLower = /[a-zà-öø-ÿ]/.test(s);
-      return hasLetter && !hasLower && s.length >= 3;
-    }
-
-    function normalizeCat(s){
-      const x = String(s || "").trim();
-      if(!x) return "Sans catégorie";
-      return x.replace(/\s{2,}/g, " ").replace(/^#+\s*/,"").trim();
-    }
-
-    function parseTaskLine(line, currentCat, ethDefault=1){
-      let s = line.trim();
-      if(!s) return null;
-      s = s.replace(/^[-•*\u2022]\s+/, "").trim();
-      if(!s) return null;
-
-      let eth = null;
-      const mDash = s.match(/\s*-\s*(\d+)\s*$/);
-      if(mDash) eth = parseInt(mDash[1],10);
-      if(eth === null){
-        const mEnd = s.match(/\s+(\d+)\s*$/);
-        if(mEnd) eth = parseInt(mEnd[1],10);
-      }
-      if(mDash) s = s.replace(/\s*-\s*\d+\s*$/,"").trim();
-      else if(eth !== null) s = s.replace(/\s+\d+\s*$/,"").trim();
-      if(!s) return null;
-
-      const finalEth = clamp((Number.isFinite(eth) ? eth : ethDefault), 1, 999);
-
-      return {
-        id: uid(),
-        title: s,
-        cat: normalizeCat(currentCat),
-        ethStart: finalEth,
-        ethLeft: finalEth,
-        pinned: false,
-        createdAt: nowISO()
-      };
-    }
-
-    /* =========================
-       Core tasks
-       ========================= */
-    function recalcStartCounts(){
-      state.startCounts.tasks = state.tasks.length + state.done.length;
-      state.startCounts.eth =
-        state.tasks.reduce((a,t)=>a+t.ethStart,0) + state.done.reduce((a,t)=>a+t.ethStart,0);
-    }
-
-    function getActiveCatsSet(){
-      const cats = [...new Set(state.tasks.map(t=>t.cat || "Sans catégorie"))];
-      if(!settings.activeCats || settings.activeCats.length===0) return new Set(cats);
-      return new Set(settings.activeCats);
-    }
-
-    function currentTask(){
-      return state.tasks.find(t=>t.id===state.currentId) || null;
-    }
-
-    function pickNextTask(){
-      const active = getActiveCatsSet();
-      const pool = state.tasks.filter(t => active.has(t.cat || "Sans catégorie"));
-      if(pool.length===0) return state.tasks[0] || null;
-
-      if(settings.sortMode==="alpha"){
-        return [...pool].sort((a,b)=>a.title.localeCompare(b.title))[0];
-      }
-      if(settings.sortMode==="chrono"){
-        return [...pool].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt))[0];
-      }
-      if(settings.sortMode==="order"){
-        return pool[0];
-      }
-
-      // roulette
-      return pool[Math.floor(Math.random()*pool.length)];
-    }
-
-    function ensureCurrent(){
-      if(state.tasks.length===0){
-        state.currentId = null;
-        state.timer = { taskId:null, elapsedMs:0, running:false };
-        return;
-      }
-      if(!state.currentId || !currentTask()){
-        const t = pickNextTask();
-        if(t){
-          state.currentId = t.id;
-          state.timer = { taskId: t.id, elapsedMs:0, running:true };
-        }
-      }
-    }
-
-    /* =========================
-       Render
-       ========================= */
-    function renderHUD(){
-      const totalTasksStart = state.startCounts.tasks || (state.tasks.length + state.done.length);
-      const totalEthStart = state.startCounts.eth || (state.tasks.reduce((a,t)=>a+t.ethStart,0) + state.done.reduce((a,t)=>a+t.ethStart,0));
-
-      const tasksLeft = state.tasks.length;
-      const ethLeft = state.tasks.reduce((a,t)=>a+t.ethLeft,0);
-      const done = state.done.length;
-
-      hudTasks.textContent = `${tasksLeft}/${totalTasksStart}`;
-      hudEth.textContent = `${ethLeft}/${totalEthStart}`;
-      hudDone.textContent = `${done}`;
-    }
-
-    function renderCurrent(){
-      ensureCurrent();
-      const t = currentTask();
-
-      if(!t){
-        taskNameEl.textContent = "Aucune tâche (Menu → Inbox / Qui fonce)";
-        bigFill.style.transform = "scaleX(1)";
-        bigPct.textContent = "100%";
-
-        ethNowEl.textContent = "0";
-        ethStartEl.textContent = "0";
-        ethMinutesEl.textContent = "0";
-        ethFill.style.transform = "scaleX(1)";
-        ethTicks.innerHTML = "";
-        return;
-      }
-
-      taskNameEl.textContent = t.title;
-
-      const frac = (t.ethStart > 0) ? (t.ethLeft / t.ethStart) : 1;
-      const f = clamp(frac, 0, 1);
-
-      bigFill.style.transform = `scaleX(${f})`;
-      bigPct.textContent = `${Math.round(f*100)}%`;
-
-      const minPer = settings.ethMinutesPer || 5;
-      ethNowEl.textContent = `${t.ethLeft}`;
-      ethStartEl.textContent = `${t.ethStart}`;
-      ethMinutesEl.textContent = `${t.ethLeft * minPer}`;
-
-      ethFill.style.transform = `scaleX(${f})`;
-
-      ethTicks.innerHTML = "";
-      const n = clamp(t.ethStart, 1, 60);
-      for(let i=0;i<n;i++){
-        const sp = document.createElement("span");
-        ethTicks.appendChild(sp);
-      }
-    }
-
-    function persistAll(){
-      saveJSON(K.settings, settings);
-      saveJSON(K.state, state);
-      saveJSON(K.notes, notes);
-      saveJSON(K.history, history);
-      saveJSON(K.habits, habits);
-      saveJSON(K.qf, qfUser);
-    }
-
-    function renderAll(){
-      ensureDay();
-      ensureCurrent();
-      renderHUD();
-      renderCurrent();
+    const del = document.createElement("button");
+    del.className = "iconBtn";
+    del.textContent = "✕";
+    del.title = "Supprimer";
+    del.onclick = () => {
+      notes = notes.filter(x=>x.id!==n.id);
       persistAll();
-    }
-
-    /* =========================
-       Timer
-       ========================= */
-    let lastTick = Date.now();
-    function tick(){
-      const now = Date.now();
-      const dt = now - lastTick;
-      lastTick = now;
-
-      const t = currentTask();
-      if(t && state.timer && state.timer.taskId===t.id && state.timer.running){
-        state.timer.elapsedMs += dt;
-        history[todayKey()].msWorked += dt;
-        hudTimer.textContent = fmtMMSS(state.timer.elapsedMs);
-      }else{
-        hudTimer.textContent = "00:00";
-      }
-
-      renderHUD();
-      requestAnimationFrame(tick);
-    }
-
-    /* =========================
-       Actions
-       ========================= */
-    function roulettePick(){
-      btnRoulette.classList.add("spinning");
-      setTimeout(()=>btnRoulette.classList.remove("spinning"), 920);
-
-      const t = pickNextTask();
-      if(!t) return;
-      state.currentId = t.id;
-      state.timer = { taskId: t.id, elapsedMs:0, running:true };
-      renderAll();
-    }
-
-    function smashOne(){
-      const t = currentTask();
-      if(!t) return;
-
-      if(t.ethLeft > 0){
-        t.ethLeft -= 1;
-        history[todayKey()].ethSmashed += 1;
-
-        if(t.ethLeft <= 0){
-          t.ethLeft = 0;
-          t.doneAt = nowISO();
-          state.done.push(t);
-          state.tasks = state.tasks.filter(x=>x.id!==t.id);
-          history[todayKey()].tasksDone += 1;
-
-          state.currentId = null;
-          state.timer = { taskId:null, elapsedMs:0, running:false };
-          ensureCurrent();
-
-          showCelebration("Tâche terminée. L’ennemi recule.");
-        }else{
-          showCelebration("+1 éthorion dégommé");
-        }
-
-        renderAll();
-      }
-    }
-
-    function resetRun(){
-      if(!confirm("Reset du run (remet 'Faits' à zéro). Tâches restent. Notes restent.")) return;
-      state.done = [];
-      recalcStartCounts();
-      const t = currentTask();
-      state.timer = t ? { taskId:t.id, elapsedMs:0, running:true } : { taskId:null, elapsedMs:0, running:false };
-      renderAll();
-    }
-
-    function deleteTask(id){
-      state.tasks = state.tasks.filter(x=>x.id!==id);
-      if(state.currentId===id){
-        state.currentId = null;
-        state.timer = { taskId:null, elapsedMs:0, running:false };
-        ensureCurrent();
-      }
-    }
-
-    function moveTask(id, dir){
-      const idx = state.tasks.findIndex(x=>x.id===id);
-      if(idx<0) return;
-      const newIdx = clamp(idx + dir, 0, state.tasks.length-1);
-      if(newIdx===idx) return;
-      const [x] = state.tasks.splice(idx,1);
-      state.tasks.splice(newIdx,0,x);
-    }
-
-    /* =========================
-       Drawer panels
-       ========================= */
-    function renderDrawerPanel(key){
-      const panel = document.getElementById("panel-"+key);
-      panel.innerHTML = "";
-
-      if(key==="inbox") panel.appendChild(buildInboxPanel());
-      if(key==="liste") panel.appendChild(buildListPanel());
-      if(key==="qf") panel.appendChild(buildQuiFoncePanel());
-      if(key==="habits") panel.appendChild(buildHabitsPanel());
-      if(key==="hist") panel.appendChild(buildHistPanel());
-      if(key==="rapport") panel.appendChild(buildRapportPanel());
-      if(key==="params") panel.appendChild(buildParamsPanel());
-    }
-
-    function mkCard(title, innerHTML){
-      const c = document.createElement("div");
-      c.className = "card";
-      c.innerHTML = `<p class="cardTitle">${escapeHTML(title)}</p>` + innerHTML;
-      return c;
-    }
-
-    /* --- Inbox panel --- */
-    function buildInboxPanel(){
-      const wrap = document.createElement("div");
-
-      const c1 = mkCard("Importer / coller une liste", `
-        <textarea id="inboxText" placeholder="Règles :
-- TITRE EN MAJUSCULE = catégorie
-- Tâche - 3   => 3 éthorions
-- Tâche 3     => 3 éthorions
-"></textarea>
-
-        <div class="row" style="margin-top:10px;">
-          <input id="inboxDefaultEth" type="number" min="1" value="1" />
-          <select id="inboxSortMode">
-            <option value="roulette">Mode sélection: roulette</option>
-            <option value="order">Mode sélection: ordre</option>
-            <option value="alpha">Mode sélection: alpha</option>
-            <option value="chrono">Mode sélection: chrono</option>
-          </select>
-        </div>
-
-        <div class="row" style="margin-top:10px;">
-          <button class="btn primary" id="btnImport">Importer</button>
-          <button class="btn" id="btnClearInbox">Vider</button>
-        </div>
-
-        <div class="help" style="margin-top:10px;">
-          Pas de célébration ici. La gloire est réservée au champ de bataille (🧨).
-        </div>
-      `);
-
-      wrap.appendChild(c1);
-
-      setTimeout(() => {
-        const inboxText = document.getElementById("inboxText");
-        const inboxDefaultEth = document.getElementById("inboxDefaultEth");
-        const inboxSortMode = document.getElementById("inboxSortMode");
-        const btnImport = document.getElementById("btnImport");
-        const btnClearInbox = document.getElementById("btnClearInbox");
-
-        inboxSortMode.value = settings.sortMode;
-
-        btnClearInbox.onclick = () => { inboxText.value = ""; };
-
-        btnImport.onclick = () => {
-          const raw = inboxText.value || "";
-          const lines = raw.split(/\r?\n/);
-          let currentCat = "Sans catégorie";
-          const ethDef = parseInt(inboxDefaultEth.value,10);
-          const ethDefaultSafe = Number.isFinite(ethDef) && ethDef>0 ? ethDef : 1;
-
-          const added = [];
-          for(const line0 of lines){
-            const line = line0.trim();
-            if(!line) continue;
-            if(isAllCapsHeading(line)){
-              currentCat = normalizeCat(line);
-              continue;
-            }
-            const t = parseTaskLine(line, currentCat, ethDefaultSafe);
-            if(t) added.push(t);
-          }
-
-          if(added.length===0) return;
-
-          state.tasks.push(...added);
-          recalcStartCounts();
-          settings.sortMode = inboxSortMode.value;
-
-          ensureCurrent();
-          renderAll();
-        };
-      }, 0);
-
-      return wrap;
-    }
-
-    /* --- Liste panel --- */
-    function buildListPanel(){
-      const wrap = document.createElement("div");
-
-      const cats = [...new Set(state.tasks.map(t=>t.cat || "Sans catégorie"))].sort((a,b)=>a.localeCompare(b));
-      const active = getActiveCatsSet();
-
-      const cFilter = mkCard("Catégories actives", `
-        <div id="catFilterRow" class="row"></div>
-        <div class="help" style="margin-top:10px;">
-          Les catégories inactives ne sont pas tirées par la roulette.
-        </div>
-      `);
-
-      const cList = mkCard("Tâches", `<div id="taskList"></div>`);
-
-      wrap.appendChild(cFilter);
-      wrap.appendChild(cList);
-
-      setTimeout(() => {
-        const row = document.getElementById("catFilterRow");
-        row.innerHTML = "";
-        for(const c of cats){
-          const b = document.createElement("button");
-          b.className = "btn small";
-          const on = active.has(c);
-          b.textContent = (on ? "[x] " : "[ ] ") + c;
-          b.onclick = () => {
-            let next = settings.activeCats;
-            if(!next || next.length===0) next = [...cats];
-            else next = [...next];
-
-            if(next.includes(c)) next = next.filter(x=>x!==c);
-            else next.push(c);
-
-            settings.activeCats = next;
-            persistAll();
-            renderDrawerPanel("liste");
-          };
-          row.appendChild(b);
-        }
-
-        const list = document.getElementById("taskList");
-        list.innerHTML = "";
-
-        for(const t of state.tasks){
-          const item = document.createElement("div");
-          item.className = "taskItem";
-
-          const left = document.createElement("div");
-          left.className = "taskLeft";
-          left.innerHTML = `
-            <div class="name">${escapeHTML(t.title)}</div>
-            <div class="sub">${escapeHTML(t.cat)} · eth ${t.ethLeft}/${t.ethStart}</div>
-          `;
-
-          const act = document.createElement("div");
-          act.className = "taskAct";
-
-          const up = document.createElement("button");
-          up.className = "iconBtn";
-          up.textContent = "↑";
-          up.onclick = () => { moveTask(t.id, -1); renderDrawerPanel("liste"); renderAll(); };
-
-          const down = document.createElement("button");
-          down.className = "iconBtn";
-          down.textContent = "↓";
-          down.onclick = () => { moveTask(t.id, +1); renderDrawerPanel("liste"); renderAll(); };
-
-          const edit = document.createElement("button");
-          edit.className = "iconBtn";
-          edit.textContent = "edit";
-          edit.onclick = () => {
-            const nv = prompt("Modifier le titre :", t.title);
-            if(nv===null) return;
-            const cleaned = nv.trim();
-            if(!cleaned) return;
-            t.title = cleaned;
-            renderDrawerPanel("liste");
-            renderAll();
-          };
-
-          const del = document.createElement("button");
-          del.className = "iconBtn";
-          del.textContent = "del";
-          del.onclick = () => {
-            if(!confirm("Supprimer cette tâche ?")) return;
-            deleteTask(t.id);
-            renderDrawerPanel("liste");
-            renderAll();
-          };
-
-          act.appendChild(up);
-          act.appendChild(down);
-          act.appendChild(edit);
-          act.appendChild(del);
-
-          item.appendChild(left);
-          item.appendChild(act);
-          list.appendChild(item);
-        }
-
-        if(state.tasks.length===0){
-          const empty = document.createElement("div");
-          empty.className = "help";
-          empty.textContent = "Liste vide. Inbox ou Qui fonce pour injecter des tâches.";
-          list.appendChild(empty);
-        }
-      }, 0);
-
-      return wrap;
-    }
-
-    /* --- Qui fonce panel (preloaded, rotating suggestions) --- */
-    function getQuiFoncePool(bucket){
-      const base = PRELOADED_QF[bucket] || [];
-      const extra = qfUser[bucket] || [];
-      return [...base, ...extra];
-    }
-
-    function buildQuiFoncePanel(){
-      const wrap = document.createElement("div");
-
-      const c1 = mkCard("Qui fonce (pré-enregistré)", `
-        <div class="help">
-          Banque préexistante. Tu peux ajouter des items, mais tu n’as pas à “penser” la liste.
-          Clique “Rafraîchir” pour faire apparaître d’autres suggestions.
-        </div>
-
-        <div class="row" style="margin-top:10px;">
-          <select id="qfBucket">
-            <option value="now">Maintenant</option>
-            <option value="today">Aujourd’hui</option>
-            <option value="week">Cette semaine</option>
-            <option value="month">Ce mois</option>
-          </select>
-          <button class="btn" id="qfRefresh">Rafraîchir</button>
-        </div>
-
-        <div id="qfSuggestions" style="margin-top:12px;"></div>
-
-        <div class="row" style="margin-top:12px;">
-          <input id="qfNewText" placeholder="Ajouter un item perso (optionnel)" />
-          <input id="qfNewEth" type="number" min="1" value="1" />
-        </div>
-        <div class="row" style="margin-top:10px;">
-          <button class="btn primary" id="qfAdd">Ajouter à la banque</button>
-          <button class="btn" id="qfInjectAll">Ajouter les suggestions à ma liste</button>
-        </div>
-      `);
-
-      wrap.appendChild(c1);
-
-      setTimeout(() => {
-        const bucketSel = document.getElementById("qfBucket");
-        const sugDiv = document.getElementById("qfSuggestions");
-
-        let lastSuggestions = [];
-
-        function renderSuggestions(){
-          const bucket = bucketSel.value;
-          const pool = getQuiFoncePool(bucket);
-          const take = (bucket==="now") ? 6 : 5;
-          lastSuggestions = shuffle(pool).slice(0, take);
-
-          sugDiv.innerHTML = "";
-          for(const s of lastSuggestions){
-            const item = document.createElement("div");
-            item.className = "taskItem";
-            item.innerHTML = `
-              <div class="taskLeft">
-                <div class="name">${escapeHTML(s.t)}</div>
-                <div class="sub">cat QUI FONCE · eth ${s.e}</div>
-              </div>
-              <div class="taskAct">
-                <button class="iconBtn" data-add="1">add</button>
-              </div>
-            `;
-            item.querySelector('[data-add="1"]').onclick = () => {
-              injectQuiFonce([s]);
-              renderAll();
-            };
-            sugDiv.appendChild(item);
-          }
-        }
-
-        function injectQuiFonce(list){
-          const added = list.map(s => ({
-            id: uid(),
-            title: s.t,
-            cat: "QUI FONCE",
-            ethStart: clamp(parseInt(s.e,10)||1,1,999),
-            ethLeft: clamp(parseInt(s.e,10)||1,1,999),
-            pinned: false,
-            createdAt: nowISO()
-          }));
-          state.tasks.push(...added);
-          recalcStartCounts();
-          ensureCurrent();
-        }
-
-        document.getElementById("qfRefresh").onclick = renderSuggestions;
-
-        document.getElementById("qfAdd").onclick = () => {
-          const bucket = bucketSel.value;
-          const txt = (document.getElementById("qfNewText").value || "").trim();
-          const eth = clamp(parseInt(document.getElementById("qfNewEth").value,10)||1,1,999);
-          if(!txt) return;
-
-          qfUser[bucket] = qfUser[bucket] || [];
-          qfUser[bucket].push({ t: txt, e: eth });
-          saveJSON(K.qf, qfUser);
-
-          document.getElementById("qfNewText").value = "";
-          // Pas de célébration ici (comme demandé)
-          renderSuggestions();
-        };
-
-        document.getElementById("qfInjectAll").onclick = () => {
-          if(lastSuggestions.length===0) return;
-          injectQuiFonce(lastSuggestions);
-          renderAll();
-        };
-
-        bucketSel.onchange = renderSuggestions;
-
-        renderSuggestions();
-      }, 0);
-
-      return wrap;
-    }
-
-    /* --- Habits panel (single line, no celebrations on add) --- */
-    function buildHabitsPanel(){
-      const wrap = document.createElement("div");
-
-      const c1 = mkCard("Paramètres habitudes", `
-        <div class="row">
-          <input id="habitSlots" type="number" min="3" max="20" />
-          <button class="btn primary" id="btnSaveHabitSlots">Enregistrer</button>
-        </div>
-        <div class="help" style="margin-top:10px;">
-          Nombre de cases par habitude et par jour.
-        </div>
-      `);
-
-      const c2 = mkCard("Ajouter une habitude", `
-        <div class="row">
-          <input id="habitName" placeholder="Ex: boire des verres d’eau" />
-          <button class="btn primary" id="btnAddHabit">Ajouter</button>
-        </div>
-      `);
-
-      const c3 = mkCard("Aujourd’hui", `<div id="habitsList"></div>`);
-
-      wrap.appendChild(c1);
-      wrap.appendChild(c2);
-      wrap.appendChild(c3);
-
-      setTimeout(() => {
-        ensureDay();
-
-        const slotsInput = document.getElementById("habitSlots");
-        slotsInput.value = String(habits.slots || 8);
-
-        document.getElementById("btnSaveHabitSlots").onclick = () => {
-          const n = parseInt(slotsInput.value,10);
-          habits.slots = clamp(Number.isFinite(n)?n:8, 3, 20);
-          saveJSON(K.habits, habits);
-          renderDrawerPanel("habits");
-        };
-
-        document.getElementById("btnAddHabit").onclick = () => {
-          const nm = (document.getElementById("habitName").value||"").trim();
-          if(!nm) return;
-          habits.habits.push({ id: uid(), name: nm, createdAt: nowISO() });
-          saveJSON(K.habits, habits);
-          renderDrawerPanel("habits");
-        };
-
-        const list = document.getElementById("habitsList");
-        list.innerHTML = "";
-
-        const day = todayKey();
-        const marks = habits.marksByDay[day] || (habits.marksByDay[day] = {});
-        const slots = habits.slots || 8;
-
-        for(const h of habits.habits){
-          if(!marks[h.id]) marks[h.id] = Array.from({length: slots}, ()=>0);
-
-          const line = document.createElement("div");
-          line.className = "habitLine";
-
-          const name = document.createElement("div");
-          name.className = "habitName";
-          name.textContent = h.name;
-
-          const checks = document.createElement("div");
-          checks.className = "habitChecks";
-
-          for(let i=0;i<slots;i++){
-            const c = document.createElement("div");
-            c.className = "check" + (marks[h.id][i] ? " on" : "");
-            c.textContent = marks[h.id][i] ? "x" : "";
-            c.onclick = () => {
-              marks[h.id][i] = marks[h.id][i] ? 0 : 1;
-              habits.marksByDay[day] = marks;
-              saveJSON(K.habits, habits);
-              renderDrawerPanel("habits");
-            };
-            checks.appendChild(c);
-          }
-
-          const btns = document.createElement("div");
-          btns.className = "habitBtns";
-
-          const r = document.createElement("button");
-          r.className = "iconBtn";
-          r.textContent = "reset";
-          r.onclick = () => {
-            marks[h.id] = Array.from({length: slots}, ()=>0);
-            saveJSON(K.habits, habits);
-            renderDrawerPanel("habits");
-          };
-
-          const d = document.createElement("button");
-          d.className = "iconBtn";
-          d.textContent = "del";
-          d.onclick = () => {
-            if(!confirm("Supprimer cette habitude ?")) return;
-            habits.habits = habits.habits.filter(x=>x.id!==h.id);
-            for(const dayKey of Object.keys(habits.marksByDay)){
-              if(habits.marksByDay[dayKey] && habits.marksByDay[dayKey][h.id]){
-                delete habits.marksByDay[dayKey][h.id];
-              }
-            }
-            saveJSON(K.habits, habits);
-            renderDrawerPanel("habits");
-          };
-
-          btns.appendChild(r);
-          btns.appendChild(d);
-
-          line.appendChild(name);
-          line.appendChild(checks);
-          line.appendChild(btns);
-
-          list.appendChild(line);
-        }
-
-        if(habits.habits.length===0){
-          const empty = document.createElement("div");
-          empty.className = "help";
-          empty.textContent = "Aucune habitude. Ajoute-en une ci-dessus.";
-          list.appendChild(empty);
-        }
-      }, 0);
-
-      return wrap;
-    }
-
-    /* --- Historique: Calendar + Timeline --- */
-    function summarizeHabitsDay(day){
-      const slots = habits.slots || 8;
-      const marks = (habits.marksByDay && habits.marksByDay[day]) ? habits.marksByDay[day] : {};
-      if(!habits.habits || habits.habits.length===0){
-        return [];
-      }
-      const items = [];
-      for(const h of habits.habits){
-        const arr = marks[h.id] || Array.from({length: slots}, ()=>0);
-        const done = arr.reduce((a,x)=>a+(x?1:0),0);
-        const pct = Math.round((done/slots)*100);
-        items.push({ name:h.name, done, slots, pct });
-      }
-      return items;
-    }
-
-    function buildHistPanel(){
-      const wrap = document.createElement("div");
-
-      const c1 = mkCard("Vue calendrier (mois)", `
-        <div class="help">Chaque jour affiche tâches / éthorions. (C’est volontairement minimal.)</div>
-        <div class="row" style="margin-top:10px;">
-          <button class="btn" id="calPrev">←</button>
-          <div class="help" id="calLabel" style="text-align:center;"></div>
-          <button class="btn" id="calNext">→</button>
-        </div>
-        <div style="margin-top:12px;" class="calWrap" id="calGrid"></div>
-      `);
-
-      const c2 = mkCard("Ligne du temps (30 jours)", `<div id="timeline"></div>`);
-
-      wrap.appendChild(c1);
-      wrap.appendChild(c2);
-
-      setTimeout(() => {
-        let viewDate = new Date();
-        viewDate.setDate(1);
-
-        function monthLabel(d){
-          return d.toLocaleDateString(undefined, { month:"long", year:"numeric" });
-        }
-
-        function dayKeyFromDate(d){
-          return d.toISOString().slice(0,10);
-        }
-
-        function renderCalendar(){
-          const calLabel = document.getElementById("calLabel");
-          const grid = document.getElementById("calGrid");
-          calLabel.textContent = monthLabel(viewDate);
-
-          grid.innerHTML = "";
-          const year = viewDate.getFullYear();
-          const month = viewDate.getMonth();
-
-          const first = new Date(year, month, 1);
-          const startDow = (first.getDay() + 6) % 7; // monday=0
-          const daysInMonth = new Date(year, month+1, 0).getDate();
-
-          // add blanks
-          for(let i=0;i<startDow;i++){
-            const blank = document.createElement("div");
-            blank.className = "calCell";
-            blank.style.opacity = ".35";
-            blank.innerHTML = `<div class="calDay"><span> </span><span></span></div>`;
-            grid.appendChild(blank);
-          }
-
-          for(let day=1; day<=daysInMonth; day++){
-            const d = new Date(year, month, day);
-            const key = dayKeyFromDate(d);
-            const h = history[key] || { ethSmashed:0, tasksDone:0, msWorked:0 };
-
-            const cell = document.createElement("div");
-            cell.className = "calCell";
-            cell.innerHTML = `
-              <div class="calDay">
-                <span>${day}</span>
-                <span class="calBadge">T ${h.tasksDone} · E ${h.ethSmashed}</span>
-              </div>
-              <div class="calStats">Temps ${fmtMMSS(h.msWorked||0)}</div>
-            `;
-            grid.appendChild(cell);
-          }
-        }
-
-        function renderTimeline(){
-          const tdiv = document.getElementById("timeline");
-          tdiv.innerHTML = "";
-
-          for(let i=0;i<30;i++){
-            const d = new Date();
-            d.setDate(d.getDate()-i);
-            const key = d.toISOString().slice(0,10);
-            const h = history[key] || null;
-            if(!h) continue;
-
-            const row = document.createElement("div");
-            row.className = "taskItem";
-            row.innerHTML = `
-              <div class="taskLeft">
-                <div class="name">${escapeHTML(key)}</div>
-                <div class="sub">T ${h.tasksDone} · E ${h.ethSmashed} · Temps ${fmtMMSS(h.msWorked||0)}</div>
-              </div>
-              <div class="taskAct">
-                <button class="iconBtn" data-exp="1">export</button>
-              </div>
-            `;
-            row.querySelector('[data-exp="1"]').onclick = () => {
-              exportJSON(buildDailyReport(key), `eliminator_journal_${key}.json`);
-            };
-            tdiv.appendChild(row);
-          }
-
-          if(tdiv.children.length===0){
-            const empty = document.createElement("div");
-            empty.className = "help";
-            empty.textContent = "Pas de données historiques pour l’instant.";
-            tdiv.appendChild(empty);
-          }
-        }
-
-        document.getElementById("calPrev").onclick = () => {
-          viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth()-1, 1);
-          renderCalendar();
-        };
-        document.getElementById("calNext").onclick = () => {
-          viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth()+1, 1);
-          renderCalendar();
-        };
-
-        renderCalendar();
-        renderTimeline();
-      }, 0);
-
-      return wrap;
-    }
-
-    /* --- Rapport --- */
-    function buildDailyReport(day){
-      const h = history[day] || { ethSmashed:0, tasksDone:0, msWorked:0 };
-      const hab = summarizeHabitsDay(day);
-      return {
-        day,
-        stats: h,
-        habits: hab,
-        run_export: buildRunExport()
-      };
-    }
-
-    function buildRunExport(){
-      const doneTasks = [...state.done].map(t => ({
-        title: t.title, cat: t.cat, ethStart: t.ethStart, doneAt: t.doneAt || null
-      }));
-      const remainingTasks = [...state.tasks].map(t => ({
-        title: t.title, cat: t.cat, ethStart: t.ethStart, ethLeft: t.ethLeft, createdAt: t.createdAt
-      }));
-
-      return {
-        exportedAt: nowISO(),
-        tasks_done_count: state.done.length,
-        tasks_remaining_count: state.tasks.length,
-        tasks_done: doneTasks,
-        tasks_remaining: remainingTasks
-      };
-    }
-
-    function buildReportText(days){
-      const lines = [];
-      lines.push(`ELIMINATOR — RAPPORT (${days.length} jour(s))`);
-      lines.push(`Généré: ${new Date().toLocaleString()}`);
-      lines.push("");
-
-      let eth=0, tasks=0, ms=0;
-      for(const d of days){
-        const h = history[d];
-        if(!h) continue;
-        eth += (h.ethSmashed||0);
-        tasks += (h.tasksDone||0);
-        ms += (h.msWorked||0);
-      }
-
-      lines.push(`Total éthorions dégommés: ${eth}`);
-      lines.push(`Total tâches terminées: ${tasks}`);
-      lines.push(`Temps cumulé (approx): ${fmtMMSS(ms)}`);
-      lines.push("");
-
-      const today = todayKey();
-      const h0 = history[today] || {ethSmashed:0,tasksDone:0,msWorked:0};
-      lines.push(`Détail du jour (${today}):`);
-      lines.push(`- Éthorions: ${h0.ethSmashed}`);
-      lines.push(`- Tâches: ${h0.tasksDone}`);
-      lines.push(`- Temps: ${fmtMMSS(h0.msWorked)}`);
-
-      const habToday = summarizeHabitsDay(today);
-      if(habToday.length){
-        lines.push(`- Habitudes:`);
-        for(const it of habToday){
-          lines.push(`  - ${it.name}: ${it.done}/${it.slots} (${it.pct}%)`);
-        }
-      }else{
-        lines.push(`- Habitudes: aucune`);
-      }
-
-      lines.push("");
-      lines.push("Run actuel:");
-      lines.push(`- Tâches restantes: ${state.tasks.length}`);
-      lines.push(`- Tâches faites: ${state.done.length}`);
-      lines.push(`- Éthorions restants: ${state.tasks.reduce((a,t)=>a+t.ethLeft,0)}`);
-      lines.push("");
-
-      return lines.join("\n");
-    }
-
-    function lastNDays(n){
-      const out = [];
-      for(let i=0;i<n;i++){
-        const d = new Date();
-        d.setDate(d.getDate()-i);
-        out.push(d.toISOString().slice(0,10));
-      }
-      return out;
-    }
-
-    function buildRapportPanel(){
-      const wrap = document.createElement("div");
-
-      const c1 = mkCard("Rapport (texte)", `
-        <div class="row">
-          <select id="repRange">
-            <option value="day">Journalier</option>
-            <option value="week">Hebdomadaire</option>
-            <option value="month">Mensuel</option>
-          </select>
-          <button class="btn primary" id="btnGenRep">Générer</button>
-          <button class="btn" id="btnExportRep">Exporter</button>
-        </div>
-        <textarea id="repText" style="margin-top:10px; min-height:240px;"></textarea>
-      `);
-
-      wrap.appendChild(c1);
-
-      setTimeout(() => {
-        const repRange = document.getElementById("repRange");
-        const repText = document.getElementById("repText");
-
-        function gen(){
-          const r = repRange.value;
-          if(r==="day") repText.value = buildReportText([todayKey()]);
-          else if(r==="week") repText.value = buildReportText(lastNDays(7));
-          else repText.value = buildReportText(lastNDays(30));
-        }
-
-        document.getElementById("btnGenRep").onclick = gen;
-        document.getElementById("btnExportRep").onclick = () => {
-          const r = repRange.value;
-          const name = r==="day" ? "journal" : (r==="week" ? "semaine" : "mois");
-          exportText(repText.value || "", `eliminator_rapport_${name}_${todayKey()}.txt`);
-        };
-
-        gen();
-      }, 0);
-
-      return wrap;
-    }
-
-    /* --- Params panel: more settings access, but hidden from main UI --- */
-    function buildParamsPanel(){
-      const wrap = document.createElement("div");
-
-      const c1 = mkCard("Sélection & temps", `
-        <div class="row">
-          <select id="sortMode">
-            <option value="roulette">Sélection: roulette</option>
-            <option value="order">Sélection: ordre</option>
-            <option value="alpha">Sélection: alpha</option>
-            <option value="chrono">Sélection: chrono</option>
-          </select>
-          <select id="ethMinutesPer">
-            <option value="5">1 éthorion = 5 min</option>
-            <option value="10">1 éthorion = 10 min</option>
-            <option value="15">1 éthorion = 15 min</option>
-          </select>
-        </div>
-        <div class="help" style="margin-top:10px;">
-          Ici tu ajustes les paramètres sans polluer l’écran principal.
-        </div>
-      `);
-
-      const c2 = mkCard("Nettoyage", `
-        <div class="row">
-          <button class="btn" id="btnResetRun">Reset run</button>
-          <button class="btn" id="btnNukeTasks">Tout effacer (tâches + stats) (notes conservées)</button>
-        </div>
-      `);
-
-      wrap.appendChild(c1);
-      wrap.appendChild(c2);
-
-      setTimeout(() => {
-        const sortMode = document.getElementById("sortMode");
-        const ethMinutesPer = document.getElementById("ethMinutesPer");
-
-        sortMode.value = settings.sortMode;
-        ethMinutesPer.value = String(settings.ethMinutesPer || 5);
-
-        sortMode.onchange = () => {
-          settings.sortMode = sortMode.value;
-          persistAll();
-        };
-        ethMinutesPer.onchange = () => {
-          settings.ethMinutesPer = parseInt(ethMinutesPer.value,10) || 5;
-          persistAll();
-          renderAll();
-        };
-
-        document.getElementById("btnResetRun").onclick = resetRun;
-        document.getElementById("btnNukeTasks").onclick = () => {
-          if(!confirm("Effacer tâches + stats (notes conservées) ?")) return;
-          state = {
-            tasks: [],
-            done: [],
-            currentId: null,
-            startCounts: { tasks: 0, eth: 0 },
-            timer: { taskId:null, elapsedMs:0, running:false }
-          };
-          history = {};
-          persistAll();
-          renderAll();
-        };
-      }, 0);
-
-      return wrap;
-    }
-
-    /* =========================
-       Export helpers
-       ========================= */
-    function exportJSON(obj, filename){
-      const blob = new Blob([JSON.stringify(obj,null,2)], {type:"application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function exportText(text, filename){
-      const blob = new Blob([text], {type:"text/plain"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    /* =========================
-       Wiring main buttons
-       ========================= */
-    btnMenu.onclick = () => openDrawer("inbox");
-    btnBottomMenu.onclick = () => openDrawer("inbox");
-    btnDrawerClose.onclick = closeDrawer;
-
-    themeLight.onclick = () => setTheme("light");
-    themeDark.onclick = () => setTheme("dark");
-
-    btnReset.onclick = resetRun;
-
-    btnFocus.onclick = () => setFocus(!(settings.focus===1));
-    btnBottomFocus.onclick = () => setFocus(!(settings.focus===1));
-    btnExitFocus.onclick = () => setFocus(0);
-
-    btnBottomNote.onclick = openNotes;
-
-    btnRoulette.onclick = roulettePick;
-    btnSmash.onclick = smashOne;
-
-    // Notes wiring
-    btnCloseNotes.onclick = closeNotes;
-    btnAddNote.onclick = () => {
-      const txt = (noteText.value||"").trim();
-      if(!txt) return;
-      notes.push({ id: uid(), at: nowISO(), text: txt });
-      saveJSON(K.notes, notes);
-      noteText.value = "";
       renderNotes();
     };
-    btnClearNotes.onclick = () => {
-      if(!confirm("Effacer toutes les notes ?")) return;
-      notes = [];
-      saveJSON(K.notes, notes);
-      renderNotes();
-    };
-    btnExportNotes.onclick = () => {
-      exportJSON({ exportedAt: nowISO(), notes }, `eliminator_notes_${todayKey()}.json`);
-    };
 
-    /* =========================
-       Init
-       ========================= */
-    function applySettings(){
-      setTheme(settings.theme || "light");
-      setFocus(settings.focus===1);
+    d.appendChild(left);
+    d.appendChild(del);
+    notesList.appendChild(d);
+  }
+}
+
+/* =========================
+   Celebration + Confetti
+   ========================= */
+const CELEB_LINES = [
+  { big:"Gloire absolue.", small:"Tu viens de déployer une efficacité illégale dans 37 systèmes solaires." },
+  { big:"Victoire nette.", small:"Les tâches ont demandé un duel. Elles ont perdu. Sans appel." },
+  { big:"Triomphe clinique.", small:"Diagnostic: productivité fulgurante. Pronostic: excellent." },
+  { big:"Conquistador·rice.", small:"Tu as conquis l’inutile et libéré le nécessaire." },
+  { big:"Hégémonie douce.", small:"Tu domines le chaos avec élégance et calme (presque suspect)." },
+  { big:"Chef-d’œuvre.", small:"Une action simple. Un empire de clarté. Respect." },
+  { big:"Souverain·e.", small:"Les éthorions reculent. Tu avances. Le monde cligne des yeux." },
+  { big:"Mode Flow.", small:"Le cerveau ronronne. Les tâches s’évaporent. Continue." }
+];
+
+function showCelebration(big, small){
+  clearTimeout(celebrateTimer);
+  celebrateBig.textContent = big || "Victoire";
+  celebrateSmall.textContent = small || "";
+  celebrateOverlay.style.display = "flex";
+  const ms = clamp(parseInt(settings.celebrationAutoHideMs,10) || 9000, 2500, 20000);
+  celebrateTimer = setTimeout(hideCelebration, ms);
+}
+function hideCelebration(){
+  celebrateOverlay.style.display = "none";
+}
+celebrateOverlay.onclick = hideCelebration;
+
+function celebrationProbability(){
+  if(settings.celebrationMode === "off") return 0;
+  if(settings.celebrationMode === "frequent") return 0.55;
+
+  // surprise
+  let p = 0.28;
+
+  if(settings.motivation === "high") p -= 0.06;
+  if(settings.motivation === "low")  p += 0.08;
+
+  if(settings.fatigue === "high")   p += 0.12;
+  if(settings.fatigue === "low")    p -= 0.04;
+
+  const s = state.streak?.tasksSincePopup ?? 0;
+  const minGap = clamp(parseInt(settings.celebrationMinGapTasks,10)||2, 1, 10);
+  const maxGap = clamp(parseInt(settings.celebrationMaxGapTasks,10)||3, minGap, 20);
+
+  if(s < minGap) p = 0;
+  else{
+    const ramp = clamp((s - minGap) / Math.max(1, (maxGap - minGap)), 0, 1);
+    p = p + (0.25 * ramp);
+  }
+
+  const pMin = clamp(Number(settings.celebrationChanceMin)||0.10, 0, 1);
+  const pMax = clamp(Number(settings.celebrationChanceMax)||0.55, 0, 1);
+  return clamp(p, pMin, pMax);
+}
+function shouldShowCelebrationPopup(){
+  return Math.random() < celebrationProbability();
+}
+
+function confettiBurst(){
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+  confettiCanvas.style.display = "block";
+
+  const N = 120;
+  const parts = Array.from({length:N}, () => {
+    const x = confettiCanvas.width/2 + (Math.random()-0.5)*240;
+    const y = confettiCanvas.height*0.30 + (Math.random()-0.5)*90;
+    const vx = (Math.random()-0.5)*10;
+    const vy = Math.random()*-10 - 6;
+    const g = 0.35 + Math.random()*0.15;
+    return { x,y,vx,vy,g,life: 60+Math.random()*25, w:2+Math.random()*4, h:8+Math.random()*10, r:Math.random()*Math.PI };
+  });
+
+  let frame = 0;
+  function step(){
+    frame++;
+    confettiCtx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+
+    for(const p of parts){
+      p.life -= 1;
+      p.vy += p.g;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.r += 0.12;
+
+      const a = Math.max(0, p.life/90);
+      confettiCtx.globalAlpha = a;
+
+      // sobre: blanc + 2 accents doux
+      const u = Math.random();
+      let fill = "rgba(255,255,255,.85)";
+      if(u < 0.33) fill = "rgba(125,185,255,.70)";
+      else if(u < 0.66) fill = "rgba(124,255,199,.60)";
+      confettiCtx.fillStyle = fill;
+
+      confettiCtx.save();
+      confettiCtx.translate(p.x, p.y);
+      confettiCtx.rotate(p.r);
+      confettiCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      confettiCtx.restore();
     }
 
-    ensureDay();
-    buildDrawer();
-    applySettings();
+    confettiCtx.globalAlpha = 1;
 
-    // start counts if missing
-    if(!state.startCounts || (!state.startCounts.tasks && !state.startCounts.eth)){
-      recalcStartCounts();
+    if(frame < 80){
+      requestAnimationFrame(step);
+    }else{
+      confettiCanvas.style.display = "none";
     }
+  }
+  step();
+}
+window.addEventListener("resize", () => {
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+});
 
+/* =========================
+   Tabs Rendering
+   ========================= */
+function renderTabs(){
+  tabsEl.innerHTML = "";
+  for(const t of TAB_DEFS){
+    const b = document.createElement("button");
+    b.className = "tab" + (t.key===activeTab ? " active": "");
+    b.textContent = t.label;
+    b.onclick = () => {
+      activeTab = t.key;
+      renderTabs();
+      renderPanel();
+    };
+    tabsEl.appendChild(b);
+  }
+}
+
+/* =========================
+   Task Logic
+   ========================= */
+function recalcStartCounts(){
+  // startCounts used for "restants / départ"
+  const tasks = state.tasks.length + state.done.length;
+  const eth = sumEth(state.tasks) + sumEth(state.done, true);
+  state.startCounts = { tasks, eth };
+}
+function sumEth(list, useStart=false){
+  let s=0;
+  for(const t of list){
+    const v = useStart ? (t.ethStart||0) : (t.ethLeft||0);
+    s += v;
+  }
+  return s;
+}
+function pickNextTask(){
+  // If set active, force order by queue
+  if(state.activeSet && Array.isArray(state.activeSet.queueTaskIds) && state.activeSet.queueTaskIds.length){
+    const nextId = state.activeSet.queueTaskIds[0];
+    const t = state.tasks.find(x=>x.id===nextId);
+    if(t) return t;
+    // purge missing
+    state.activeSet.queueTaskIds.shift();
+  }
+
+  if(!state.tasks.length) return null;
+
+  if(settings.sortMode === "order"){
+    // pinned first, then by createdAt
+    const pinned = state.tasks.filter(t=>t.pinned);
+    if(pinned.length) return pinned[0];
+    return state.tasks[0];
+  }else{
+    // roulette among tasks, prefer pinned? We keep pinned in pool but lightly biased
+    const pool = [...state.tasks];
+    const pinned = pool.filter(t=>t.pinned);
+    if(pinned.length && Math.random() < 0.55) return pinned[Math.floor(Math.random()*pinned.length)];
+    return pool[Math.floor(Math.random()*pool.length)];
+  }
+}
+
+function ensureCurrent(){
+  if(!state.tasks.length){
+    state.currentId = null;
+    state.timer = { taskId:null, elapsedMs:0, running:false, startedAt:null };
+    return;
+  }
+  if(state.currentId && state.tasks.some(t=>t.id===state.currentId)){
+    // keep current
+  }else{
+    const t = pickNextTask();
+    state.currentId = t ? t.id : null;
+    // reset timer for new task
+    state.timer = { taskId: state.currentId, elapsedMs:0, running: !!state.currentId, startedAt: Date.now() };
+  }
+}
+
+function getCurrent(){
+  if(!state.currentId) return null;
+  return state.tasks.find(t=>t.id===state.currentId) || null;
+}
+
+function roulette(){
+  if(!state.tasks.length) return;
+  // pick randomly but not same if possible
+  const current = getCurrent();
+  let t = null;
+
+  // if set active, roulette should still allow "reroll" but not break order:
+  // We will allow reroll only if NOT in set mode
+  if(state.activeSet){
+    // In set mode, roulette just re-focus the next expected task
     ensureCurrent();
     renderAll();
-    tick();
+    return;
+  }
 
-  })();
-  </script>
+  if(state.tasks.length === 1){
+    t = state.tasks[0];
+  }else{
+    for(let i=0;i<12;i++){
+      const candidate = state.tasks[Math.floor(Math.random()*state.tasks.length)];
+      if(!current || candidate.id !== current.id){ t = candidate; break; }
+    }
+    if(!t) t = state.tasks[0];
+  }
+  state.currentId = t.id;
+  state.timer = { taskId: t.id, elapsedMs:0, running:true, startedAt: Date.now() };
+}
+
+function smashOne(){
+  const t = getCurrent();
+  if(!t) return;
+
+  // Ensure timer running
+  if(!state.timer.running || state.timer.taskId !== t.id){
+    state.timer = { taskId: t.id, elapsedMs:0, running:true, startedAt: Date.now() };
+  }
+
+  t.ethLeft = clamp((t.ethLeft||1) - 1, 0, 999);
+
+  // optional: small popup rarely on smash (not always)
+  if(settings.celebrationMode !== "off"){
+    const p = clamp(celebrationProbability()*0.35, 0, 0.25);
+    if(Math.random() < p){
+      const line = CELEB_LINES[Math.floor(Math.random()*CELEB_LINES.length)];
+      showCelebration(line.big, "+1 éthorion. Petit pas, grande conquête.");
+    }
+  }
+
+  // complete task
+  if(t.ethLeft <= 0){
+    completeTask(t, "smash");
+  }else{
+    persistAll();
+    renderAll();
+  }
+}
+
+function completeTask(t, source){
+  // Confetti always at end of task
+  confettiBurst();
+
+  // snapshot for done
+  const doneTask = {
+    ...t,
+    doneAt: nowISO(),
+    doneSource: source,
+    elapsedMs: currentTaskElapsedMs()
+  };
+
+  // remove from tasks
+  state.tasks = state.tasks.filter(x=>x.id!==t.id);
+  state.done.unshift(doneTask);
+
+  // set queue advance
+  if(state.activeSet && state.activeSet.queueTaskIds && state.activeSet.queueTaskIds[0] === t.id){
+    state.activeSet.queueTaskIds.shift();
+    if(state.activeSet.queueTaskIds.length === 0){
+      // set finished
+      state.activeSet = null;
+    }
+  }
+
+  // history log (daily)
+  pushHistoryEvent({
+    type:"task_done",
+    dayISO: todayISO(),
+    taskId: doneTask.id,
+    title: doneTask.title,
+    cat: doneTask.cat,
+    ethStart: doneTask.ethStart,
+    elapsedMs: doneTask.elapsedMs || 0
+  });
+
+  // streak
+  state.streak.tasksSinceStart = (state.streak.tasksSinceStart||0) + 1;
+  state.streak.tasksSincePopup = (state.streak.tasksSincePopup||0) + 1;
+
+  // popup surprise sometimes
+  if(shouldShowCelebrationPopup()){
+    const line = CELEB_LINES[Math.floor(Math.random()*CELEB_LINES.length)];
+    showCelebration(line.big, line.small);
+    state.streak.tasksSincePopup = 0;
+  }
+
+  // choose next
+  state.currentId = null;
+  state.timer = { taskId:null, elapsedMs:0, running:false, startedAt:null };
+  ensureCurrent();
+  persistAll();
+  renderAll();
+}
+
+function currentTaskElapsedMs(){
+  if(!state.timer || !state.timer.taskId) return 0;
+  return state.timer.elapsedMs || 0;
+}
+
+/* =========================
+   History / daily rollover
+   ========================= */
+function pushHistoryEvent(evt){
+  history.unshift({ id: uid(), ts: nowISO(), ...evt });
+  // keep reasonable size
+  if(history.length > 5000) history.length = 5000;
+  saveJSON(K.history, history);
+}
+
+function maybeRolloverDay(){
+  const today = todayISO();
+  if(state.dayStartISO !== today){
+    // new day: keep tasks (you wanted history daily + weekly)
+    // we just mark the day switch event
+    pushHistoryEvent({ type:"day_rollover", from: state.dayStartISO, to: today });
+    state.dayStartISO = today;
+
+    // reset habits day if you want separate daily boxes
+    // (we store habits with dayISO; if day changed, create new day boxes when needed)
+
+    persistAll();
+  }
+}
+
+/* =========================
+   Reset
+   ========================= */
+btnReset.onclick = () => {
+  // reset tasks/done/timer/streak/current/set, but keep notes/kiff/habits/history
+  state.tasks = [];
+  state.done = [];
+  state.currentId = null;
+  state.startCounts = { tasks:0, eth:0 };
+  state.timer = { taskId:null, elapsedMs:0, running:false, startedAt:null };
+  state.streak = { tasksSincePopup:0, tasksSinceStart:0 };
+  state.activeSet = null;
+
+  pushHistoryEvent({ type:"reset", dayISO: todayISO() });
+
+  persistAll();
+  renderAll();
+  renderPanel();
+};
+
+/* =========================
+   Tick timer (elapsed)
+   ========================= */
+function startTicker(){
+  stopTicker();
+  tickTimer = setInterval(() => {
+    maybeRolloverDay();
+    const cur = getCurrent();
+    if(cur && state.timer && state.timer.taskId === cur.id && state.timer.running){
+      const now = Date.now();
+      const base = state.timer.startedAt || now;
+      state.timer.elapsedMs = (now - base);
+      saveJSON(K.state, state);
+      renderHUD();
+    }else{
+      renderHUD();
+    }
+  }, 500);
+}
+function stopTicker(){
+  if(tickTimer) clearInterval(tickTimer);
+  tickTimer = null;
+}
+
+/* =========================
+   Render: HUD + Main
+   ========================= */
+function renderHUD(){
+  const totalTasks0 = state.startCounts.tasks || (state.tasks.length + state.done.length);
+  const totalEth0 = state.startCounts.eth || (sumEth(state.tasks) + sumEth(state.done,true));
+
+  const tasksLeft = state.tasks.length;
+  const ethLeft = sumEth(state.tasks);
+
+  hudTasks.innerHTML = `<b>${tasksLeft}</b> / ${totalTasks0} tâches`;
+  hudEth.innerHTML   = `<b>${ethLeft}</b> / ${totalEth0} éthorions`;
+  hudDone.innerHTML  = `<b>${state.done.length}</b> faites`;
+
+  const cur = getCurrent();
+  if(cur){
+    hudTimer.innerHTML = `temps <b>${fmtTime(state.timer?.elapsedMs||0)}</b>`;
+  }else{
+    hudTimer.innerHTML = `temps <b>00:00</b>`;
+  }
+}
+
+function renderMain(){
+  ensureCurrent();
+
+  const totalTasks0 = state.startCounts.tasks || (state.tasks.length + state.done.length);
+  const totalEth0 = state.startCounts.eth || (sumEth(state.tasks) + sumEth(state.done,true));
+  const tasksLeft = state.tasks.length;
+
+  // Task progress uses: % done = 1 - tasksLeft/totalTasks0
+  const pct = totalTasks0 ? (1 - (tasksLeft/totalTasks0)) : 0;
+  const p = clamp(Math.round(pct*100), 0, 100);
+  taskFill.style.width = `${p}%`;
+  taskPct.textContent = `${p}%`;
+
+  const cur = getCurrent();
+  if(!cur){
+    currentTitle.textContent = "Aucune tâche";
+    currentMeta.innerHTML = `<span>Importe des tâches dans Inbox.</span>`;
+    ethFill.style.width = `0%`;
+    btnSmash.disabled = true;
+    btnRoulette.disabled = true;
+    return;
+  }
+
+  btnSmash.disabled = false;
+  btnRoulette.disabled = false;
+
+  currentTitle.textContent = cur.title;
+
+  const minsLeft = minutesFromEth(cur.ethLeft||0);
+  const minsStart = minutesFromEth(cur.ethStart||0);
+  const meta = [];
+
+  // minimal meta, but useful
+  meta.push(`Éthorions: ${cur.ethLeft}/${cur.ethStart} (${fmtMin(minsLeft)} restants)`);
+  if(cur.cat) meta.push(`Cat: ${cur.cat}`);
+  if(state.activeSet) meta.push(`Set actif: ${state.activeSet.setName}`);
+
+  currentMeta.innerHTML = meta.map(x=>`<span>${safeText(x)}</span>`).join(" · ");
+
+  const ethPct = cur.ethStart ? ((cur.ethLeft||0)/(cur.ethStart||1)) : 0;
+  ethFill.style.width = `${clamp(Math.round(ethPct*100), 0, 100)}%`;
+
+  // accessibility: update smash text contrast; we already use CSS variables.
+}
+
+/* =========================
+   Render Panel content
+   ========================= */
+function mkCard(title, innerHTML){
+  const c = document.createElement("div");
+  c.className = "card";
+  const h = document.createElement("h3");
+  h.textContent = title;
+  c.appendChild(h);
+  const d = document.createElement("div");
+  d.innerHTML = innerHTML;
+  c.appendChild(d);
+  return c;
+}
+
+function renderPanel(){
+  panelEl.innerHTML = "";
+  if(activeTab==="inbox") panelEl.appendChild(buildInboxPanel());
+  if(activeTab==="liste") panelEl.appendChild(buildListPanel());
+  if(activeTab==="sets") panelEl.appendChild(buildSetsPanel());
+  if(activeTab==="kiff") panelEl.appendChild(buildKiffPanel());
+  if(activeTab==="habits") panelEl.appendChild(buildHabitsPanel());
+  if(activeTab==="hist") panelEl.appendChild(buildHistoryPanel());
+  if(activeTab==="rapport") panelEl.appendChild(buildReportPanel());
+  if(activeTab==="params") panelEl.appendChild(buildParamsPanel());
+}
+
+/* =========================
+   Inbox: import parsing (caps category)
+   ========================= */
+function buildInboxPanel(){
+  const wrap = document.createElement("div");
+
+  const c1 = mkCard("Importer", `
+    <p class="help">
+      Format:
+      <br>— Une ligne en MAJUSCULES = catégorie
+      <br>— Les lignes dessous = tâches de cette catégorie
+      <br>— Option: "Tâche - 3" (3 éthorions) ou "Tâche 3"
+    </p>
+    <textarea id="inboxText" placeholder="EX:\nAPPELS\nAppeler Hugo - 2\nAppeler Samira\nADMIN\nRapport X - 6"></textarea>
+    <div class="row" style="margin-top:10px;">
+      <button class="btn primary" id="btnImport">Importer</button>
+      <button class="btn" id="btnClearInbox">Effacer</button>
+    </div>
+    <div class="row" style="margin-top:10px;">
+      <button class="btn" id="btnExportTasks">Exporter tâches</button>
+      <button class="btn" id="btnExportDone">Exporter fait</button>
+    </div>
+  `);
+
+  const c2 = mkCard("Aperçu", `
+    <div class="help" id="importPreview">Aucun aperçu.</div>
+  `);
+
+  wrap.appendChild(c1);
+  wrap.appendChild(c2);
+
+  setTimeout(() => {
+    const inboxText = document.getElementById("inboxText");
+    const preview = document.getElementById("importPreview");
+
+    function previewParse(){
+      const txt = inboxText.value || "";
+      const lines = txt.split(/\r?\n/);
+      let cat = "";
+      let out = [];
+      for(const raw of lines){
+        const line = raw.trim();
+        if(!line) continue;
+        if(isAllCaps(line)){
+          cat = line;
+          continue;
+        }
+        const parsed = parseTaskLine(line);
+        if(!parsed || !parsed.title) continue;
+        out.push({ cat: cat || "INBOX", title: parsed.title, eth: parsed.eth });
+      }
+      if(!out.length){
+        preview.textContent = "Aucun élément détecté.";
+        return;
+      }
+      const cats = uniq(out.map(x=>x.cat));
+      preview.innerHTML = `${out.length} tâches détectées · ${cats.length} catégories`;
+    }
+
+    inboxText.addEventListener("input", previewParse);
+    previewParse();
+
+    document.getElementById("btnClearInbox").onclick = () => {
+      inboxText.value = "";
+      previewParse();
+    };
+
+    document.getElementById("btnImport").onclick = () => {
+      const txt = inboxText.value || "";
+      const lines = txt.split(/\r?\n/);
+      let cat = "";
+      const created = [];
+      for(const raw of lines){
+        const line = raw.trim();
+        if(!line) continue;
+        if(isAllCaps(line)){
+          cat = line;
+          continue;
+        }
+        const parsed = parseTaskLine(line);
+        if(!parsed || !parsed.title) continue;
+        const t = {
+          id: uid(),
+          title: parsed.title,
+          cat: cat || "INBOX",
+          ethStart: parsed.eth,
+          ethLeft: parsed.eth,
+          pinned: false,
+          createdAt: nowISO()
+        };
+        created.push(t);
+      }
+      if(!created.length) return;
+
+      state.tasks = [...state.tasks, ...created];
+      recalcStartCounts();
+      state.currentId = null;
+      ensureCurrent();
+
+      pushHistoryEvent({ type:"import", dayISO: todayISO(), count: created.length });
+
+      persistAll();
+      renderAll();
+      renderPanel();
+    };
+
+    document.getElementById("btnExportTasks").onclick = () => {
+      downloadJSON(`eliminator-tasks-${todayISO()}.json`, state.tasks);
+    };
+    document.getElementById("btnExportDone").onclick = () => {
+      downloadJSON(`eliminator-done-${todayISO()}.json`, state.done);
+    };
+  }, 0);
+
+  return wrap;
+}
+
+/* =========================
+   Liste: minimal actions + mark done
+   ========================= */
+function buildListPanel(){
+  const wrap = document.createElement("div");
+
+  const c1 = mkCard("Tâches (pool actif)", `
+    <div class="row">
+      <select id="sortMode">
+        <option value="roulette">Mode: roulette</option>
+        <option value="order">Mode: ordre</option>
+      </select>
+      <button class="btn" id="btnRecalc">Recalcul départ</button>
+    </div>
+    <div class="row" style="margin-top:10px;">
+      <button class="btn" id="btnSelectCats">Filtrer catégories</button>
+      <button class="btn" id="btnClearCatFilter">Tout afficher</button>
+    </div>
+    <div class="list" id="taskList"></div>
+  `);
+
+  wrap.appendChild(c1);
+
+  setTimeout(() => {
+    const sortMode = document.getElementById("sortMode");
+    sortMode.value = settings.sortMode || "roulette";
+    sortMode.onchange = () => {
+      settings.sortMode = sortMode.value;
+      persistAll();
+    };
+
+    document.getElementById("btnRecalc").onclick = () => {
+      recalcStartCounts();
+      persistAll();
+      renderAll();
+    };
+
+    document.getElementById("btnSelectCats").onclick = () => {
+      const cats = uniq(state.tasks.map(t=>t.cat || "INBOX")).sort((a,b)=>a.localeCompare(b));
+      const chosen = prompt(
+        "Catégories à inclure (séparées par des virgules).\nDisponibles:\n" + cats.join(", "),
+        (settings.activeCats && settings.activeCats.length) ? settings.activeCats.join(", ") : ""
+      );
+      if(chosen===null) return;
+      const arr = chosen.split(",").map(x=>x.trim()).filter(Boolean);
+      settings.activeCats = arr.length ? arr : null;
+      persistAll();
+      renderAll();
+      renderPanel();
+    };
+
+    document.getElementById("btnClearCatFilter").onclick = () => {
+      settings.activeCats = null;
+      persistAll();
+      renderAll();
+      renderPanel();
+    };
+
+    renderTaskList();
+  }, 0);
+
+  return wrap;
+}
+
+function filteredTasks(){
+  if(!settings.activeCats || !settings.activeCats.length) return state.tasks;
+  const set = new Set(settings.activeCats);
+  return state.tasks.filter(t => set.has(t.cat || "INBOX"));
+}
+
+function renderTaskList(){
+  const list = document.getElementById("taskList");
+  if(!list) return;
+  list.innerHTML = "";
+
+  const tasks = filteredTasks();
+
+  if(!tasks.length){
+    const p = document.createElement("p");
+    p.className = "help";
+    p.textContent = "Aucune tâche dans la sélection.";
+    list.appendChild(p);
+    return;
+  }
+
+  for(let i=0;i<tasks.length;i++){
+    const t = tasks[i];
+    const row = document.createElement("div");
+    row.className = "item";
+
+    const left = document.createElement("div");
+    left.className = "t";
+
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = t.title;
+
+    const sub = document.createElement("div");
+    sub.className = "sub";
+    sub.textContent = `${t.cat || "INBOX"} · ${t.ethLeft}/${t.ethStart} éthorions` + (t.pinned ? " · épinglée" : "");
+
+    left.appendChild(name);
+    left.appendChild(sub);
+
+    // up/down/edit + delete + mark done
+    const up = document.createElement("button");
+    up.className = "iconBtn";
+    up.textContent = "↑";
+    up.title = "Monter (prioriser)";
+    up.onclick = () => {
+      const idx = state.tasks.findIndex(x=>x.id===t.id);
+      if(idx>0){
+        const tmp = state.tasks[idx-1];
+        state.tasks[idx-1] = state.tasks[idx];
+        state.tasks[idx] = tmp;
+        persistAll();
+        renderPanel();
+      }
+    };
+
+    const down = document.createElement("button");
+    down.className = "iconBtn";
+    down.textContent = "↓";
+    down.title = "Descendre";
+    down.onclick = () => {
+      const idx = state.tasks.findIndex(x=>x.id===t.id);
+      if(idx>=0 && idx<state.tasks.length-1){
+        const tmp = state.tasks[idx+1];
+        state.tasks[idx+1] = state.tasks[idx];
+        state.tasks[idx] = tmp;
+        persistAll();
+        renderPanel();
+      }
+    };
+
+    const edit = document.createElement("button");
+    edit.className = "iconBtn";
+    edit.textContent = "✎";
+    edit.title = "Éditer";
+    edit.onclick = () => {
+      const newTitle = prompt("Nouveau titre", t.title);
+      if(newTitle===null) return;
+      t.title = (newTitle||"").trim() || t.title;
+
+      const newEth = prompt("Éthorions (nombre)", String(t.ethStart||1));
+      if(newEth!==null){
+        const n = clamp(parseInt(newEth,10)||t.ethStart||1, 1, 999);
+        // adjust proportionally: keep same remaining ratio if possible
+        const ratio = (t.ethStart>0) ? (t.ethLeft/t.ethStart) : 1;
+        t.ethStart = n;
+        t.ethLeft = clamp(Math.round(n*ratio), 0, n);
+      }
+
+      persistAll();
+      renderAll();
+      renderPanel();
+    };
+
+    const pin = document.createElement("button");
+    pin.className = "iconBtn";
+    pin.textContent = "⌁";
+    pin.title = "Épingler / désépingler";
+    pin.onclick = () => {
+      t.pinned = !t.pinned;
+      persistAll();
+      renderAll();
+      renderPanel();
+    };
+
+    const doneBtn = document.createElement("button");
+    doneBtn.className = "iconBtn";
+    doneBtn.textContent = "✓";
+    doneBtn.title = "Marquer comme déjà dégommée";
+    doneBtn.onclick = () => {
+      // Mark as done immediately, no confetti (this is administrative)
+      const fake = { ...t, ethLeft:0 };
+      state.currentId = (state.currentId===t.id) ? null : state.currentId;
+      state.tasks = state.tasks.filter(x=>x.id!==t.id);
+      state.done.unshift({ ...fake, doneAt: nowISO(), doneSource:"manual_mark_done", elapsedMs:0 });
+
+      pushHistoryEvent({ type:"task_done", dayISO: todayISO(), taskId: t.id, title: t.title, cat: t.cat, ethStart: t.ethStart, elapsedMs:0 });
+
+      // advance set queue if needed
+      if(state.activeSet && state.activeSet.queueTaskIds && state.activeSet.queueTaskIds[0] === t.id){
+        state.activeSet.queueTaskIds.shift();
+        if(state.activeSet.queueTaskIds.length === 0) state.activeSet = null;
+      }
+
+      recalcStartCounts();
+      ensureCurrent();
+      persistAll();
+      renderAll();
+      renderPanel();
+    };
+
+    const del = document.createElement("button");
+    del.className = "iconBtn";
+    del.textContent = "✕";
+    del.title = "Supprimer";
+    del.onclick = () => {
+      state.tasks = state.tasks.filter(x=>x.id!==t.id);
+      if(state.currentId===t.id) state.currentId=null;
+      ensureCurrent();
+      recalcStartCounts();
+      persistAll();
+      renderAll();
+      renderPanel();
+    };
+
+    row.appendChild(left);
+    row.appendChild(up);
+    row.appendChild(down);
+    row.appendChild(edit);
+    row.appendChild(pin);
+    row.appendChild(doneBtn);
+    row.appendChild(del);
+    list.appendChild(row);
+  }
+}
+
+/* =========================
+   Sets panel (hospital/consult)
+   ========================= */
+function buildSetsPanel(){
+  const wrap = document.createElement("div");
+
+  const c1 = mkCard("Sets", `
+    <p class="help">
+      Active un set pour le rendre prioritaire et le faire dans l’ordre.
+      Tu peux générer N patients (Patient 1 → étapes…).
+    </p>
+
+    <div class="row" style="margin-top:10px;">
+      <select id="setSelect"></select>
+      <input id="setPatients" type="number" min="1" max="60" value="4" />
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <button class="btn primary" id="btnActivateSet">Activer</button>
+      <button class="btn danger" id="btnStopSet">Stop</button>
+      <button class="btn" id="btnEditSet">Modifier</button>
+    </div>
+
+    <div style="margin-top:12px;" class="help" id="setStatus"></div>
+  `);
+
+  const c2 = mkCard("Éditeur", `
+    <input id="setName" placeholder="Nom du set" />
+    <textarea id="setSteps" style="margin-top:10px; min-height:140px;"
+      placeholder="1 ligne = une étape (format : Libellé - eth)\nEx:\nVoir patient - 1\nNote - 1\nTraitement - 1\nDossier - 2"></textarea>
+
+    <div class="row" style="margin-top:10px;">
+      <button class="btn primary" id="btnSaveSet">Enregistrer</button>
+      <button class="btn" id="btnNewSet">Nouveau</button>
+      <button class="btn danger" id="btnDeleteSet">Supprimer</button>
+    </div>
+    <p class="help" style="margin-top:10px;">
+      L’éditeur est volontairement simple pour rester utilisable sans usine à gaz.
+    </p>
+  `);
+
+  c2.style.display = "none";
+  wrap.appendChild(c1);
+  wrap.appendChild(c2);
+
+  setTimeout(() => {
+    const setSelect = document.getElementById("setSelect");
+    const setPatients = document.getElementById("setPatients");
+    const setStatus = document.getElementById("setStatus");
+
+    const setName = document.getElementById("setName");
+    const setSteps = document.getElementById("setSteps");
+    const btnEditSet = document.getElementById("btnEditSet");
+    const btnSaveSet = document.getElementById("btnSaveSet");
+    const btnNewSet = document.getElementById("btnNewSet");
+    const btnDeleteSet = document.getElementById("btnDeleteSet");
+
+    function refreshSelect(){
+      setSelect.innerHTML = "";
+      for(const s of sets){
+        const opt = document.createElement("option");
+        opt.value = s.id;
+        opt.textContent = s.name;
+        setSelect.appendChild(opt);
+      }
+    }
+    function getSelectedSet(){
+      const id = setSelect.value;
+      return sets.find(x=>x.id===id) || sets[0];
+    }
+    function formatStepsText(steps){
+      return (steps||[]).map(st => `${st.label} - ${st.eth}`).join("\n");
+    }
+    function parseStepsText(text){
+      const out = [];
+      const lines = (text||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+      for(const ln of lines){
+        let label = ln;
+        let eth = 1;
+        const m = ln.match(/\s*-\s*(\d+)\s*$/);
+        if(m){
+          eth = clamp(parseInt(m[1],10)||1,1,999);
+          label = ln.replace(/\s*-\s*\d+\s*$/,"").trim();
+        }
+        if(label) out.push({ label, eth });
+      }
+      return out.length ? out : [{ label:"Étape", eth:1 }];
+    }
+    function renderStatus(){
+      if(state.activeSet){
+        setStatus.textContent = `Set actif: ${state.activeSet.setName || "—"} · reste ${state.activeSet.queueTaskIds.length} tâche(s).`;
+      }else{
+        setStatus.textContent = `Aucun set actif.`;
+      }
+    }
+
+    function activateSet(){
+      const s = getSelectedSet();
+      const n = clamp(parseInt(setPatients.value,10)||1, 1, 60);
+
+      const cat = `SET · ${s.name}`;
+      const created = [];
+      const queue = [];
+
+      for(let i=1;i<=n;i++){
+        const pLabel = `Patient ${i}`;
+        for(const st of (s.steps||[])){
+          const title = `${pLabel} — ${st.label}`;
+          const eth = clamp(parseInt(st.eth,10)||1,1,999);
+          const t = {
+            id: uid(),
+            title,
+            cat,
+            ethStart: eth,
+            ethLeft: eth,
+            pinned: false,
+            createdAt: nowISO(),
+            setMeta: { setId: s.id, patient: i, step: st.label }
+          };
+          created.push(t);
+          queue.push(t.id);
+        }
+      }
+
+      // priority: insert in front
+      state.tasks = [...created, ...state.tasks];
+
+      state.activeSet = {
+        setId: s.id,
+        setName: s.name,
+        queueTaskIds: queue,
+        startedAt: nowISO()
+      };
+
+      settings.sortMode = "order"; // set forces order (but not spammed on UI)
+      recalcStartCounts();
+      state.currentId = null;
+      state.timer = { taskId:null, elapsedMs:0, running:false, startedAt:null };
+      ensureCurrent();
+
+      pushHistoryEvent({ type:"set_activated", dayISO: todayISO(), setId:s.id, setName:s.name, patients:n });
+
+      persistAll();
+      renderAll();
+      renderPanel();
+    }
+
+    function stopSet(){
+      if(state.activeSet){
+        pushHistoryEvent({ type:"set_stopped", dayISO: todayISO(), setName: state.activeSet.setName });
+      }
+      state.activeSet = null;
+      persistAll();
+      renderAll();
+      renderPanel();
+    }
+
+    btnEditSet.onclick = () => {
+      const s = getSelectedSet();
+      setName.value = s.name;
+      setSteps.value = formatStepsText(s.steps);
+      c2.style.display = (c2.style.display==="none") ? "" : "none";
+    };
+
+    btnSaveSet.onclick = () => {
+      const s = getSelectedSet();
+      s.name = (setName.value || s.name).trim() || s.name;
+      s.steps = parseStepsText(setSteps.value);
+      persistAll();
+      refreshSelect();
+      renderPanel();
+    };
+
+    btnNewSet.onclick = () => {
+      const id = "set_" + uid();
+      const s = {
+        id,
+        name: "Nouveau set",
+        type:"custom",
+        steps: [{label:"Étape", eth:1}]
+      };
+      sets.push(s);
+      persistAll();
+      refreshSelect();
+      setSelect.value = id;
+      setName.value = s.name;
+      setSteps.value = formatStepsText(s.steps);
+      c2.style.display = "";
+    };
+
+    btnDeleteSet.onclick = () => {
+      const s = getSelectedSet();
+      if(s.id==="set_hosp" || s.id==="set_cons"){
+        alert("Sets de base non supprimables.");
+        return;
+      }
+      sets = sets.filter(x=>x.id!==s.id);
+      persistAll();
+      refreshSelect();
+      renderPanel();
+    };
+
+    document.getElementById("btnActivateSet").onclick = activateSet;
+    document.getElementById("btnStopSet").onclick = stopSet;
+
+    refreshSelect();
+    renderStatus();
+  }, 0);
+
+  return wrap;
+}
+
+/* =========================
+   Kiffance: 4 catégories (5/10/15/25+)
+   ========================= */
+function buildKiffPanel(){
+  const wrap = document.createElement("div");
+
+  const c1 = mkCard("Kiffance — suggestions", `
+    <p class="help">
+      4 catégories: 5 min, 10 min, 15 min, 25+ min.
+      Rafraîchir pour tirer une suggestion.
+    </p>
+
+    <div class="row" style="margin-top:10px;">
+      <select id="kiffCat">
+        <option value="5">5 minutes</option>
+        <option value="10">10 minutes</option>
+        <option value="15">15 minutes</option>
+        <option value="25">25+ minutes</option>
+      </select>
+      <button class="btn primary" id="btnKiffRefresh">Rafraîchir</button>
+    </div>
+
+    <div class="card" style="margin-top:10px; margin-bottom:0;">
+      <h3>Suggestion</h3>
+      <p class="help" id="kiffSuggestion">—</p>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn" id="btnKiffToTasks">Ajouter à la liste</button>
+        <button class="btn" id="btnKiffCopy">Copier</button>
+      </div>
+    </div>
+  `);
+
+  const c2 = mkCard("Banque (ajouter / supprimer)", `
+    <div class="row">
+      <select id="kiffCat2">
+        <option value="5">5 minutes</option>
+        <option value="10">10 minutes</option>
+        <option value="15">15 minutes</option>
+        <option value="25">25+ minutes</option>
+      </select>
+      <button class="btn" id="btnKiffShow">Voir</button>
+    </div>
+
+    <textarea id="kiffAdd" style="margin-top:10px; min-height:90px;" placeholder="Ajouter des lignes (1 idée par ligne)"></textarea>
+    <div class="row" style="margin-top:10px;">
+      <button class="btn primary" id="btnKiffAdd">Ajouter</button>
+      <button class="btn danger" id="btnKiffReset">Reset banque</button>
+    </div>
+
+    <div class="list" id="kiffList" style="margin-top:10px;"></div>
+  `);
+
+  wrap.appendChild(c1);
+  wrap.appendChild(c2);
+
+  setTimeout(() => {
+    const kiffCat = document.getElementById("kiffCat");
+    const kiffSuggestion = document.getElementById("kiffSuggestion");
+    const kiffCat2 = document.getElementById("kiffCat2");
+    const kiffList = document.getElementById("kiffList");
+
+    let currentSuggestion = "";
+
+    function pickSuggestion(cat){
+      const arr = kiffBank[String(cat)] || [];
+      if(!arr.length) return "Banque vide pour cette catégorie.";
+      return arr[Math.floor(Math.random()*arr.length)];
+    }
+
+    function refresh(){
+      const cat = kiffCat.value;
+      currentSuggestion = pickSuggestion(cat);
+      kiffSuggestion.textContent = currentSuggestion;
+    }
+
+    document.getElementById("btnKiffRefresh").onclick = refresh;
+
+    document.getElementById("btnKiffToTasks").onclick = () => {
+      if(!currentSuggestion) refresh();
+      const cat = "KIFFANCE";
+      const eth = (kiffCat.value==="5") ? 1 :
+                  (kiffCat.value==="10") ? 2 :
+                  (kiffCat.value==="15") ? 3 : 5;
+      state.tasks.push({
+        id: uid(),
+        title: currentSuggestion,
+        cat,
+        ethStart: eth,
+        ethLeft: eth,
+        pinned: false,
+        createdAt: nowISO()
+      });
+      recalcStartCounts();
+      ensureCurrent();
+      pushHistoryEvent({ type:"kiff_to_task", dayISO: todayISO(), cat:kiffCat.value });
+      persistAll();
+      renderAll();
+      renderPanel();
+    };
+
+    document.getElementById("btnKiffCopy").onclick = async () => {
+      if(!currentSuggestion) refresh();
+      try{ await navigator.clipboard.writeText(currentSuggestion); }catch(e){}
+    };
+
+    function renderBankList(cat){
+      kiffList.innerHTML = "";
+      const arr = (kiffBank[String(cat)] || []);
+      if(!arr.length){
+        const p = document.createElement("p");
+        p.className = "help";
+        p.textContent = "Banque vide.";
+        kiffList.appendChild(p);
+        return;
+      }
+      arr.forEach((txt, idx) => {
+        const it = document.createElement("div");
+        it.className = "item";
+        const t = document.createElement("div");
+        t.className = "t";
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = txt;
+        t.appendChild(name);
+
+        const del = document.createElement("button");
+        del.className = "iconBtn";
+        del.textContent = "✕";
+        del.title = "Supprimer";
+        del.onclick = () => {
+          kiffBank[String(cat)] = kiffBank[String(cat)].filter((_,i)=>i!==idx);
+          persistAll();
+          renderBankList(cat);
+        };
+
+        it.appendChild(t);
+        it.appendChild(del);
+        kiffList.appendChild(it);
+      });
+    }
+
+    document.getElementById("btnKiffShow").onclick = () => {
+      renderBankList(kiffCat2.value);
+    };
+
+    document.getElementById("btnKiffAdd").onclick = () => {
+      const cat = kiffCat2.value;
+      const txt = (document.getElementById("kiffAdd").value || "");
+      const lines = txt.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+      if(!lines.length) return;
+      kiffBank[String(cat)] = (kiffBank[String(cat)] || []).concat(lines);
+      document.getElementById("kiffAdd").value = "";
+      persistAll();
+      renderBankList(cat);
+    };
+
+    document.getElementById("btnKiffReset").onclick = () => {
+      kiffBank = structuredClone(DEFAULT_KIFF);
+      persistAll();
+      renderBankList(kiffCat2.value);
+      refresh();
+    };
+
+    refresh();
+    renderBankList("5");
+  }, 0);
+
+  return wrap;
+}
+
+/* =========================
+   Habits: 10 boxes + report
+   ========================= */
+function buildHabitsPanel(){
+  const wrap = document.createElement("div");
+  const c1 = mkCard("Suivi des habitudes", `
+    <p class="help">
+      Une habitude = une ligne. 10 cases = progression (au choix: journée, semaine, etc.).
+      Pas de célébration à l’encodage, c’est administratif.
+    </p>
+    <div class="row" style="margin-top:10px;">
+      <input id="habitName" placeholder="Nom (ex: verres d’eau / marche / dossier X)" />
+      <button class="btn primary" id="btnAddHabit">Ajouter</button>
+    </div>
+    <div class="list" id="habitList" style="margin-top:10px;"></div>
+  `);
+
+  wrap.appendChild(c1);
+
+  setTimeout(() => {
+    document.getElementById("btnAddHabit").onclick = () => {
+      const name = (document.getElementById("habitName").value||"").trim();
+      if(!name) return;
+      habits.unshift({
+        id: uid(),
+        name,
+        dayISO: todayISO(),
+        boxes: Array.from({length:10}, ()=>false)
+      });
+      document.getElementById("habitName").value = "";
+      persistAll();
+      renderPanel();
+    };
+
+    renderHabitsList();
+  }, 0);
+
+  return wrap;
+}
+
+function renderHabitsList(){
+  const list = document.getElementById("habitList");
+  if(!list) return;
+  list.innerHTML = "";
+
+  if(!habits.length){
+    const p = document.createElement("p");
+    p.className = "help";
+    p.textContent = "Aucune habitude.";
+    list.appendChild(p);
+    return;
+  }
+
+  for(const h of habits){
+    const row = document.createElement("div");
+    row.className = "item";
+
+    const left = document.createElement("div");
+    left.className = "t";
+
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = h.name;
+
+    const sub = document.createElement("div");
+    sub.className = "sub";
+    const done = (h.boxes||[]).filter(Boolean).length;
+    sub.textContent = `${done}/10 · ${h.dayISO}`;
+
+    left.appendChild(name);
+    left.appendChild(sub);
+
+    const boxesWrap = document.createElement("div");
+    boxesWrap.style.display = "flex";
+    boxesWrap.style.gap = "6px";
+    boxesWrap.style.alignItems = "center";
+
+    for(let i=0;i<10;i++){
+      const b = document.createElement("button");
+      b.className = "iconBtn";
+      b.style.width = "28px";
+      b.style.height = "28px";
+      b.textContent = (h.boxes && h.boxes[i]) ? "■" : "□";
+      b.title = `Case ${i+1}`;
+      b.onclick = () => {
+        h.boxes[i] = !h.boxes[i];
+        persistAll();
+        renderHabitsList();
+      };
+      boxesWrap.appendChild(b);
+    }
+
+    const reset = document.createElement("button");
+    reset.className = "iconBtn";
+    reset.textContent = "↺";
+    reset.title = "Reset cases";
+    reset.onclick = () => {
+      h.boxes = Array.from({length:10}, ()=>false);
+      persistAll();
+      renderHabitsList();
+    };
+
+    const del = document.createElement("button");
+    del.className = "iconBtn";
+    del.textContent = "✕";
+    del.title = "Supprimer";
+    del.onclick = () => {
+      habits = habits.filter(x=>x.id!==h.id);
+      persistAll();
+      renderHabitsList();
+    };
+
+    row.appendChild(left);
+    row.appendChild(boxesWrap);
+    row.appendChild(reset);
+    row.appendChild(del);
+
+    list.appendChild(row);
+  }
+}
+
+/* =========================
+   History panel: timeline + calendar
+   ========================= */
+function buildHistoryPanel(){
+  const wrap = document.createElement("div");
+
+  const c1 = mkCard("Historique (timeline)", `
+    <div class="row">
+      <button class="btn" id="btnExportHistory">Exporter</button>
+      <button class="btn" id="btnClearHistory">Vider</button>
+    </div>
+    <div class="list" id="histList" style="margin-top:10px;"></div>
+  `);
+
+  const c2 = mkCard("Calendrier (mois)", `
+    <div class="row">
+      <button class="btn" id="btnPrevMonth">←</button>
+      <div class="help" id="calTitle" style="text-align:center;"></div>
+      <button class="btn" id="btnNextMonth">→</button>
+    </div>
+    <div class="calGrid" id="calGrid"></div>
+    <p class="help" style="margin-top:10px;">
+      Chaque case affiche tâches faites / éthorions faits (approximé via ethStart).
+    </p>
+  `);
+
+  wrap.appendChild(c1);
+  wrap.appendChild(c2);
+
+  setTimeout(() => {
+    document.getElementById("btnExportHistory").onclick = () => downloadJSON(`eliminator-history-${todayISO()}.json`, history);
+    document.getElementById("btnClearHistory").onclick = () => {
+      if(confirm("Vider l'historique ?")){
+        history = [];
+        persistAll();
+        renderPanel();
+      }
+    };
+
+    renderHistoryList();
+
+    // calendar
+    let view = new Date();
+    view.setDate(1);
+
+    function renderCal(){
+      const calTitle = document.getElementById("calTitle");
+      const grid = document.getElementById("calGrid");
+      grid.innerHTML = "";
+
+      const y = view.getFullYear();
+      const m = view.getMonth();
+      calTitle.textContent = view.toLocaleString(undefined, { month:"long", year:"numeric" });
+
+      const firstDay = new Date(y,m,1);
+      const startWeekday = (firstDay.getDay()+6)%7; // monday=0
+      const daysInMonth = new Date(y,m+1,0).getDate();
+
+      // map daily totals from history
+      const map = {}; // dayISO -> {tasks, eth}
+      for(const e of history){
+        if(e.type==="task_done" && e.dayISO){
+          map[e.dayISO] = map[e.dayISO] || { tasks:0, eth:0 };
+          map[e.dayISO].tasks += 1;
+          map[e.dayISO].eth += (e.ethStart||0);
+        }
+      }
+
+      // leading blanks
+      for(let i=0;i<startWeekday;i++){
+        const c = document.createElement("div");
+        c.className = "calCell";
+        c.style.opacity = "0.45";
+        grid.appendChild(c);
+      }
+
+      for(let d=1; d<=daysInMonth; d++){
+        const iso = `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+        const c = document.createElement("div");
+        c.className = "calCell";
+
+        const dd = document.createElement("div");
+        dd.className = "d";
+        dd.textContent = String(d);
+
+        const val = map[iso];
+        const kk = document.createElement("div");
+        kk.className = "k";
+        kk.textContent = val ? `${val.tasks} / ${val.eth}` : "—";
+
+        c.appendChild(dd);
+        c.appendChild(kk);
+        grid.appendChild(c);
+      }
+    }
+
+    document.getElementById("btnPrevMonth").onclick = () => { view.setMonth(view.getMonth()-1); renderCal(); };
+    document.getElementById("btnNextMonth").onclick = () => { view.setMonth(view.getMonth()+1); renderCal(); };
+
+    renderCal();
+  }, 0);
+
+  return wrap;
+}
+
+function renderHistoryList(){
+  const list = document.getElementById("histList");
+  if(!list) return;
+  list.innerHTML = "";
+
+  const items = history.slice(0, 60);
+  if(!items.length){
+    const p = document.createElement("p");
+    p.className = "help";
+    p.textContent = "Aucun historique.";
+    list.appendChild(p);
+    return;
+  }
+
+  for(const e of items){
+    const row = document.createElement("div");
+    row.className = "item";
+
+    const left = document.createElement("div");
+    left.className = "t";
+
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = `${new Date(e.ts).toLocaleString()} — ${e.type}`;
+
+    const sub = document.createElement("div");
+    sub.className = "sub";
+    if(e.type==="task_done"){
+      sub.textContent = `${e.title} · ${e.cat||""} · eth:${e.ethStart||0}`;
+    }else if(e.type==="import"){
+      sub.textContent = `Import: ${e.count} tâches`;
+    }else if(e.type==="set_activated"){
+      sub.textContent = `Set: ${e.setName} · patients:${e.patients}`;
+    }else{
+      sub.textContent = JSON.stringify(e).slice(0,140);
+    }
+
+    left.appendChild(name);
+    left.appendChild(sub);
+    row.appendChild(left);
+    list.appendChild(row);
+  }
+}
+
+/* =========================
+   Rapport panel
+   ========================= */
+function buildReportPanel(){
+  const wrap = document.createElement("div");
+
+  const c1 = mkCard("Rapport", `
+    <p class="help">
+      Rapport journalier / hebdo / mensuel (basique mais utile).
+      Exporte en JSON (pour tes traitements ultérieurs).
+    </p>
+
+    <div class="row" style="margin-top:10px;">
+      <select id="repRange">
+        <option value="day">Aujourd'hui</option>
+        <option value="week">7 jours</option>
+        <option value="month">30 jours</option>
+      </select>
+      <button class="btn primary" id="btnMakeReport">Générer</button>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <button class="btn" id="btnExportReport">Exporter</button>
+      <button class="btn" id="btnCopyReport">Copier</button>
+    </div>
+
+    <textarea id="reportOut" style="margin-top:10px; min-height:220px;" readonly></textarea>
+  `);
+
+  wrap.appendChild(c1);
+
+  setTimeout(() => {
+    const repRange = document.getElementById("repRange");
+    const out = document.getElementById("reportOut");
+
+    let lastReport = null;
+
+    function rangeDays(){
+      const v = repRange.value;
+      if(v==="day") return 1;
+      if(v==="week") return 7;
+      return 30;
+    }
+
+    function makeReport(){
+      const days = rangeDays();
+      const cutoff = Date.now() - days*24*3600*1000;
+
+      const ev = history.filter(e => new Date(e.ts).getTime() >= cutoff);
+
+      const doneEv = ev.filter(e => e.type==="task_done");
+      const doneTasks = doneEv.length;
+      const doneEth = doneEv.reduce((a,b)=>a+(b.ethStart||0),0);
+
+      // remaining snapshot (current state)
+      const remainTasks = state.tasks.length;
+      const remainEth = sumEth(state.tasks);
+
+      // habits snapshot
+      const habitLines = habits.slice(0,50).map(h=>{
+        const done = (h.boxes||[]).filter(Boolean).length;
+        return { name:h.name, done, total:10, dayISO:h.dayISO };
+      });
+
+      lastReport = {
+        generatedAt: nowISO(),
+        rangeDays: days,
+        doneTasks,
+        doneEth,
+        remaining: { tasks: remainTasks, eth: remainEth },
+        doneExamples: doneEv.slice(0,20),
+        habits: habitLines,
+        activeSet: state.activeSet
+      };
+
+      out.value = JSON.stringify(lastReport, null, 2);
+    }
+
+    document.getElementById("btnMakeReport").onclick = makeReport;
+
+    document.getElementById("btnExportReport").onclick = () => {
+      if(!lastReport) makeReport();
+      downloadJSON(`eliminator-report-${todayISO()}.json`, lastReport);
+    };
+
+    document.getElementById("btnCopyReport").onclick = async () => {
+      if(!lastReport) makeReport();
+      try{ await navigator.clipboard.writeText(out.value); }catch(e){}
+    };
+
+    makeReport();
+  }, 0);
+
+  return wrap;
+}
+
+/* =========================
+   Params panel
+   ========================= */
+function buildParamsPanel(){
+  const wrap = document.createElement("div");
+
+  const c1 = mkCard("Affichage & comportement", `
+    <div class="row">
+      <select id="celebrationMode">
+        <option value="surprise">Célébrations: surprise</option>
+        <option value="frequent">Célébrations: fréquentes</option>
+        <option value="off">Célébrations: off</option>
+      </select>
+      <select id="motivation">
+        <option value="high">Motivation: haute</option>
+        <option value="normal">Motivation: normale</option>
+        <option value="low">Motivation: basse</option>
+      </select>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <select id="fatigue">
+        <option value="low">Fatigue: faible</option>
+        <option value="medium">Fatigue: moyenne</option>
+        <option value="high">Fatigue: élevée</option>
+      </select>
+      <select id="celebrateHide">
+        <option value="6000">Popup: 6s</option>
+        <option value="9000">Popup: 9s</option>
+        <option value="12000">Popup: 12s</option>
+      </select>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <input id="ethMin" type="number" min="1" max="60" placeholder="Minutes par éthorion (5)" />
+      <button class="btn" id="btnApplyEth">Appliquer</button>
+    </div>
+
+    <p class="help" style="margin-top:10px;">
+      Par défaut: thème clair, interface épurée. Le “mode focus” masque au maximum sans perdre le HUD en haut.
+    </p>
+  `);
+
+  wrap.appendChild(c1);
+
+  setTimeout(() => {
+    const celebrationMode = document.getElementById("celebrationMode");
+    const motivation = document.getElementById("motivation");
+    const fatigue = document.getElementById("fatigue");
+    const celebrateHide = document.getElementById("celebrateHide");
+    const ethMin = document.getElementById("ethMin");
+
+    celebrationMode.value = settings.celebrationMode || "surprise";
+    motivation.value = settings.motivation || "normal";
+    fatigue.value = settings.fatigue || "medium";
+    celebrateHide.value = String(settings.celebrationAutoHideMs || 9000);
+    ethMin.value = String(settings.ethMinutesPer || 5);
+
+    celebrationMode.onchange = () => { settings.celebrationMode = celebrationMode.value; persistAll(); };
+    motivation.onchange = () => { settings.motivation = motivation.value; persistAll(); };
+    fatigue.onchange = () => { settings.fatigue = fatigue.value; persistAll(); };
+    celebrateHide.onchange = () => { settings.celebrationAutoHideMs = parseInt(celebrateHide.value,10)||9000; persistAll(); };
+
+    document.getElementById("btnApplyEth").onclick = () => {
+      settings.ethMinutesPer = clamp(parseInt(ethMin.value,10)||5, 1, 60);
+      persistAll();
+      renderAll();
+    };
+  }, 0);
+
+  return wrap;
+}
+
+/* =========================
+   Export helper
+   ========================= */
+function downloadJSON(filename, obj){
+  const blob = new Blob([JSON.stringify(obj,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* =========================
+   Wire actions
+   ========================= */
+btnRoulette.onclick = () => {
+  wheel.classList.remove("spin");
+  // reflow for animation restart
+  void wheel.offsetWidth;
+  wheel.classList.add("spin");
+  roulette();
+  ensureCurrent();
+  persistAll();
+  renderAll();
+};
+
+btnSmash.onclick = () => {
+  smashOne();
+};
+
+function renderAll(){
+  applyTheme();
+  applyFocus();
+  renderHUD();
+  renderMain();
+  // refresh list panel if open
+  if(activeTab==="liste"){
+    setTimeout(() => renderTaskList(), 0);
+  }
+  if(activeTab==="habits"){
+    setTimeout(() => renderHabitsList(), 0);
+  }
+}
+
+/* =========================
+   Init
+   ========================= */
+function boot(){
+  applyTheme();
+  applyFocus();
+
+  renderTabs();
+  renderPanel();
+
+  // baseline counts if missing
+  if(!state.startCounts || !state.startCounts.tasks){
+    recalcStartCounts();
+  }
+
+  ensureCurrent();
+  renderAll();
+  startTicker();
+}
+boot();
+
+</script>
 </body>
 </html>
