@@ -2,629 +2,570 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>ELIMINATOR</title>
 
   <style>
     :root{
-      /* Light (par défaut) — élégant, vitré, sobre */
-      --bg: #f6f8fc;
-      --fg: #0f172a;
-      --muted: rgba(15,23,42,.60);
-      --muted2: rgba(15,23,42,.42);
-      --glass: rgba(255,255,255,.60);
-      --glass2: rgba(255,255,255,.46);
-      --stroke: rgba(15,23,42,.10);
-      --shadow: 0 18px 50px rgba(15,23,42,.12);
-      --shadow2: 0 10px 26px rgba(15,23,42,.10);
-      --accent: rgba(70, 140, 255, .95);
-      --accent2: rgba(40, 200, 160, .85);
-
+      --bg:#0f1115;
+      --fg:#e9edf5;
+      --muted:#a8b0bd;
+      --glass: rgba(255,255,255,.06);
+      --glass2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
       --radius: 18px;
-      --radius2: 26px;
-
-      --topbarH: 64px;
-
-      --titleSize: 48px;
-      --subtitleSize: 14px;
-
-      --progressH: 34px; /* grande barre */
-      --ethH: 14px;      /* mini barre */
-
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --radius2: 14px;
+      --pad: 14px;
+      --focusGlow: rgba(120,170,255,.16); /* discret */
+      --accent: rgba(120,170,255,.25);    /* discret */
+      --danger: rgba(255,255,255,.12);    /* pas rouge */
+      --barbg: rgba(255,255,255,.10);
+      --barfg: rgba(255,255,255,.65);
+      --barfg2: rgba(255,255,255,.42);
     }
 
-    /* Dark */
-    [data-theme="dark"]{
-      --bg:#0b1020;
-      --fg:#eaf0ff;
-      --muted: rgba(234,240,255,.64);
-      --muted2: rgba(234,240,255,.40);
-      --glass: rgba(255,255,255,.07);
-      --glass2: rgba(255,255,255,.05);
-      --stroke: rgba(255,255,255,.11);
-      --shadow: 0 22px 60px rgba(0,0,0,.45);
-      --shadow2: 0 12px 30px rgba(0,0,0,.35);
-      --accent: rgba(120, 170, 255, .95);
-      --accent2: rgba(124,255,199,.78);
+    [data-theme="light"]{
+      --bg:#f4f6fb;
+      --fg:#101218;
+      --muted:#5d6572;
+      --glass: rgba(255,255,255,.62);
+      --glass2: rgba(255,255,255,.74);
+      --stroke: rgba(20,22,28,.10);
+      --shadow: 0 12px 30px rgba(20,22,28,.12);
+      --focusGlow: rgba(90,130,255,.18);
+      --accent: rgba(90,130,255,.22);
+      --danger: rgba(20,22,28,.08);
+      --barbg: rgba(20,22,28,.10);
+      --barfg: rgba(20,22,28,.70);
+      --barfg2: rgba(20,22,28,.45);
     }
 
-    html, body{
-      height:100%;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
       margin:0;
-      background: radial-gradient(1200px 700px at 50% -10%, rgba(70,140,255,.18), transparent 60%),
-                  radial-gradient(900px 520px at 90% 0%, rgba(40,200,160,.14), transparent 62%),
-                  var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 700px at 20% -10%, var(--accent), transparent 60%),
+        radial-gradient(900px 600px at 110% 0%, rgba(255,255,255,.06), transparent 55%),
+        var(--bg);
       color:var(--fg);
-      font-family:var(--font);
       overflow-x:hidden;
     }
 
-    /* Top bar: tout ce qui est actionnable / HUD au-dessus */
-    .topbar{
-      position:fixed;
-      top:0; left:0; right:0;
-      height:var(--topbarH);
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding: 10px 12px;
-      z-index: 40;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      background: linear-gradient(to bottom, var(--glass), rgba(255,255,255,0));
-      border-bottom:1px solid var(--stroke);
-    }
-
-    .topbar .left, .topbar .right{
-      display:flex; align-items:center; gap:10px;
-      min-width: 0;
-    }
-    .topbar .left{ flex:1; }
-    .topbar .right{ flex:1; justify-content:flex-end; }
-
-    .btn{
-      appearance:none;
-      border:1px solid var(--stroke);
-      background: var(--glass2);
-      color:var(--fg);
-      border-radius: 999px;
-      padding: 10px 12px;
-      font-size: 13px;
-      line-height: 1;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      cursor:pointer;
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      user-select:none;
-    }
-    .btn:hover{ transform: translateY(-1px); }
-    .btn:active{ transform: translateY(0px); }
-    .btn.primary{
-      border-color: rgba(70,140,255,.35);
-      background: linear-gradient(180deg, rgba(70,140,255,.18), rgba(255,255,255,0));
-    }
-    .btn.danger{
-      border-color: rgba(255,90,90,.30);
-      background: linear-gradient(180deg, rgba(255,90,90,.12), rgba(255,255,255,0));
-    }
-    .btn.ghost{
-      background: transparent;
-      border-color: transparent;
-      box-shadow: none;
-    }
-
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--stroke);
-      background: var(--glass2);
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .chip b{ color: var(--fg); font-weight: 700; }
-
-    .toggle{
-      display:inline-flex;
-      gap:6px;
-      border:1px solid var(--stroke);
-      background: var(--glass2);
-      padding: 5px;
-      border-radius: 999px;
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    .toggle button{
-      border:0;
-      background: transparent;
-      color: var(--muted);
-      padding: 7px 10px;
-      border-radius: 999px;
-      cursor:pointer;
-      font-size: 12px;
-    }
-    .toggle button.active{
-      background: linear-gradient(180deg, rgba(70,140,255,.22), rgba(255,255,255,0));
-      color: var(--fg);
-      border: 1px solid rgba(70,140,255,.25);
-    }
-
-    /* Main layout: top controls remain above, main content centered vertically but under topbar */
-    .main{
-      min-height: 100vh;
-      padding-top: calc(var(--topbarH) + 18px);
-      padding-bottom: 24px;
+    .app{
+      min-height:100%;
       display:flex;
       justify-content:center;
     }
 
-    .stage{
-      width: min(920px, calc(100vw - 22px));
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap: 16px;
+    .shell{
+      width:min(980px, 100%);
+      padding: 14px 14px 90px;
     }
 
-    /* Keep a big clean central zone */
-    .hero{
-      width: 100%;
+    /* Topbar: jamais de superposition -> wrap + gaps */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:30;
+      padding: 10px 0 12px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .topRow{
       display:flex;
-      flex-direction:column;
+      flex-wrap:wrap;
       align-items:center;
-      gap: 6px;
-      margin-top: 14px;
+      justify-content:space-between;
+      gap: 10px 12px;
     }
-    .title{
-      font-size: var(--titleSize);
-      letter-spacing: -0.02em;
-      font-weight: 860;
-      margin:0;
-      line-height: 1.02;
-      text-align:center;
+
+    .leftGroup, .rightGroup{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      align-items:center;
     }
-    .subtitle{
-      margin:0;
-      font-size: var(--subtitleSize);
+
+    .hud{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px 10px;
+      align-items:center;
+      justify-content:flex-end;
       color: var(--muted);
-      text-align:center;
+      font-size: 13px;
+      letter-spacing: .01em;
+      white-space:nowrap;
     }
-
-    /* Progress area: minimal framing (no boxes everywhere) */
-    .progressWrap{
-      width:100%;
-      margin-top: 8px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap: 10px;
-    }
-
-    .progressBar{
-      width: 100%;
-      height: var(--progressH);
+    .hud .pill{
+      padding: 6px 10px;
       border-radius: 999px;
+      background: var(--glass);
       border: 1px solid var(--stroke);
-      background: rgba(255,255,255,.15);
-      overflow:hidden;
-      position:relative;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       box-shadow: var(--shadow);
     }
-    [data-theme="dark"] .progressBar{
-      background: rgba(255,255,255,.05);
+
+    /* Boutons: monochrome, élégants */
+    .btn{
+      border: 1px solid var(--stroke);
+      background: var(--glass);
+      color: var(--fg);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      cursor:pointer;
+      line-height:1;
+      user-select:none;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      font-weight:650;
+      letter-spacing: .01em;
     }
-    .progressFill{
-      height:100%;
-      width:0%;
+    .btn:active{ transform: translateY(1px) }
+    .btn.ghost{
+      background: transparent;
+      box-shadow:none;
+    }
+    .btn.small{
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-weight: 650;
+    }
+    .btn.wide{
+      padding: 12px 16px;
+      border-radius: 14px;
+    }
+    .btn.pressed{
+      outline:none;
+      border-color: rgba(255,255,255,.22);
+      box-shadow: 0 0 0 4px var(--focusGlow), var(--shadow);
+    }
+    [data-theme="light"] .btn.pressed{
+      border-color: rgba(20,22,28,.20);
+      box-shadow: 0 0 0 4px var(--focusGlow), var(--shadow);
+    }
+
+    .main{
+      margin-top: 10px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .card{
+      width:min(860px, 100%);
+      border-radius: var(--radius);
+      border: 1px solid var(--stroke);
+      background: var(--glass2);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 18px;
+    }
+
+    /* Titre + tagline */
+    .brand{
+      text-align:center;
+      margin: 10px 0 18px;
+    }
+    .brand h1{
+      margin: 0;
+      font-size: clamp(38px, 4.2vw, 64px);
+      letter-spacing: -0.03em;
+      font-weight: 920;
+    }
+    .brand .tag{
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing:.02em;
+    }
+
+    /* Progress zone séparée et grande */
+    .progressZone{
+      margin: 16px auto 10px;
+      width: min(760px, 100%);
+      padding: 16px 14px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--stroke);
+      background: var(--glass);
+      box-shadow: var(--shadow);
+    }
+
+    .bigbar{
+      position:relative;
+      height: 34px;
       border-radius: 999px;
-      background: linear-gradient(90deg, rgba(70,140,255,.85), rgba(40,200,160,.72));
-      transition: width .30s ease;
+      background: var(--barbg);
+      overflow:hidden;
     }
-    .progressText{
+    .bigbar .fill{
+      height:100%;
+      width:50%;
+      background: var(--barfg);
+      transition: width .25s ease;
+    }
+    .bigbar .pct{
       position:absolute;
       inset:0;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-weight: 750;
-      font-size: 13px;
-      color: rgba(255,255,255,.92);
-      text-shadow: 0 2px 10px rgba(0,0,0,.30);
-      mix-blend-mode: normal;
+      font-weight: 850;
+      letter-spacing:.02em;
+      font-size: 14px;
+      color: var(--fg);
+      text-shadow: 0 1px 0 rgba(0,0,0,.08);
       pointer-events:none;
     }
 
-    .targetTitle{
-      width: 100%;
+    .targetWrap{
+      margin: 18px auto 8px;
+      width: min(760px, 100%);
       text-align:center;
-      font-size: 20px;
-      font-weight: 780;
-      letter-spacing: -0.01em;
-      margin-top: 4px;
-      padding: 0 4px;
-    }
-    .targetMeta{
-      width:100%;
-      display:flex;
-      justify-content:center;
-      gap: 14px;
-      color: var(--muted);
-      font-size: 12px;
-      flex-wrap: wrap;
     }
 
-    /* Eth fragments bar (dotted segments) */
+    .targetName{
+      font-size: clamp(22px, 2.2vw, 30px);
+      font-weight: 850;
+      letter-spacing: -0.01em;
+      margin: 0 0 10px;
+    }
+
+    /* barre “étorions” (fragments) */
     .ethBar{
-      width: 100%;
-      height: var(--ethH);
+      margin: 8px auto 0;
+      width: min(520px, 100%);
+      height: 12px;
       border-radius: 999px;
-      border: 1px solid var(--stroke);
-      background: rgba(255,255,255,.10);
+      background: var(--barbg);
       overflow:hidden;
       position:relative;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: var(--shadow2);
     }
-    [data-theme="dark"] .ethBar{
-      background: rgba(255,255,255,.04);
-    }
-    .ethFill{
+    .ethBar .fill{
       height:100%;
-      width:0%;
-      border-radius: 999px;
-      background: rgba(70,140,255,.40);
-      transition: width .20s ease;
+      width:100%;
+      background: var(--barfg2);
+      transition: width .25s ease;
     }
-    .ethDots{
-      position:absolute;
-      inset:0;
-      background-image: radial-gradient(circle at 1px 50%, rgba(255,255,255,.55) 1px, transparent 1.5px);
-      background-size: 10px 100%;
-      opacity: .18;
-      pointer-events:none;
+    .ethTicks{
+      width:min(520px,100%);
+      margin: 8px auto 0;
+      display:flex;
+      gap: 6px;
+      justify-content:center;
+      opacity: .9;
+      flex-wrap:wrap;
+    }
+    .tick{
+      width: 12px;
+      height: 6px;
+      border-radius: 999px;
+      border: 1px dashed var(--stroke);
+      background: transparent;
+    }
+    .tick.on{
+      background: var(--barfg2);
+      border-style: solid;
+      border-color: transparent;
     }
 
+    /* Actions principales */
     .actions{
-      width:100%;
+      margin: 18px auto 0;
+      width: min(760px, 100%);
       display:flex;
       justify-content:center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 10px;
+      gap: 10px;
+      flex-wrap:wrap;
     }
 
     .rouletteBtn{
+      min-width: 170px;
       padding: 14px 18px;
-      font-size: 14px;
-      font-weight: 760;
-      border-radius: 999px;
-      border: 1px solid rgba(70,140,255,.30);
-      background: linear-gradient(180deg, rgba(70,140,255,.15), rgba(255,255,255,0));
-      box-shadow: var(--shadow);
-      min-width: 160px;
-      display:inline-flex;
-      justify-content:center;
-      gap: 10px;
+      border-radius: 16px;
+      font-size: 16px;
     }
-    .rouletteWheel{
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      border: 2px solid var(--fg);
-      opacity: .85;
-      position: relative;
+    .rouletteBtn.spin{
+      animation: spinPulse .55s ease;
     }
-    .rouletteWheel:after{
-      content:"";
-      position:absolute;
-      width: 2px; height: 8px;
-      background: var(--fg);
-      left: 50%;
-      top: 1px;
-      transform: translateX(-50%);
-      opacity: .85;
+    @keyframes spinPulse{
+      0%{transform:scale(1)}
+      50%{transform:scale(1.04)}
+      100%{transform:scale(1)}
     }
-    .spin{
-      animation: spin .65s ease-in-out;
-    }
-    @keyframes spin{ from{ transform: rotate(0deg);} to{ transform: rotate(720deg);} }
 
-    .smashBtn{
-      padding: 14px 18px;
-      font-size: 14px;
-      font-weight: 780;
-      border-radius: 999px;
-      border: 1px solid rgba(40,200,160,.28);
-      background: linear-gradient(180deg, rgba(40,200,160,.14), rgba(255,255,255,0));
-      box-shadow: var(--shadow);
+    .bombBtn{
       min-width: 220px;
-      justify-content:center;
+      padding: 16px 18px;
+      border-radius: 16px;
+      font-size: 16px;
     }
 
-    /* bottom mini actions (menu + notes) near smash as user asked before */
-    .miniRow{
-      width:100%;
+    /* Micro actions (pin/edit/delete/down) sous la cible */
+    .micro{
+      margin: 12px auto 0;
+      width: min(760px, 100%);
       display:flex;
       justify-content:center;
-      gap: 10px;
-      margin-top: 6px;
+      gap: 8px;
+      flex-wrap:wrap;
+      color: var(--muted);
     }
 
-    /* Drawer (menu latéral) */
-    .drawerOverlay{
+    /* Inline list */
+    .inlineListWrap{
+      width: min(760px, 100%);
+      margin: 18px auto 0;
+      padding: 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--stroke);
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .inlineListHead{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:center;
+      margin-bottom: 10px;
+    }
+    .inlineListTitle{
+      font-weight: 850;
+      letter-spacing: -0.01em;
+    }
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+    .item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+    }
+    [data-theme="light"] .item{ background: rgba(20,22,28,.03); }
+
+    .t{
+      min-width:0;
+      flex:1;
+    }
+    .name{
+      font-weight: 780;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .sub{
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .iconBtn{
+      width: 34px;
+      height: 34px;
+      display:grid;
+      place-items:center;
+      border-radius: 12px;
+      border: 1px solid var(--stroke);
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      cursor:pointer;
+      font-weight: 900;
+      line-height:1;
+      user-select:none;
+    }
+    .iconBtn:active{transform:translateY(1px)}
+
+    /* Drawer */
+    .drawerBack{
       position:fixed;
       inset:0;
       background: rgba(0,0,0,.35);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      z-index: 60;
       display:none;
+      z-index:50;
     }
+    [data-theme="light"] .drawerBack{ background: rgba(10,12,16,.18); }
+
     .drawer{
       position:fixed;
       top:0;
       bottom:0;
       left:0;
       width: min(420px, 92vw);
-      background: var(--glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: var(--glass2);
       border-right: 1px solid var(--stroke);
       box-shadow: var(--shadow);
-      z-index: 61;
-      transform: translateX(-110%);
-      transition: transform .24s ease;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      transform: translateX(-105%);
+      transition: transform .22s ease;
+      z-index:60;
+      padding: 14px;
       display:flex;
       flex-direction:column;
+      gap: 12px;
     }
-    .drawer.open{ transform: translateX(0); }
-    .drawerOverlay.open{ display:block; }
-
-    .drawerHead{
-      height: var(--topbarH);
+    .drawer.open{ transform: translateX(0) }
+    .drawerTop{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--stroke);
-    }
-    .drawerHead .h{
-      font-weight: 820;
-      letter-spacing:-0.01em;
+      gap:10px;
     }
     .tabs{
       display:flex;
-      gap: 6px;
-      padding: 10px 10px 0 10px;
-      flex-wrap: wrap;
+      flex-wrap:wrap;
+      gap: 8px;
     }
     .tab{
-      border:1px solid var(--stroke);
-      background: var(--glass2);
-      color: var(--muted);
+      padding: 10px 12px;
       border-radius: 999px;
-      padding: 8px 10px;
-      font-size: 12px;
+      border:1px solid var(--stroke);
+      background: var(--glass);
       cursor:pointer;
-      user-select:none;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      font-weight: 750;
+      font-size: 13px;
+      box-shadow: var(--shadow);
     }
     .tab.active{
-      color: var(--fg);
-      border-color: rgba(70,140,255,.25);
-      background: linear-gradient(180deg, rgba(70,140,255,.18), rgba(255,255,255,0));
+      box-shadow: 0 0 0 4px var(--focusGlow), var(--shadow);
     }
-    .panel{
-      padding: 12px 12px 16px 12px;
-      overflow:auto;
+    .view{
       flex:1;
+      overflow:auto;
+      padding-right: 4px;
     }
-
-    /* Cards inside menu (keep minimal) */
-    .card{
-      border: 1px solid var(--stroke);
-      background: var(--glass2);
-      border-radius: var(--radius);
+    .section{
+      border:1px solid var(--stroke);
+      background: var(--glass);
+      border-radius: var(--radius2);
       padding: 12px;
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
       margin-bottom: 10px;
     }
-    .card h3{
-      margin:0 0 8px 0;
+    .section h3{
+      margin: 0 0 10px;
       font-size: 14px;
-      letter-spacing:-0.01em;
+      letter-spacing:.01em;
     }
     .help{
-      margin:0;
-      font-size: 12px;
       color: var(--muted);
-      line-height: 1.35;
+      font-size: 13px;
+      margin: 8px 0 0;
+      line-height:1.4;
     }
-
     textarea, input, select{
       width:100%;
-      border-radius: 14px;
       border:1px solid var(--stroke);
-      padding: 10px 10px;
-      background: rgba(255,255,255,.25);
+      background: rgba(255,255,255,.04);
       color: var(--fg);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: inherit;
       outline:none;
-      font-size: 13px;
-      font-family: var(--font);
-      box-sizing: border-box;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
     }
-    [data-theme="dark"] textarea,
-    [data-theme="dark"] input,
-    [data-theme="dark"] select{
-      background: rgba(255,255,255,.07);
+    [data-theme="light"] textarea,
+    [data-theme="light"] input,
+    [data-theme="light"] select{
+      background: rgba(20,22,28,.04);
     }
-    textarea{ min-height: 140px; resize: vertical; font-family: var(--mono); }
 
     .row{
       display:flex;
-      gap: 10px;
+      gap: 8px;
+      flex-wrap:wrap;
       align-items:center;
     }
-    .row > *{ flex:1; }
-
-    .list{
-      display:flex;
-      flex-direction:column;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .item{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      padding: 10px 10px;
-      border-radius: 14px;
-      border: 1px solid var(--stroke);
-      background: rgba(255,255,255,.22);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    [data-theme="dark"] .item{ background: rgba(255,255,255,.06); }
-    .item .t{
-      flex:1;
-      min-width:0;
-    }
-    .item .t .name{
-      font-size: 13px;
-      font-weight: 720;
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
-    }
-    .item .t .sub{
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 2px;
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
-    }
-
-    .iconBtn{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.18);
-      color: var(--fg);
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      display:grid;
-      place-items:center;
-      cursor:pointer;
-      box-shadow: none;
-      user-select:none;
-      font-size: 13px;
-    }
-    [data-theme="dark"] .iconBtn{ background: rgba(255,255,255,.06); }
-
-    /* Focus mode: hide everything except essentials but keep HUD */
-    .focus .drawerOverlay,
-    .focus .drawer{
-      display:none !important;
-    }
-    .focus .miniRow{ display:none; } /* optional; you said keep HUD; menu can remain top */
-    .focus .topbar .left .btn.menuBtn{ display:none; } /* keep top minimal */
-    .focus .topbar .right .btn.resetBtn{ display:none; } /* you can comment this if you want */
-    .focus .subtitle{ display:none; }
+    .row > *{ flex: 1 }
+    .row .btn, .row .iconBtn{ flex: 0 0 auto }
 
     /* Notes modal */
-    .modalOverlay{
+    .modalBack{
       position:fixed;
       inset:0;
       background: rgba(0,0,0,.35);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      z-index: 80;
       display:none;
+      z-index:80;
     }
+    [data-theme="light"] .modalBack{ background: rgba(10,12,16,.18); }
+
     .modal{
       position:fixed;
-      left:50%;
-      top:50%;
-      transform: translate(-50%, -50%);
-      width: min(680px, 92vw);
-      max-height: 82vh;
-      overflow:auto;
-      background: var(--glass);
-      border: 1px solid var(--stroke);
-      border-radius: var(--radius2);
+      inset: 10% 50% auto 50%;
+      transform: translateX(-50%);
+      width: min(720px, 94vw);
+      background: var(--glass2);
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 14px;
-      z-index: 81;
       display:none;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      z-index:90;
     }
-    .modalHead{
+    .modalTop{
       display:flex;
-      align-items:center;
       justify-content:space-between;
+      align-items:center;
       gap: 10px;
       margin-bottom: 10px;
     }
-    .modalHead .mh{
-      font-weight: 840;
-      letter-spacing:-0.01em;
-    }
 
     /* Celebration overlay */
-    .celebrateOverlay{
+    .celeBack{
       position:fixed;
       inset:0;
       background: rgba(0,0,0,.35);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      z-index: 90;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 16px;
+      z-index:100;
     }
-    .celebrateBox{
-      width: min(720px, 92vw);
-      border-radius: var(--radius2);
-      border: 1px solid var(--stroke);
-      background: var(--glass);
+    [data-theme="light"] .celeBack{ background: rgba(10,12,16,.16); }
+
+    .cele{
+      position:fixed;
+      inset: 18% 50% auto 50%;
+      transform: translateX(-50%);
+      width: min(760px, 94vw);
+      border-radius: var(--radius);
+      border:1px solid var(--stroke);
+      background: var(--glass2);
       box-shadow: var(--shadow);
-      padding: 18px 16px;
+      padding: 18px;
+      display:none;
+      z-index:110;
       text-align:center;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
     }
-    .celebrateBox .big{
-      font-size: 18px;
-      font-weight: 880;
-      letter-spacing:-0.01em;
-      margin:0 0 8px 0;
+    .celeTitle{
+      font-weight: 920;
+      letter-spacing: -0.02em;
+      font-size: clamp(24px, 2.4vw, 34px);
+      margin: 0 0 10px;
     }
-    .celebrateBox .small{
-      margin:0;
-      font-size: 13px;
+    .celeMsg{
       color: var(--muted);
-      line-height: 1.4;
+      font-size: 15px;
+      line-height:1.5;
+      margin: 0 auto 14px;
+      width: min(640px, 100%);
     }
 
     /* Confetti canvas */
@@ -632,2268 +573,2030 @@
       position:fixed;
       inset:0;
       pointer-events:none;
-      z-index: 89;
+      z-index:120;
       display:none;
     }
 
-    /* Calendar */
-    .calGrid{
-      display:grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
-      margin-top: 10px;
-    }
-    .calCell{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.18);
-      border-radius: 14px;
-      padding: 8px;
-      min-height: 52px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      display:flex;
-      flex-direction:column;
-      gap: 4px;
-    }
-    [data-theme="dark"] .calCell{ background: rgba(255,255,255,.05); }
-    .calCell .d{
-      font-size: 11px;
-      color: var(--muted);
-    }
-    .calCell .k{
-      font-size: 12px;
-      font-weight: 800;
+    /* Focus mode: masque presque tout sauf essentials */
+    .focus .drawerBack,
+    .focus .drawer,
+    .focus .inlineListWrap,
+    .focus .micro{
+      display:none !important;
     }
 
-    /* responsive */
+    /* Responsive: topbar -> tout wrap naturellement */
     @media (max-width: 520px){
-      :root{
-        --titleSize: 36px;
-        --progressH: 30px;
-      }
+      .hud{ justify-content:flex-start; }
       .rouletteBtn{ min-width: 150px; }
-      .smashBtn{ min-width: 200px; }
-      .topbar{ padding: 10px 10px; }
-      .chip{ display:none; } /* keep top clean on small screens */
+      .bombBtn{ min-width: 200px; }
+      .progressZone{ padding: 14px 12px; }
     }
   </style>
 </head>
 
 <body data-theme="light">
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div class="left">
-      <button class="btn menuBtn" id="btnMenu">Menu</button>
+  <canvas id="confetti"></canvas>
 
-      <div class="toggle" title="Thème">
-        <button id="btnLight" class="active">Clair</button>
-        <button id="btnDark">Sombre</button>
-      </div>
-
-      <button class="btn" id="btnFocus">Focus</button>
-      <button class="btn resetBtn danger" id="btnReset">Reset</button>
-    </div>
-
-    <div class="right">
-      <div class="chip" id="hudTasks"></div>
-      <div class="chip" id="hudEth"></div>
-      <div class="chip" id="hudDone"></div>
-      <div class="chip" id="hudTimer"></div>
-    </div>
-  </div>
-
-  <!-- DRAWER -->
-  <div class="drawerOverlay" id="drawerOverlay"></div>
+  <div class="drawerBack" id="drawerBack"></div>
   <aside class="drawer" id="drawer">
-    <div class="drawerHead">
-      <div class="h">ELIMINATOR</div>
-      <button class="btn ghost" id="btnCloseDrawer">Fermer</button>
+    <div class="drawerTop">
+      <div style="font-weight:900; letter-spacing:-0.02em;">Menu</div>
+      <button class="btn small" id="btnCloseDrawer">Fermer</button>
     </div>
 
     <div class="tabs" id="tabs"></div>
-    <div class="panel" id="panel"></div>
+
+    <div class="view" id="drawerView"></div>
   </aside>
 
-  <!-- NOTES MODAL -->
-  <div class="modalOverlay" id="notesOverlay"></div>
+  <div class="modalBack" id="notesBack"></div>
   <div class="modal" id="notesModal">
-    <div class="modalHead">
-      <div class="mh">Notes</div>
-      <div class="row" style="flex:0; gap:8px;">
-        <button class="btn" id="btnExportNotes">Exporter</button>
-        <button class="btn danger" id="btnCloseNotes">Fermer</button>
-      </div>
+    <div class="modalTop">
+      <div style="font-weight:900; letter-spacing:-0.02em;">Notes</div>
+      <button class="btn small" id="btnCloseNotes">Fermer</button>
     </div>
-
-    <div class="card">
-      <h3>Ajouter une note</h3>
-      <textarea id="noteInput" placeholder="Écris ici. (Conservé même si tu reset les tâches.)"></textarea>
+    <div class="section">
+      <h3>Nouvelle note (persistante)</h3>
+      <textarea id="noteInput" rows="3" placeholder="Écris. Ça reste. Même après reset."></textarea>
       <div class="row" style="margin-top:10px;">
-        <button class="btn primary" id="btnAddNote">Ajouter</button>
-        <button class="btn" id="btnClearNoteInput">Effacer</button>
+        <button class="btn" id="btnAddNote">Ajouter</button>
+        <button class="btn ghost" id="btnClearNotes">Vider (irréversible)</button>
       </div>
-      <p class="help" style="margin-top:10px;">
-        Les notes sont datées automatiquement et restent en mémoire.
-      </p>
+      <p class="help">Les notes sont sauvegardées dans la mémoire locale de l’app.</p>
     </div>
 
-    <div class="card">
+    <div class="section">
       <h3>Historique des notes</h3>
       <div class="list" id="notesList"></div>
     </div>
   </div>
 
-  <!-- CELEBRATION -->
-  <canvas id="confetti"></canvas>
-  <div class="celebrateOverlay" id="celebrateOverlay">
-    <div class="celebrateBox" id="celebrateBox">
-      <p class="big" id="celebrateBig">Victoire</p>
-      <p class="small" id="celebrateSmall">…</p>
-    </div>
+  <div class="celeBack" id="celeBack"></div>
+  <div class="cele" id="celeModal">
+    <div class="celeTitle" id="celeTitle">Victoire</div>
+    <div class="celeMsg" id="celeMsg">...</div>
+    <button class="btn" id="btnCloseCele">OK</button>
+    <p class="help" id="celeHint" style="margin-top:10px;">(Cette célébration peut disparaître automatiquement.)</p>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
-    <div class="stage">
+  <div class="app">
+    <div class="shell">
+      <div class="topbar">
+        <div class="topRow">
+          <div class="leftGroup">
+            <button class="btn" id="btnMenu">Menu</button>
+            <button class="btn" id="btnTheme">Thème</button>
+            <button class="btn" id="btnFocus">Focus</button>
+            <button class="btn" id="btnInlineList">Liste</button>
+            <button class="btn" id="btnReset">Reset</button>
+          </div>
 
-      <div class="hero">
-        <h1 class="title">ELIMINATOR</h1>
-        <p class="subtitle">Dégomme toutes les tâches. Dégomme tous les éthorions en cours.</p>
-      </div>
-
-      <div class="progressWrap">
-        <div class="progressBar" aria-label="Progression tâches">
-          <div class="progressFill" id="taskFill"></div>
-          <div class="progressText" id="taskPct">—</div>
-        </div>
-
-        <div style="height:10px;"></div>
-
-        <div class="targetTitle" id="currentTitle">Aucune tâche</div>
-        <div class="targetMeta" id="currentMeta"></div>
-
-        <div class="ethBar" aria-label="Éthorions">
-          <div class="ethFill" id="ethFill"></div>
-          <div class="ethDots"></div>
-        </div>
-
-        <div class="actions">
-          <button class="btn rouletteBtn" id="btnRoulette">
-            <span class="rouletteWheel" id="wheel"></span>
-            <span>Roulette</span>
-          </button>
-
-          <button class="btn smashBtn" id="btnSmash">🧨 Dégommer 1 éthorion</button>
-        </div>
-
-        <div class="miniRow">
-          <button class="btn" id="btnNotes">Notes</button>
-          <button class="btn" id="btnQuickMenu">Menu</button>
+          <div class="rightGroup">
+            <div class="hud" id="hud"></div>
+          </div>
         </div>
       </div>
 
+      <div class="main">
+        <div class="card" id="card">
+          <div class="brand">
+            <h1>ELIMINATOR</h1>
+            <div class="tag">Dégomme toutes les tâches. Dégomme tous les étorions en cours.</div>
+          </div>
+
+          <div class="progressZone">
+            <div class="bigbar" aria-label="progression tâches">
+              <div class="fill" id="taskFill"></div>
+              <div class="pct" id="taskPct">0%</div>
+            </div>
+          </div>
+
+          <div class="targetWrap">
+            <div class="targetName" id="currentTitle">Aucune tâche</div>
+            <div class="ethBar" aria-label="progression étorions">
+              <div class="fill" id="ethFill"></div>
+            </div>
+            <div class="ethTicks" id="ethTicks"></div>
+          </div>
+
+          <div class="micro" id="microActions">
+            <button class="btn small" id="btnPin">Épingler</button>
+            <button class="btn small" id="btnEdit">Éditer</button>
+            <button class="btn small" id="btnDown">Descendre</button>
+            <button class="btn small" id="btnDone">Marquer dégommée</button>
+            <button class="btn small" id="btnDel">Supprimer</button>
+          </div>
+
+          <div class="actions">
+            <button class="btn wide rouletteBtn" id="btnRoulette">Roulette</button>
+            <button class="btn wide bombBtn" id="btnDegomme">💣 Dégommer 1 étorion</button>
+            <button class="btn wide" id="btnNotes">Notes</button>
+          </div>
+
+          <div class="inlineListWrap" id="inlineListWrap" style="display:none;">
+            <div class="inlineListHead">
+              <div class="inlineListTitle">Tâches en cours</div>
+              <div class="row" style="justify-content:flex-end;">
+                <button class="btn small" id="btnInlineListHide">Masquer</button>
+              </div>
+            </div>
+            <div class="list" id="inlineTaskList"></div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 
-<script>
-/* ============================================================
-   ELIMINATOR — Single file, tout inclus
-   - Thème clair par défaut + toggle rapide en topbar
-   - Menu latéral masquable + onglets
-   - Interface principale épurée + centrée (sous topbar)
-   - Progression (barre tasks + barre éthorions)
-   - Roulette (gros bouton + animation)
-   - Smash (🧨) + confettis toujours en fin de tâche
-   - Célébration popup surprise (pilotée fatigue/motivation)
-   - Inbox import: catégorie = ligne en MAJUSCULES
-     tâches sous la catégorie; option "- N" pour éthorions
-   - Liste: éditer / monter / descendre / supprimer / marquer "déjà dégommé"
-   - Kiffance (banque) 4 catégories: 5, 10, 15, 25+ minutes + refresh
-   - Habitudes: lignes + cases (10) + reset/suppr + report
-   - Notes: modal central, persistantes (même si reset tâches)
-   - Sets: prédéfinis Hôpital / Consultation + N patients, ordre strict, priorité
-   - Historique + Rapport + export (JSON)
-============================================================ */
+  <script>
+    // =========================
+    // Storage keys
+    // =========================
+    const KEY_STATE = "elim_state_v2";
+    const KEY_SETTINGS = "elim_settings_v2";
+    const KEY_NOTES = "elim_notes_v2";
+    const KEY_KIFF = "elim_kiffbank_v2";
+    const KEY_HABITS = "elim_habits_v2";
 
-/* =========================
-   Storage keys + Defaults
-   ========================= */
-const K = {
-  state: "ELIMINATOR_STATE_V5",
-  settings: "ELIMINATOR_SETTINGS_V5",
-  notes: "ELIMINATOR_NOTES_V5",
-  history: "ELIMINATOR_HISTORY_V5",
-  habits: "ELIMINATOR_HABITS_V5",
-  kiff: "ELIMINATOR_KIFFANCE_V5",
-  sets: "ELIMINATOR_SETS_V5"
-};
+    // =========================
+    // Helpers
+    // =========================
+    const el = (id)=>document.getElementById(id);
+    const nowISO = ()=> new Date().toISOString();
+    const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+    const pad2 = (n)=>String(n).padStart(2,"0");
+    const fmtTime = (ms)=>{
+      const s = Math.floor(ms/1000);
+      const m = Math.floor(s/60);
+      const r = s%60;
+      return `${m}:${pad2(r)}`;
+    };
+    const rand = (n)=>Math.floor(Math.random()*n);
+    const uniq = ()=>Math.random().toString(16).slice(2)+Date.now().toString(16);
 
-const DEFAULTS = {
-  theme: "light",        // light default
-  focus: 0,
-  ethMinutesPer: 5,
-  sortMode: "roulette",  // roulette | order
-  activeCats: null,      // null => toutes
-
-  // Célébrations (surprise)
-  celebrationMode: "surprise",   // off | surprise | frequent
-  motivation: "normal",          // low | normal | high
-  fatigue: "medium",             // low | medium | high
-  celebrationMinGapTasks: 2,
-  celebrationMaxGapTasks: 3,
-  celebrationAutoHideMs: 9000,
-  celebrationChanceMin: 0.10,
-  celebrationChanceMax: 0.55
-};
-
-const DEFAULT_SETS = [
-  {
-    id:"set_hosp",
-    name:"Hôpital — tour de salle",
-    type:"hospital",
-    steps:[
-      { label:"Voir patient", eth:1 },
-      { label:"Note", eth:1 },
-      { label:"Traitement", eth:1 },
-      { label:"Dossier (encoder/réviser)", eth:2 }
-    ]
-  },
-  {
-    id:"set_cons",
-    name:"Consultation — flow",
-    type:"consult",
-    steps:[
-      { label:"Accueil / objectif", eth:1 },
-      { label:"Anamnèse ciblée", eth:2 },
-      { label:"Plan / traitement", eth:2 },
-      { label:"Note / dossier", eth:2 }
-    ]
-  }
-];
-
-const DEFAULT_KIFF = {
-  "5": [
-    "Boire un verre d’eau. Respiration lente 60 secondes.",
-    "Ranger une surface (30 secondes chrono).",
-    "Écrire 1 phrase: ce que je fais maintenant."
-  ],
-  "10": [
-    "Marche 5 minutes. Retour. Hydratation.",
-    "Micro-étirement nuque/épaules (sans violence).",
-    "Nettoyer le bureau (version minimaliste)."
-  ],
-  "15": [
-    "Pause active: marche + lumière + eau.",
-    "Mini-reset mental: 3 priorités, 1 action.",
-    "Organisation éclair: ouvrir le doc, préparer la page."
-  ],
-  "25": [
-    "Pause longue: bouger, respirer, manger un truc simple.",
-    "Récupération: musique + marche + eau.",
-    "Reset posture + planning rapide (sans perfectionnisme)."
-  ]
-};
-
-/* =========================
-   State model
-   ========================= */
-let settings = loadJSON(K.settings, null) || {...DEFAULTS};
-settings = {...DEFAULTS, ...settings};
-
-let state = loadJSON(K.state, null);
-if(!state){
-  state = {
-    tasks: [],
-    done: [],
-    currentId: null,
-    startCounts: { tasks: 0, eth: 0 },
-    timer: { taskId: null, elapsedMs: 0, running: false, startedAt: null },
-    streak: { tasksSincePopup: 0, tasksSinceStart: 0 },
-    activeSet: null, // { setId, setName, queueTaskIds, startedAt }
-    dayStartISO: todayISO()
-  };
-}
-state.timer = state.timer || { taskId:null, elapsedMs:0, running:false, startedAt:null };
-state.streak = state.streak || { tasksSincePopup:0, tasksSinceStart:0 };
-state.activeSet = state.activeSet || null;
-state.startCounts = state.startCounts || { tasks:0, eth:0 };
-state.done = state.done || [];
-state.tasks = state.tasks || [];
-state.dayStartISO = state.dayStartISO || todayISO();
-
-let notes = loadJSON(K.notes, []) || [];
-let history = loadJSON(K.history, []) || [];
-let habits = loadJSON(K.habits, []) || []; // {id,name,boxes:[bool*10], dayISO}
-let kiffBank = loadJSON(K.kiff, null) || structuredClone(DEFAULT_KIFF);
-let sets = loadJSON(K.sets, null) || structuredClone(DEFAULT_SETS);
-
-persistAll();
-
-/* =========================
-   DOM refs
-   ========================= */
-const el = (id)=>document.getElementById(id);
-
-const drawer = el("drawer");
-const drawerOverlay = el("drawerOverlay");
-const btnMenu = el("btnMenu");
-const btnQuickMenu = el("btnQuickMenu");
-const btnCloseDrawer = el("btnCloseDrawer");
-
-const tabsEl = el("tabs");
-const panelEl = el("panel");
-
-const btnLight = el("btnLight");
-const btnDark = el("btnDark");
-const btnFocus = el("btnFocus");
-const btnReset = el("btnReset");
-
-const hudTasks = el("hudTasks");
-const hudEth = el("hudEth");
-const hudDone = el("hudDone");
-const hudTimer = el("hudTimer");
-
-const taskFill = el("taskFill");
-const taskPct = el("taskPct");
-const currentTitle = el("currentTitle");
-const currentMeta = el("currentMeta");
-const ethFill = el("ethFill");
-
-const btnRoulette = el("btnRoulette");
-const wheel = el("wheel");
-const btnSmash = el("btnSmash");
-
-const btnNotes = el("btnNotes");
-const notesOverlay = el("notesOverlay");
-const notesModal = el("notesModal");
-const btnCloseNotes = el("btnCloseNotes");
-const btnAddNote = el("btnAddNote");
-const btnClearNoteInput = el("btnClearNoteInput");
-const btnExportNotes = el("btnExportNotes");
-const noteInput = el("noteInput");
-const notesList = el("notesList");
-
-const celebrateOverlay = el("celebrateOverlay");
-const celebrateBig = el("celebrateBig");
-const celebrateSmall = el("celebrateSmall");
-const confettiCanvas = el("confetti");
-const confettiCtx = confettiCanvas.getContext("2d");
-
-let celebrateTimer = null;
-let tickTimer = null;
-
-/* =========================
-   Drawer Tabs
-   ========================= */
-const TAB_DEFS = [
-  { key:"inbox",   label:"Inbox" },
-  { key:"liste",   label:"Liste" },
-  { key:"sets",    label:"Sets" },
-  { key:"kiff",    label:"Kiffance" },
-  { key:"habits",  label:"Habitudes" },
-  { key:"hist",    label:"Hist" },
-  { key:"rapport", label:"Rapport" },
-  { key:"params",  label:"Param" }
-];
-
-let activeTab = "inbox";
-
-/* =========================
-   Utilities
-   ========================= */
-function nowISO(){ return new Date().toISOString(); }
-function todayISO(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const da = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${da}`;
-}
-function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
-function uid(){
-  return Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2);
-}
-function saveJSON(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
-function loadJSON(k, fallback){
-  try{
-    const raw = localStorage.getItem(k);
-    if(!raw) return fallback;
-    return JSON.parse(raw);
-  }catch(e){ return fallback; }
-}
-function persistAll(){
-  saveJSON(K.settings, settings);
-  saveJSON(K.state, state);
-  saveJSON(K.notes, notes);
-  saveJSON(K.history, history);
-  saveJSON(K.habits, habits);
-  saveJSON(K.kiff, kiffBank);
-  saveJSON(K.sets, sets);
-}
-function minutesFromEth(eth){ return (eth||0) * (settings.ethMinutesPer || 5); }
-function fmtMin(min){
-  min = Math.round(min);
-  if(min < 60) return `${min} min`;
-  const h = Math.floor(min/60);
-  const m = min%60;
-  return `${h}h${String(m).padStart(2,"0")}`;
-}
-function fmtTime(ms){
-  const s = Math.floor(ms/1000);
-  const mm = Math.floor(s/60);
-  const ss = s%60;
-  return `${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
-}
-function isAllCaps(line){
-  const t = (line||"").trim();
-  if(!t) return false;
-  const hasLetter = /[A-ZÀ-ÖØ-Ý]/.test(t);
-  const hasLower = /[a-zà-öø-ÿ]/.test(t);
-  return hasLetter && !hasLower && t.length>=3;
-}
-function parseTaskLine(line){
-  // "Tâche - 3" => ethStart=3
-  // Also accept: "Tâche 3" at end (space number)
-  let t = line.trim();
-  if(!t) return null;
-
-  let eth = null;
-  // match "- N"
-  let m = t.match(/\s*-\s*(\d+)\s*$/);
-  if(m){
-    eth = parseInt(m[1],10);
-    t = t.replace(/\s*-\s*\d+\s*$/,"").trim();
-  }else{
-    // match " ... N" at end
-    m = t.match(/\s+(\d+)\s*$/);
-    if(m){
-      eth = parseInt(m[1],10);
-      // only treat as eth if preceding char isn't part of an ID like "A1"
-      t = t.replace(/\s+\d+\s*$/,"").trim();
+    function downloadText(filename, text){
+      const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     }
-  }
 
-  eth = clamp((Number.isFinite(eth)?eth:1), 1, 999);
-  return { title: t, eth };
-}
-function uniq(arr){
-  return [...new Set(arr)];
-}
-function safeText(s){
-  return (s||"").replace(/[<>]/g, "");
-}
+    // =========================
+    // Data models
+    // =========================
+    const DEFAULTS_SETTINGS = {
+      theme: "light",       // light default
+      focus: 0,
+      inlineListVisible: 0,
+      // surprise celebrations
+      fatigue: 2,           // 0..4
+      motivation: 2,        // 0..4
+      celeChanceBase: 0.22, // base probability per task completion
+      celeAutoCloseSec: 10,
+      // filtering categories
+      activeCats: ["INBOX"], // if empty => all
+      // roulette mode
+      rouletteMode: "random", // random | ordered
+      // ordered strategy
+      orderedStrategy: "pinnedFirst", // pinnedFirst | alpha | chrono
+    };
 
-/* =========================
-   Theme + Focus
-   ========================= */
-function applyTheme(){
-  document.body.setAttribute("data-theme", settings.theme);
-  btnLight.classList.toggle("active", settings.theme==="light");
-  btnDark.classList.toggle("active", settings.theme==="dark");
-}
-btnLight.onclick = () => { settings.theme="light"; persistAll(); applyTheme(); renderAll(); };
-btnDark.onclick = () => { settings.theme="dark"; persistAll(); applyTheme(); renderAll(); };
+    const DEFAULT_STATE = {
+      tasks: [],
+      done: [],      // completed tasks archive (today + past)
+      currentId: null,
+      startCounts: { tasks:0, eth:0 }, // baseline for session
+      timer: { taskId:null, elapsedMs:0, running:false, startedAt:0 },
+      history: [],   // daily snapshots
+      lastSaveDay: "", // YYYY-MM-DD for daily rollover
+      streak: { completedSinceCele: 0 }
+    };
 
-function applyFocus(){
-  document.body.classList.toggle("focus", !!settings.focus);
-  btnFocus.textContent = settings.focus ? "Quitter focus" : "Focus";
-}
-btnFocus.onclick = () => {
-  settings.focus = settings.focus ? 0 : 1;
-  persistAll();
-  applyFocus();
-};
+    // =========================
+    // UI refs
+    // =========================
+    const btnMenu = el("btnMenu");
+    const btnTheme = el("btnTheme");
+    const btnFocus = el("btnFocus");
+    const btnInlineList = el("btnInlineList");
+    const btnInlineListHide = el("btnInlineListHide");
+    const btnReset = el("btnReset");
 
-/* =========================
-   Drawer
-   ========================= */
-function openDrawer(){
-  drawer.classList.add("open");
-  drawerOverlay.classList.add("open");
-}
-function closeDrawer(){
-  drawer.classList.remove("open");
-  drawerOverlay.classList.remove("open");
-}
-btnMenu.onclick = openDrawer;
-btnQuickMenu.onclick = openDrawer;
-btnCloseDrawer.onclick = closeDrawer;
-drawerOverlay.onclick = closeDrawer;
+    const hud = el("hud");
+    const taskFill = el("taskFill");
+    const taskPct = el("taskPct");
+    const currentTitle = el("currentTitle");
+    const ethFill = el("ethFill");
+    const ethTicks = el("ethTicks");
 
-/* =========================
-   Notes modal
-   ========================= */
-function openNotes(){
-  notesOverlay.style.display = "block";
-  notesModal.style.display = "block";
-  renderNotes();
-}
-function closeNotes(){
-  notesOverlay.style.display = "none";
-  notesModal.style.display = "none";
-}
-btnNotes.onclick = openNotes;
-btnCloseNotes.onclick = closeNotes;
-notesOverlay.onclick = closeNotes;
+    const btnRoulette = el("btnRoulette");
+    const btnDegomme = el("btnDegomme");
+    const btnNotes = el("btnNotes");
 
-btnAddNote.onclick = () => {
-  const txt = (noteInput.value||"").trim();
-  if(!txt) return;
-  notes.unshift({ id: uid(), ts: nowISO(), text: txt });
-  noteInput.value = "";
-  persistAll();
-  renderNotes();
-};
-btnClearNoteInput.onclick = () => { noteInput.value=""; };
+    const btnPin = el("btnPin");
+    const btnEdit = el("btnEdit");
+    const btnDown = el("btnDown");
+    const btnDone = el("btnDone");
+    const btnDel = el("btnDel");
 
-btnExportNotes.onclick = () => {
-  downloadJSON(`eliminator-notes-${todayISO()}.json`, notes);
-};
+    const inlineListWrap = el("inlineListWrap");
+    const inlineTaskList = el("inlineTaskList");
 
-function renderNotes(){
-  notesList.innerHTML = "";
-  if(!notes.length){
-    const p = document.createElement("p");
-    p.className = "help";
-    p.textContent = "Aucune note.";
-    notesList.appendChild(p);
-    return;
-  }
-  for(const n of notes){
-    const d = document.createElement("div");
-    d.className = "item";
-    const left = document.createElement("div");
-    left.className = "t";
-    const name = document.createElement("div");
-    name.className = "name";
-    name.textContent = new Date(n.ts).toLocaleString();
-    const sub = document.createElement("div");
-    sub.className = "sub";
-    sub.textContent = n.text;
-    left.appendChild(name);
-    left.appendChild(sub);
+    const drawerBack = el("drawerBack");
+    const drawer = el("drawer");
+    const btnCloseDrawer = el("btnCloseDrawer");
+    const tabsEl = el("tabs");
+    const drawerView = el("drawerView");
 
-    const del = document.createElement("button");
-    del.className = "iconBtn";
-    del.textContent = "✕";
-    del.title = "Supprimer";
-    del.onclick = () => {
-      notes = notes.filter(x=>x.id!==n.id);
+    const notesBack = el("notesBack");
+    const notesModal = el("notesModal");
+    const btnCloseNotes = el("btnCloseNotes");
+    const noteInput = el("noteInput");
+    const btnAddNote = el("btnAddNote");
+    const btnClearNotes = el("btnClearNotes");
+    const notesList = el("notesList");
+
+    const celeBack = el("celeBack");
+    const celeModal = el("celeModal");
+    const celeTitle = el("celeTitle");
+    const celeMsg = el("celeMsg");
+    const btnCloseCele = el("btnCloseCele");
+
+    const confettiCanvas = el("confetti");
+    const ctx = confettiCanvas.getContext("2d");
+
+    // =========================
+    // State
+    // =========================
+    let settings = load(KEY_SETTINGS, DEFAULTS_SETTINGS);
+    let state = load(KEY_STATE, DEFAULT_STATE);
+    let notes = load(KEY_NOTES, []);
+    let kiffBank = load(KEY_KIFF, null);
+    let habits = load(KEY_HABITS, []);
+
+    // =========================
+    // Init kiff bank (énorme + catégorisée)
+    // =========================
+    function initKiffBank(){
+      // 4 catégories: 5m, 10m, 15m, 25m+
+      // Banque volontairement très large et “prête à l’emploi”
+      return {
+        v: 1,
+        buckets: {
+          "5m": [
+            "Respiration carrée 4-4-4-4 pendant 2 minutes.",
+            "Ranger une surface (une seule) : table, bureau, évier.",
+            "Boire un verre d’eau. Lentement. Comme un rituel d’empire.",
+            "Étirement nuque/épaules 90 secondes.",
+            "Relire la prochaine micro-étape de ta tâche (juste la prochaine).",
+            "Fermer 3 onglets qui ne servent à rien. Exécution propre.",
+            "Mini marche : 200 pas dans la pièce, sans téléphone.",
+            "Nettoyer l’écran (oui, l’écran).",
+            "Écrire 1 phrase : “Là, je fais X.”",
+            "Mettre un timer 5 min et faire “le début moche”."
+          ],
+          "10m": [
+            "Marche rapide 8 minutes, retour 2 minutes.",
+            "Préparer un snack simple et neutre (pas une œuvre d’art).",
+            "Dégager 10 items : jeter / ranger / classer.",
+            "Douche express ou visage/eau froide 60 secondes + retour calme.",
+            "Écrire un mini plan : 3 puces max.",
+            "Réviser un paragraphe / une page, sans chercher la perfection.",
+            "Ranger la zone “inbox” (mail/notes) pendant 10 minutes puis stop.",
+            "Étirements dos + hanches 10 minutes.",
+            "Faire une petite check de planning (juste la prochaine heure).",
+            "Préparer “kit de reprise” : eau + stylo + page ouverte."
+          ],
+          "15m": [
+            "Pause de marche 12 min + 3 min de respiration lente.",
+            "Micro séance mobilité (cou/épaules/hanches) 15 min.",
+            "Préparer une liste de 5 tâches pour demain (pas plus).",
+            "Lecture plaisir 10 min + 5 min de retour à la tâche.",
+            "Ranger un tiroir (un seul) — fin quand le timer sonne.",
+            "Préparer un espace de travail ultra propre (15 minutes chrono).",
+            "Faire 15 minutes de “brouillon” sur un document pénible.",
+            "Exercices de gainage léger 10 min + étirements 5 min.",
+            "Mettre à jour une seule section d’un dossier/rapport.",
+            "Appeler / message une personne utile (1 seul message)."
+          ],
+          "25m+": [
+            "Sortie courte : marche + air + retour (30 min).",
+            "Session de deep-clean d’une zone (25 min) puis arrêt net.",
+            "Séance sport légère/modérée 30-40 min.",
+            "Cuisine simple pour 2 repas (batch minimaliste).",
+            "Revue hebdo (30 min) : ce qui reste, ce qui part, ce qui compte.",
+            "Lecture ciblée + prise de notes (25 min).",
+            "Réorganisation d’un set (hôpital/consult) + plan du lendemain.",
+            "Écrire une page “décharge mentale” puis classer 3 actions.",
+            "Faire une tâche admin lourde 25 min, stop, célébration intérieure.",
+            "Préparer un environnement “flow” (lumière, sons off, distractions out)."
+          ]
+        }
+      };
+    }
+    if(!kiffBank || !kiffBank.buckets){
+      kiffBank = initKiffBank();
+      save(KEY_KIFF, kiffBank);
+    }
+
+    // =========================
+    // Drawer Tabs + Views
+    // =========================
+    const TAB_DEFS = [
+      { key:"inbox",   label:"Inbox" },
+      { key:"liste",   label:"Liste" },
+      { key:"cats",    label:"Cat" },
+      { key:"sets",    label:"Sets" },
+      { key:"mode",    label:"Mode" },
+      { key:"energie", label:"Énergie" },
+      { key:"params",  label:"Param" },
+      { key:"profiles",label:"Profils" },
+      { key:"banks",   label:"Textes" },
+      { key:"kiff",    label:"Kiffance" },
+      { key:"calib",   label:"Calib" },
+      { key:"hist",    label:"Hist" },
+      { key:"rapport", label:"Rapport" }
+    ];
+
+    let activeTab = "inbox";
+
+    // =========================
+    // Load/Save
+    // =========================
+    function load(key, fallback){
+      try{
+        const raw = localStorage.getItem(key);
+        if(!raw) return structuredClone(fallback);
+        return Object.assign(structuredClone(fallback), JSON.parse(raw));
+      }catch{
+        return structuredClone(fallback);
+      }
+    }
+    function save(key, obj){
+      localStorage.setItem(key, JSON.stringify(obj));
+    }
+    function persistAll(){
+      save(KEY_SETTINGS, settings);
+      save(KEY_STATE, state);
+      save(KEY_NOTES, notes);
+      save(KEY_HABITS, habits);
+      save(KEY_KIFF, kiffBank);
+    }
+
+    // =========================
+    // Day rollover + history
+    // =========================
+    function dayKey(d=new Date()){
+      return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+    }
+
+    function rolloverIfNeeded(){
+      const today = dayKey();
+      if(!state.lastSaveDay){
+        state.lastSaveDay = today;
+        persistAll();
+        return;
+      }
+      if(state.lastSaveDay !== today){
+        // snapshot previous day
+        state.history.push(buildDailySnapshot(state.lastSaveDay));
+        // keep history reasonable
+        if(state.history.length > 180) state.history = state.history.slice(-180);
+        // reset only the daily counters if you want; here we just update day marker
+        state.lastSaveDay = today;
+        persistAll();
+      }
+    }
+
+    function buildDailySnapshot(day){
+      const doneThatDay = state.done.filter(x => (x.doneAt||"").startsWith(day));
+      const totalDone = doneThatDay.length;
+      const ethDone = doneThatDay.reduce((a,t)=>a+(t.ethStart||0),0);
+      return {
+        day,
+        totalDone,
+        ethDone,
+        remainingTasks: state.tasks.length,
+        remainingEth: state.tasks.reduce((a,t)=>a+(t.ethLeft||0),0),
+        habits: habits.map(h=>({
+          name: h.name,
+          total: h.total,
+          checked: h.checked || 0
+        }))
+      };
+    }
+
+    // =========================
+    // Theme + focus
+    // =========================
+    function applyTheme(){
+      document.body.setAttribute("data-theme", settings.theme);
+      btnTheme.classList.toggle("pressed", settings.theme==="light");
+    }
+    function applyFocus(){
+      document.body.classList.toggle("focus", !!settings.focus);
+      btnFocus.classList.toggle("pressed", !!settings.focus);
+    }
+
+    // =========================
+    // Tasks
+    // =========================
+    function computeStartCountsIfEmpty(){
+      if(!state.startCounts || state.startCounts.tasks===0 && state.startCounts.eth===0){
+        state.startCounts = {
+          tasks: state.tasks.length,
+          eth: state.tasks.reduce((a,t)=>a+(t.ethStart||0),0)
+        };
+      }
+    }
+
+    function ensureCurrent(){
+      if(state.currentId && state.tasks.some(t=>t.id===state.currentId)) return;
+      // prefer pinned tasks
+      const pinned = state.tasks.find(t=>t.pinned);
+      const next = pinned || state.tasks[0] || null;
+      state.currentId = next ? next.id : null;
+    }
+
+    function currentTask(){
+      return state.tasks.find(t=>t.id===state.currentId) || null;
+    }
+
+    function filteredTasks(){
+      // activeCats empty => all
+      if(!settings.activeCats || settings.activeCats.length===0) return state.tasks;
+      return state.tasks.filter(t => settings.activeCats.includes((t.cat||"INBOX")));
+    }
+
+    function pickRoulette(){
+      const pool = filteredTasks();
+      if(!pool.length) return null;
+
+      if(settings.rouletteMode === "ordered"){
+        const ordered = [...pool];
+        if(settings.orderedStrategy === "pinnedFirst"){
+          ordered.sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0) || (a.createdAt||"").localeCompare(b.createdAt||""));
+        }else if(settings.orderedStrategy === "alpha"){
+          ordered.sort((a,b)=>(a.title||"").localeCompare(b.title||"", "fr", {sensitivity:"base"}));
+        }else{
+          ordered.sort((a,b)=>(a.createdAt||"").localeCompare(b.createdAt||""));
+        }
+        return ordered[0];
+      }else{
+        return pool[rand(pool.length)];
+      }
+    }
+
+    function setCurrent(id){
+      state.currentId = id;
+      // restart timer for current task
+      state.timer = { taskId:id, elapsedMs:0, running:true, startedAt: Date.now() };
+      persistAll();
+      renderAll();
+    }
+
+    function tickTimer(){
+      const t = state.timer;
+      if(!t || !t.running || !t.taskId) return;
+      const now = Date.now();
+      t.elapsedMs += (now - (t.startedAt || now));
+      t.startedAt = now;
+    }
+
+    function makeTask(title, cat="INBOX", eth=1, prio=0){
+      const e = clamp(parseInt(eth||1,10) || 1, 1, 999);
+      return {
+        id: uniq(),
+        title: (title||"").trim(),
+        cat,
+        ethStart: e,
+        ethLeft: e,
+        prio: prio ? 1 : 0,
+        pinned: false,
+        createdAt: nowISO(),
+        updatedAt: nowISO()
+      };
+    }
+
+    function deleteTask(id){
+      const idx = state.tasks.findIndex(t=>t.id===id);
+      if(idx<0) return;
+      const wasCurrent = state.currentId===id;
+      state.tasks.splice(idx,1);
+      if(wasCurrent) state.currentId=null;
+      ensureCurrent();
+      persistAll();
+      renderAll();
+    }
+
+    function markDone(id){
+      const idx = state.tasks.findIndex(t=>t.id===id);
+      if(idx<0) return;
+      const t = state.tasks[idx];
+      t.doneAt = nowISO();
+      state.done.push(t);
+      state.tasks.splice(idx,1);
+      state.streak.completedSinceCele = (state.streak.completedSinceCele||0) + 1;
+
+      // confetti always at task completion
+      burstConfetti();
+
+      // celebration occasionally (surprise)
+      maybeCelebrate(t);
+
+      if(state.currentId===id) state.currentId=null;
+      ensureCurrent();
+      computeStartCountsIfEmpty();
+      persistAll();
+      renderAll();
+    }
+
+    function degommeOneEth(){
+      const t = currentTask();
+      if(!t) return;
+
+      // update timer tick first
+      tickTimer();
+
+      t.ethLeft = Math.max(0, (t.ethLeft||0) - 1);
+      t.updatedAt = nowISO();
+
+      // when eth reaches 0 => task done
+      if(t.ethLeft===0){
+        markDone(t.id);
+        return;
+      }
+
+      persistAll();
+      renderAll();
+    }
+
+    function pinToggle(){
+      const t = currentTask();
+      if(!t) return;
+      t.pinned = !t.pinned;
+      t.updatedAt = nowISO();
+      persistAll();
+      renderAll();
+    }
+
+    function pushDownCurrent(){
+      const t = currentTask();
+      if(!t) return;
+      const idx = state.tasks.findIndex(x=>x.id===t.id);
+      if(idx<0) return;
+      state.tasks.splice(idx,1);
+      state.tasks.push(t);
+      persistAll();
+      renderAll();
+    }
+
+    function moveTask(taskId, delta){
+      const idx = state.tasks.findIndex(x=>x.id===taskId);
+      if(idx < 0) return;
+      const j = idx + delta;
+      if(j < 0 || j >= state.tasks.length) return;
+      const tmp = state.tasks[j];
+      state.tasks[j] = state.tasks[idx];
+      state.tasks[idx] = tmp;
+      persistAll();
+      renderAll();
+      renderPanel();
+    }
+
+    function editTaskTitle(id, newTitle){
+      const t = state.tasks.find(x=>x.id===id);
+      if(!t) return;
+      t.title = (newTitle||"").trim() || t.title;
+      t.updatedAt = nowISO();
+      persistAll();
+      renderAll();
+    }
+
+    // =========================
+    // Inbox parsing (MAJUSCULES = catégorie)
+    //  - LIGNES sous la catégorie => tâches
+    //  - format tâche: "Nom - 3" => eth=3
+    //  - priorité: si contient "!": prio=1 (optionnel)
+    // =========================
+    function parseInbox(text){
+      const lines = (text||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+      let cat = "INBOX";
+      const tasks = [];
+      for(const line of lines){
+        // category header: all caps & not too long
+        if(isCategoryHeader(line)){
+          cat = normalizeCat(line);
+          continue;
+        }
+        // parse eth
+        let title = line;
+        let eth = 1;
+        let prio = 0;
+
+        // priority marker optional
+        if(title.includes("!")){
+          prio = 1;
+          title = title.replace(/!/g,"").trim();
+        }
+
+        // eth patterns: " - 3" OR " 3" at end
+        const m1 = title.match(/^(.*?)(?:\s*[-–—]\s*)(\d{1,3})$/);
+        const m2 = title.match(/^(.*?)(?:\s+)(\d{1,3})$/);
+        if(m1){
+          title = m1[1].trim();
+          eth = parseInt(m1[2],10);
+        }else if(m2){
+          // only if last token is number and title part non-empty
+          if(m2[1].trim().length>0){
+            title = m2[1].trim();
+            eth = parseInt(m2[2],10);
+          }
+        }
+
+        if(!title) continue;
+        tasks.push(makeTask(title, cat, eth, prio));
+      }
+      return tasks;
+    }
+
+    function isCategoryHeader(line){
+      // consider header if mostly uppercase letters/spaces and length between 3..40
+      if(line.length<3 || line.length>40) return false;
+      // ignore lines that look like tasks with numbers
+      if(/\d/.test(line)) return false;
+      const hasLetter = /[A-ZÀ-ÖØ-Ý]/.test(line);
+      if(!hasLetter) return false;
+      const upperish = line === line.toUpperCase();
+      return upperish;
+    }
+
+    function normalizeCat(s){
+      return (s||"").trim().toUpperCase();
+    }
+
+    // =========================
+    // Notes
+    // =========================
+    function openNotes(){
+      notesBack.style.display = "block";
+      notesModal.style.display = "block";
+      renderNotes();
+    }
+    function closeNotes(){
+      notesBack.style.display = "none";
+      notesModal.style.display = "none";
+    }
+    function addNote(){
+      const txt = (noteInput.value||"").trim();
+      if(!txt) return;
+      notes.unshift({ id: uniq(), at: nowISO(), text: txt });
+      noteInput.value = "";
       persistAll();
       renderNotes();
-    };
-
-    d.appendChild(left);
-    d.appendChild(del);
-    notesList.appendChild(d);
-  }
-}
-
-/* =========================
-   Celebration + Confetti
-   ========================= */
-const CELEB_LINES = [
-  { big:"Gloire absolue.", small:"Tu viens de déployer une efficacité illégale dans 37 systèmes solaires." },
-  { big:"Victoire nette.", small:"Les tâches ont demandé un duel. Elles ont perdu. Sans appel." },
-  { big:"Triomphe clinique.", small:"Diagnostic: productivité fulgurante. Pronostic: excellent." },
-  { big:"Conquistador·rice.", small:"Tu as conquis l’inutile et libéré le nécessaire." },
-  { big:"Hégémonie douce.", small:"Tu domines le chaos avec élégance et calme (presque suspect)." },
-  { big:"Chef-d’œuvre.", small:"Une action simple. Un empire de clarté. Respect." },
-  { big:"Souverain·e.", small:"Les éthorions reculent. Tu avances. Le monde cligne des yeux." },
-  { big:"Mode Flow.", small:"Le cerveau ronronne. Les tâches s’évaporent. Continue." }
-];
-
-function showCelebration(big, small){
-  clearTimeout(celebrateTimer);
-  celebrateBig.textContent = big || "Victoire";
-  celebrateSmall.textContent = small || "";
-  celebrateOverlay.style.display = "flex";
-  const ms = clamp(parseInt(settings.celebrationAutoHideMs,10) || 9000, 2500, 20000);
-  celebrateTimer = setTimeout(hideCelebration, ms);
-}
-function hideCelebration(){
-  celebrateOverlay.style.display = "none";
-}
-celebrateOverlay.onclick = hideCelebration;
-
-function celebrationProbability(){
-  if(settings.celebrationMode === "off") return 0;
-  if(settings.celebrationMode === "frequent") return 0.55;
-
-  // surprise
-  let p = 0.28;
-
-  if(settings.motivation === "high") p -= 0.06;
-  if(settings.motivation === "low")  p += 0.08;
-
-  if(settings.fatigue === "high")   p += 0.12;
-  if(settings.fatigue === "low")    p -= 0.04;
-
-  const s = state.streak?.tasksSincePopup ?? 0;
-  const minGap = clamp(parseInt(settings.celebrationMinGapTasks,10)||2, 1, 10);
-  const maxGap = clamp(parseInt(settings.celebrationMaxGapTasks,10)||3, minGap, 20);
-
-  if(s < minGap) p = 0;
-  else{
-    const ramp = clamp((s - minGap) / Math.max(1, (maxGap - minGap)), 0, 1);
-    p = p + (0.25 * ramp);
-  }
-
-  const pMin = clamp(Number(settings.celebrationChanceMin)||0.10, 0, 1);
-  const pMax = clamp(Number(settings.celebrationChanceMax)||0.55, 0, 1);
-  return clamp(p, pMin, pMax);
-}
-function shouldShowCelebrationPopup(){
-  return Math.random() < celebrationProbability();
-}
-
-function confettiBurst(){
-  confettiCanvas.width = window.innerWidth;
-  confettiCanvas.height = window.innerHeight;
-  confettiCanvas.style.display = "block";
-
-  const N = 120;
-  const parts = Array.from({length:N}, () => {
-    const x = confettiCanvas.width/2 + (Math.random()-0.5)*240;
-    const y = confettiCanvas.height*0.30 + (Math.random()-0.5)*90;
-    const vx = (Math.random()-0.5)*10;
-    const vy = Math.random()*-10 - 6;
-    const g = 0.35 + Math.random()*0.15;
-    return { x,y,vx,vy,g,life: 60+Math.random()*25, w:2+Math.random()*4, h:8+Math.random()*10, r:Math.random()*Math.PI };
-  });
-
-  let frame = 0;
-  function step(){
-    frame++;
-    confettiCtx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
-
-    for(const p of parts){
-      p.life -= 1;
-      p.vy += p.g;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.r += 0.12;
-
-      const a = Math.max(0, p.life/90);
-      confettiCtx.globalAlpha = a;
-
-      // sobre: blanc + 2 accents doux
-      const u = Math.random();
-      let fill = "rgba(255,255,255,.85)";
-      if(u < 0.33) fill = "rgba(125,185,255,.70)";
-      else if(u < 0.66) fill = "rgba(124,255,199,.60)";
-      confettiCtx.fillStyle = fill;
-
-      confettiCtx.save();
-      confettiCtx.translate(p.x, p.y);
-      confettiCtx.rotate(p.r);
-      confettiCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-      confettiCtx.restore();
     }
-
-    confettiCtx.globalAlpha = 1;
-
-    if(frame < 80){
-      requestAnimationFrame(step);
-    }else{
-      confettiCanvas.style.display = "none";
-    }
-  }
-  step();
-}
-window.addEventListener("resize", () => {
-  confettiCanvas.width = window.innerWidth;
-  confettiCanvas.height = window.innerHeight;
-});
-
-/* =========================
-   Tabs Rendering
-   ========================= */
-function renderTabs(){
-  tabsEl.innerHTML = "";
-  for(const t of TAB_DEFS){
-    const b = document.createElement("button");
-    b.className = "tab" + (t.key===activeTab ? " active": "");
-    b.textContent = t.label;
-    b.onclick = () => {
-      activeTab = t.key;
-      renderTabs();
-      renderPanel();
-    };
-    tabsEl.appendChild(b);
-  }
-}
-
-/* =========================
-   Task Logic
-   ========================= */
-function recalcStartCounts(){
-  // startCounts used for "restants / départ"
-  const tasks = state.tasks.length + state.done.length;
-  const eth = sumEth(state.tasks) + sumEth(state.done, true);
-  state.startCounts = { tasks, eth };
-}
-function sumEth(list, useStart=false){
-  let s=0;
-  for(const t of list){
-    const v = useStart ? (t.ethStart||0) : (t.ethLeft||0);
-    s += v;
-  }
-  return s;
-}
-function pickNextTask(){
-  // If set active, force order by queue
-  if(state.activeSet && Array.isArray(state.activeSet.queueTaskIds) && state.activeSet.queueTaskIds.length){
-    const nextId = state.activeSet.queueTaskIds[0];
-    const t = state.tasks.find(x=>x.id===nextId);
-    if(t) return t;
-    // purge missing
-    state.activeSet.queueTaskIds.shift();
-  }
-
-  if(!state.tasks.length) return null;
-
-  if(settings.sortMode === "order"){
-    // pinned first, then by createdAt
-    const pinned = state.tasks.filter(t=>t.pinned);
-    if(pinned.length) return pinned[0];
-    return state.tasks[0];
-  }else{
-    // roulette among tasks, prefer pinned? We keep pinned in pool but lightly biased
-    const pool = [...state.tasks];
-    const pinned = pool.filter(t=>t.pinned);
-    if(pinned.length && Math.random() < 0.55) return pinned[Math.floor(Math.random()*pinned.length)];
-    return pool[Math.floor(Math.random()*pool.length)];
-  }
-}
-
-function ensureCurrent(){
-  if(!state.tasks.length){
-    state.currentId = null;
-    state.timer = { taskId:null, elapsedMs:0, running:false, startedAt:null };
-    return;
-  }
-  if(state.currentId && state.tasks.some(t=>t.id===state.currentId)){
-    // keep current
-  }else{
-    const t = pickNextTask();
-    state.currentId = t ? t.id : null;
-    // reset timer for new task
-    state.timer = { taskId: state.currentId, elapsedMs:0, running: !!state.currentId, startedAt: Date.now() };
-  }
-}
-
-function getCurrent(){
-  if(!state.currentId) return null;
-  return state.tasks.find(t=>t.id===state.currentId) || null;
-}
-
-function roulette(){
-  if(!state.tasks.length) return;
-  // pick randomly but not same if possible
-  const current = getCurrent();
-  let t = null;
-
-  // if set active, roulette should still allow "reroll" but not break order:
-  // We will allow reroll only if NOT in set mode
-  if(state.activeSet){
-    // In set mode, roulette just re-focus the next expected task
-    ensureCurrent();
-    renderAll();
-    return;
-  }
-
-  if(state.tasks.length === 1){
-    t = state.tasks[0];
-  }else{
-    for(let i=0;i<12;i++){
-      const candidate = state.tasks[Math.floor(Math.random()*state.tasks.length)];
-      if(!current || candidate.id !== current.id){ t = candidate; break; }
-    }
-    if(!t) t = state.tasks[0];
-  }
-  state.currentId = t.id;
-  state.timer = { taskId: t.id, elapsedMs:0, running:true, startedAt: Date.now() };
-}
-
-function smashOne(){
-  const t = getCurrent();
-  if(!t) return;
-
-  // Ensure timer running
-  if(!state.timer.running || state.timer.taskId !== t.id){
-    state.timer = { taskId: t.id, elapsedMs:0, running:true, startedAt: Date.now() };
-  }
-
-  t.ethLeft = clamp((t.ethLeft||1) - 1, 0, 999);
-
-  // optional: small popup rarely on smash (not always)
-  if(settings.celebrationMode !== "off"){
-    const p = clamp(celebrationProbability()*0.35, 0, 0.25);
-    if(Math.random() < p){
-      const line = CELEB_LINES[Math.floor(Math.random()*CELEB_LINES.length)];
-      showCelebration(line.big, "+1 éthorion. Petit pas, grande conquête.");
-    }
-  }
-
-  // complete task
-  if(t.ethLeft <= 0){
-    completeTask(t, "smash");
-  }else{
-    persistAll();
-    renderAll();
-  }
-}
-
-function completeTask(t, source){
-  // Confetti always at end of task
-  confettiBurst();
-
-  // snapshot for done
-  const doneTask = {
-    ...t,
-    doneAt: nowISO(),
-    doneSource: source,
-    elapsedMs: currentTaskElapsedMs()
-  };
-
-  // remove from tasks
-  state.tasks = state.tasks.filter(x=>x.id!==t.id);
-  state.done.unshift(doneTask);
-
-  // set queue advance
-  if(state.activeSet && state.activeSet.queueTaskIds && state.activeSet.queueTaskIds[0] === t.id){
-    state.activeSet.queueTaskIds.shift();
-    if(state.activeSet.queueTaskIds.length === 0){
-      // set finished
-      state.activeSet = null;
-    }
-  }
-
-  // history log (daily)
-  pushHistoryEvent({
-    type:"task_done",
-    dayISO: todayISO(),
-    taskId: doneTask.id,
-    title: doneTask.title,
-    cat: doneTask.cat,
-    ethStart: doneTask.ethStart,
-    elapsedMs: doneTask.elapsedMs || 0
-  });
-
-  // streak
-  state.streak.tasksSinceStart = (state.streak.tasksSinceStart||0) + 1;
-  state.streak.tasksSincePopup = (state.streak.tasksSincePopup||0) + 1;
-
-  // popup surprise sometimes
-  if(shouldShowCelebrationPopup()){
-    const line = CELEB_LINES[Math.floor(Math.random()*CELEB_LINES.length)];
-    showCelebration(line.big, line.small);
-    state.streak.tasksSincePopup = 0;
-  }
-
-  // choose next
-  state.currentId = null;
-  state.timer = { taskId:null, elapsedMs:0, running:false, startedAt:null };
-  ensureCurrent();
-  persistAll();
-  renderAll();
-}
-
-function currentTaskElapsedMs(){
-  if(!state.timer || !state.timer.taskId) return 0;
-  return state.timer.elapsedMs || 0;
-}
-
-/* =========================
-   History / daily rollover
-   ========================= */
-function pushHistoryEvent(evt){
-  history.unshift({ id: uid(), ts: nowISO(), ...evt });
-  // keep reasonable size
-  if(history.length > 5000) history.length = 5000;
-  saveJSON(K.history, history);
-}
-
-function maybeRolloverDay(){
-  const today = todayISO();
-  if(state.dayStartISO !== today){
-    // new day: keep tasks (you wanted history daily + weekly)
-    // we just mark the day switch event
-    pushHistoryEvent({ type:"day_rollover", from: state.dayStartISO, to: today });
-    state.dayStartISO = today;
-
-    // reset habits day if you want separate daily boxes
-    // (we store habits with dayISO; if day changed, create new day boxes when needed)
-
-    persistAll();
-  }
-}
-
-/* =========================
-   Reset
-   ========================= */
-btnReset.onclick = () => {
-  // reset tasks/done/timer/streak/current/set, but keep notes/kiff/habits/history
-  state.tasks = [];
-  state.done = [];
-  state.currentId = null;
-  state.startCounts = { tasks:0, eth:0 };
-  state.timer = { taskId:null, elapsedMs:0, running:false, startedAt:null };
-  state.streak = { tasksSincePopup:0, tasksSinceStart:0 };
-  state.activeSet = null;
-
-  pushHistoryEvent({ type:"reset", dayISO: todayISO() });
-
-  persistAll();
-  renderAll();
-  renderPanel();
-};
-
-/* =========================
-   Tick timer (elapsed)
-   ========================= */
-function startTicker(){
-  stopTicker();
-  tickTimer = setInterval(() => {
-    maybeRolloverDay();
-    const cur = getCurrent();
-    if(cur && state.timer && state.timer.taskId === cur.id && state.timer.running){
-      const now = Date.now();
-      const base = state.timer.startedAt || now;
-      state.timer.elapsedMs = (now - base);
-      saveJSON(K.state, state);
-      renderHUD();
-    }else{
-      renderHUD();
-    }
-  }, 500);
-}
-function stopTicker(){
-  if(tickTimer) clearInterval(tickTimer);
-  tickTimer = null;
-}
-
-/* =========================
-   Render: HUD + Main
-   ========================= */
-function renderHUD(){
-  const totalTasks0 = state.startCounts.tasks || (state.tasks.length + state.done.length);
-  const totalEth0 = state.startCounts.eth || (sumEth(state.tasks) + sumEth(state.done,true));
-
-  const tasksLeft = state.tasks.length;
-  const ethLeft = sumEth(state.tasks);
-
-  hudTasks.innerHTML = `<b>${tasksLeft}</b> / ${totalTasks0} tâches`;
-  hudEth.innerHTML   = `<b>${ethLeft}</b> / ${totalEth0} éthorions`;
-  hudDone.innerHTML  = `<b>${state.done.length}</b> faites`;
-
-  const cur = getCurrent();
-  if(cur){
-    hudTimer.innerHTML = `temps <b>${fmtTime(state.timer?.elapsedMs||0)}</b>`;
-  }else{
-    hudTimer.innerHTML = `temps <b>00:00</b>`;
-  }
-}
-
-function renderMain(){
-  ensureCurrent();
-
-  const totalTasks0 = state.startCounts.tasks || (state.tasks.length + state.done.length);
-  const totalEth0 = state.startCounts.eth || (sumEth(state.tasks) + sumEth(state.done,true));
-  const tasksLeft = state.tasks.length;
-
-  // Task progress uses: % done = 1 - tasksLeft/totalTasks0
-  const pct = totalTasks0 ? (1 - (tasksLeft/totalTasks0)) : 0;
-  const p = clamp(Math.round(pct*100), 0, 100);
-  taskFill.style.width = `${p}%`;
-  taskPct.textContent = `${p}%`;
-
-  const cur = getCurrent();
-  if(!cur){
-    currentTitle.textContent = "Aucune tâche";
-    currentMeta.innerHTML = `<span>Importe des tâches dans Inbox.</span>`;
-    ethFill.style.width = `0%`;
-    btnSmash.disabled = true;
-    btnRoulette.disabled = true;
-    return;
-  }
-
-  btnSmash.disabled = false;
-  btnRoulette.disabled = false;
-
-  currentTitle.textContent = cur.title;
-
-  const minsLeft = minutesFromEth(cur.ethLeft||0);
-  const minsStart = minutesFromEth(cur.ethStart||0);
-  const meta = [];
-
-  // minimal meta, but useful
-  meta.push(`Éthorions: ${cur.ethLeft}/${cur.ethStart} (${fmtMin(minsLeft)} restants)`);
-  if(cur.cat) meta.push(`Cat: ${cur.cat}`);
-  if(state.activeSet) meta.push(`Set actif: ${state.activeSet.setName}`);
-
-  currentMeta.innerHTML = meta.map(x=>`<span>${safeText(x)}</span>`).join(" · ");
-
-  const ethPct = cur.ethStart ? ((cur.ethLeft||0)/(cur.ethStart||1)) : 0;
-  ethFill.style.width = `${clamp(Math.round(ethPct*100), 0, 100)}%`;
-
-  // accessibility: update smash text contrast; we already use CSS variables.
-}
-
-/* =========================
-   Render Panel content
-   ========================= */
-function mkCard(title, innerHTML){
-  const c = document.createElement("div");
-  c.className = "card";
-  const h = document.createElement("h3");
-  h.textContent = title;
-  c.appendChild(h);
-  const d = document.createElement("div");
-  d.innerHTML = innerHTML;
-  c.appendChild(d);
-  return c;
-}
-
-function renderPanel(){
-  panelEl.innerHTML = "";
-  if(activeTab==="inbox") panelEl.appendChild(buildInboxPanel());
-  if(activeTab==="liste") panelEl.appendChild(buildListPanel());
-  if(activeTab==="sets") panelEl.appendChild(buildSetsPanel());
-  if(activeTab==="kiff") panelEl.appendChild(buildKiffPanel());
-  if(activeTab==="habits") panelEl.appendChild(buildHabitsPanel());
-  if(activeTab==="hist") panelEl.appendChild(buildHistoryPanel());
-  if(activeTab==="rapport") panelEl.appendChild(buildReportPanel());
-  if(activeTab==="params") panelEl.appendChild(buildParamsPanel());
-}
-
-/* =========================
-   Inbox: import parsing (caps category)
-   ========================= */
-function buildInboxPanel(){
-  const wrap = document.createElement("div");
-
-  const c1 = mkCard("Importer", `
-    <p class="help">
-      Format:
-      <br>— Une ligne en MAJUSCULES = catégorie
-      <br>— Les lignes dessous = tâches de cette catégorie
-      <br>— Option: "Tâche - 3" (3 éthorions) ou "Tâche 3"
-    </p>
-    <textarea id="inboxText" placeholder="EX:\nAPPELS\nAppeler Hugo - 2\nAppeler Samira\nADMIN\nRapport X - 6"></textarea>
-    <div class="row" style="margin-top:10px;">
-      <button class="btn primary" id="btnImport">Importer</button>
-      <button class="btn" id="btnClearInbox">Effacer</button>
-    </div>
-    <div class="row" style="margin-top:10px;">
-      <button class="btn" id="btnExportTasks">Exporter tâches</button>
-      <button class="btn" id="btnExportDone">Exporter fait</button>
-    </div>
-  `);
-
-  const c2 = mkCard("Aperçu", `
-    <div class="help" id="importPreview">Aucun aperçu.</div>
-  `);
-
-  wrap.appendChild(c1);
-  wrap.appendChild(c2);
-
-  setTimeout(() => {
-    const inboxText = document.getElementById("inboxText");
-    const preview = document.getElementById("importPreview");
-
-    function previewParse(){
-      const txt = inboxText.value || "";
-      const lines = txt.split(/\r?\n/);
-      let cat = "";
-      let out = [];
-      for(const raw of lines){
-        const line = raw.trim();
-        if(!line) continue;
-        if(isAllCaps(line)){
-          cat = line;
-          continue;
-        }
-        const parsed = parseTaskLine(line);
-        if(!parsed || !parsed.title) continue;
-        out.push({ cat: cat || "INBOX", title: parsed.title, eth: parsed.eth });
-      }
-      if(!out.length){
-        preview.textContent = "Aucun élément détecté.";
-        return;
-      }
-      const cats = uniq(out.map(x=>x.cat));
-      preview.innerHTML = `${out.length} tâches détectées · ${cats.length} catégories`;
-    }
-
-    inboxText.addEventListener("input", previewParse);
-    previewParse();
-
-    document.getElementById("btnClearInbox").onclick = () => {
-      inboxText.value = "";
-      previewParse();
-    };
-
-    document.getElementById("btnImport").onclick = () => {
-      const txt = inboxText.value || "";
-      const lines = txt.split(/\r?\n/);
-      let cat = "";
-      const created = [];
-      for(const raw of lines){
-        const line = raw.trim();
-        if(!line) continue;
-        if(isAllCaps(line)){
-          cat = line;
-          continue;
-        }
-        const parsed = parseTaskLine(line);
-        if(!parsed || !parsed.title) continue;
-        const t = {
-          id: uid(),
-          title: parsed.title,
-          cat: cat || "INBOX",
-          ethStart: parsed.eth,
-          ethLeft: parsed.eth,
-          pinned: false,
-          createdAt: nowISO()
-        };
-        created.push(t);
-      }
-      if(!created.length) return;
-
-      state.tasks = [...state.tasks, ...created];
-      recalcStartCounts();
-      state.currentId = null;
-      ensureCurrent();
-
-      pushHistoryEvent({ type:"import", dayISO: todayISO(), count: created.length });
-
-      persistAll();
-      renderAll();
-      renderPanel();
-    };
-
-    document.getElementById("btnExportTasks").onclick = () => {
-      downloadJSON(`eliminator-tasks-${todayISO()}.json`, state.tasks);
-    };
-    document.getElementById("btnExportDone").onclick = () => {
-      downloadJSON(`eliminator-done-${todayISO()}.json`, state.done);
-    };
-  }, 0);
-
-  return wrap;
-}
-
-/* =========================
-   Liste: minimal actions + mark done
-   ========================= */
-function buildListPanel(){
-  const wrap = document.createElement("div");
-
-  const c1 = mkCard("Tâches (pool actif)", `
-    <div class="row">
-      <select id="sortMode">
-        <option value="roulette">Mode: roulette</option>
-        <option value="order">Mode: ordre</option>
-      </select>
-      <button class="btn" id="btnRecalc">Recalcul départ</button>
-    </div>
-    <div class="row" style="margin-top:10px;">
-      <button class="btn" id="btnSelectCats">Filtrer catégories</button>
-      <button class="btn" id="btnClearCatFilter">Tout afficher</button>
-    </div>
-    <div class="list" id="taskList"></div>
-  `);
-
-  wrap.appendChild(c1);
-
-  setTimeout(() => {
-    const sortMode = document.getElementById("sortMode");
-    sortMode.value = settings.sortMode || "roulette";
-    sortMode.onchange = () => {
-      settings.sortMode = sortMode.value;
-      persistAll();
-    };
-
-    document.getElementById("btnRecalc").onclick = () => {
-      recalcStartCounts();
-      persistAll();
-      renderAll();
-    };
-
-    document.getElementById("btnSelectCats").onclick = () => {
-      const cats = uniq(state.tasks.map(t=>t.cat || "INBOX")).sort((a,b)=>a.localeCompare(b));
-      const chosen = prompt(
-        "Catégories à inclure (séparées par des virgules).\nDisponibles:\n" + cats.join(", "),
-        (settings.activeCats && settings.activeCats.length) ? settings.activeCats.join(", ") : ""
-      );
-      if(chosen===null) return;
-      const arr = chosen.split(",").map(x=>x.trim()).filter(Boolean);
-      settings.activeCats = arr.length ? arr : null;
-      persistAll();
-      renderAll();
-      renderPanel();
-    };
-
-    document.getElementById("btnClearCatFilter").onclick = () => {
-      settings.activeCats = null;
-      persistAll();
-      renderAll();
-      renderPanel();
-    };
-
-    renderTaskList();
-  }, 0);
-
-  return wrap;
-}
-
-function filteredTasks(){
-  if(!settings.activeCats || !settings.activeCats.length) return state.tasks;
-  const set = new Set(settings.activeCats);
-  return state.tasks.filter(t => set.has(t.cat || "INBOX"));
-}
-
-function renderTaskList(){
-  const list = document.getElementById("taskList");
-  if(!list) return;
-  list.innerHTML = "";
-
-  const tasks = filteredTasks();
-
-  if(!tasks.length){
-    const p = document.createElement("p");
-    p.className = "help";
-    p.textContent = "Aucune tâche dans la sélection.";
-    list.appendChild(p);
-    return;
-  }
-
-  for(let i=0;i<tasks.length;i++){
-    const t = tasks[i];
-    const row = document.createElement("div");
-    row.className = "item";
-
-    const left = document.createElement("div");
-    left.className = "t";
-
-    const name = document.createElement("div");
-    name.className = "name";
-    name.textContent = t.title;
-
-    const sub = document.createElement("div");
-    sub.className = "sub";
-    sub.textContent = `${t.cat || "INBOX"} · ${t.ethLeft}/${t.ethStart} éthorions` + (t.pinned ? " · épinglée" : "");
-
-    left.appendChild(name);
-    left.appendChild(sub);
-
-    // up/down/edit + delete + mark done
-    const up = document.createElement("button");
-    up.className = "iconBtn";
-    up.textContent = "↑";
-    up.title = "Monter (prioriser)";
-    up.onclick = () => {
-      const idx = state.tasks.findIndex(x=>x.id===t.id);
-      if(idx>0){
-        const tmp = state.tasks[idx-1];
-        state.tasks[idx-1] = state.tasks[idx];
-        state.tasks[idx] = tmp;
-        persistAll();
-        renderPanel();
-      }
-    };
-
-    const down = document.createElement("button");
-    down.className = "iconBtn";
-    down.textContent = "↓";
-    down.title = "Descendre";
-    down.onclick = () => {
-      const idx = state.tasks.findIndex(x=>x.id===t.id);
-      if(idx>=0 && idx<state.tasks.length-1){
-        const tmp = state.tasks[idx+1];
-        state.tasks[idx+1] = state.tasks[idx];
-        state.tasks[idx] = tmp;
-        persistAll();
-        renderPanel();
-      }
-    };
-
-    const edit = document.createElement("button");
-    edit.className = "iconBtn";
-    edit.textContent = "✎";
-    edit.title = "Éditer";
-    edit.onclick = () => {
-      const newTitle = prompt("Nouveau titre", t.title);
-      if(newTitle===null) return;
-      t.title = (newTitle||"").trim() || t.title;
-
-      const newEth = prompt("Éthorions (nombre)", String(t.ethStart||1));
-      if(newEth!==null){
-        const n = clamp(parseInt(newEth,10)||t.ethStart||1, 1, 999);
-        // adjust proportionally: keep same remaining ratio if possible
-        const ratio = (t.ethStart>0) ? (t.ethLeft/t.ethStart) : 1;
-        t.ethStart = n;
-        t.ethLeft = clamp(Math.round(n*ratio), 0, n);
-      }
-
-      persistAll();
-      renderAll();
-      renderPanel();
-    };
-
-    const pin = document.createElement("button");
-    pin.className = "iconBtn";
-    pin.textContent = "⌁";
-    pin.title = "Épingler / désépingler";
-    pin.onclick = () => {
-      t.pinned = !t.pinned;
-      persistAll();
-      renderAll();
-      renderPanel();
-    };
-
-    const doneBtn = document.createElement("button");
-    doneBtn.className = "iconBtn";
-    doneBtn.textContent = "✓";
-    doneBtn.title = "Marquer comme déjà dégommée";
-    doneBtn.onclick = () => {
-      // Mark as done immediately, no confetti (this is administrative)
-      const fake = { ...t, ethLeft:0 };
-      state.currentId = (state.currentId===t.id) ? null : state.currentId;
-      state.tasks = state.tasks.filter(x=>x.id!==t.id);
-      state.done.unshift({ ...fake, doneAt: nowISO(), doneSource:"manual_mark_done", elapsedMs:0 });
-
-      pushHistoryEvent({ type:"task_done", dayISO: todayISO(), taskId: t.id, title: t.title, cat: t.cat, ethStart: t.ethStart, elapsedMs:0 });
-
-      // advance set queue if needed
-      if(state.activeSet && state.activeSet.queueTaskIds && state.activeSet.queueTaskIds[0] === t.id){
-        state.activeSet.queueTaskIds.shift();
-        if(state.activeSet.queueTaskIds.length === 0) state.activeSet = null;
-      }
-
-      recalcStartCounts();
-      ensureCurrent();
-      persistAll();
-      renderAll();
-      renderPanel();
-    };
-
-    const del = document.createElement("button");
-    del.className = "iconBtn";
-    del.textContent = "✕";
-    del.title = "Supprimer";
-    del.onclick = () => {
-      state.tasks = state.tasks.filter(x=>x.id!==t.id);
-      if(state.currentId===t.id) state.currentId=null;
-      ensureCurrent();
-      recalcStartCounts();
-      persistAll();
-      renderAll();
-      renderPanel();
-    };
-
-    row.appendChild(left);
-    row.appendChild(up);
-    row.appendChild(down);
-    row.appendChild(edit);
-    row.appendChild(pin);
-    row.appendChild(doneBtn);
-    row.appendChild(del);
-    list.appendChild(row);
-  }
-}
-
-/* =========================
-   Sets panel (hospital/consult)
-   ========================= */
-function buildSetsPanel(){
-  const wrap = document.createElement("div");
-
-  const c1 = mkCard("Sets", `
-    <p class="help">
-      Active un set pour le rendre prioritaire et le faire dans l’ordre.
-      Tu peux générer N patients (Patient 1 → étapes…).
-    </p>
-
-    <div class="row" style="margin-top:10px;">
-      <select id="setSelect"></select>
-      <input id="setPatients" type="number" min="1" max="60" value="4" />
-    </div>
-
-    <div class="row" style="margin-top:10px;">
-      <button class="btn primary" id="btnActivateSet">Activer</button>
-      <button class="btn danger" id="btnStopSet">Stop</button>
-      <button class="btn" id="btnEditSet">Modifier</button>
-    </div>
-
-    <div style="margin-top:12px;" class="help" id="setStatus"></div>
-  `);
-
-  const c2 = mkCard("Éditeur", `
-    <input id="setName" placeholder="Nom du set" />
-    <textarea id="setSteps" style="margin-top:10px; min-height:140px;"
-      placeholder="1 ligne = une étape (format : Libellé - eth)\nEx:\nVoir patient - 1\nNote - 1\nTraitement - 1\nDossier - 2"></textarea>
-
-    <div class="row" style="margin-top:10px;">
-      <button class="btn primary" id="btnSaveSet">Enregistrer</button>
-      <button class="btn" id="btnNewSet">Nouveau</button>
-      <button class="btn danger" id="btnDeleteSet">Supprimer</button>
-    </div>
-    <p class="help" style="margin-top:10px;">
-      L’éditeur est volontairement simple pour rester utilisable sans usine à gaz.
-    </p>
-  `);
-
-  c2.style.display = "none";
-  wrap.appendChild(c1);
-  wrap.appendChild(c2);
-
-  setTimeout(() => {
-    const setSelect = document.getElementById("setSelect");
-    const setPatients = document.getElementById("setPatients");
-    const setStatus = document.getElementById("setStatus");
-
-    const setName = document.getElementById("setName");
-    const setSteps = document.getElementById("setSteps");
-    const btnEditSet = document.getElementById("btnEditSet");
-    const btnSaveSet = document.getElementById("btnSaveSet");
-    const btnNewSet = document.getElementById("btnNewSet");
-    const btnDeleteSet = document.getElementById("btnDeleteSet");
-
-    function refreshSelect(){
-      setSelect.innerHTML = "";
-      for(const s of sets){
-        const opt = document.createElement("option");
-        opt.value = s.id;
-        opt.textContent = s.name;
-        setSelect.appendChild(opt);
-      }
-    }
-    function getSelectedSet(){
-      const id = setSelect.value;
-      return sets.find(x=>x.id===id) || sets[0];
-    }
-    function formatStepsText(steps){
-      return (steps||[]).map(st => `${st.label} - ${st.eth}`).join("\n");
-    }
-    function parseStepsText(text){
-      const out = [];
-      const lines = (text||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-      for(const ln of lines){
-        let label = ln;
-        let eth = 1;
-        const m = ln.match(/\s*-\s*(\d+)\s*$/);
-        if(m){
-          eth = clamp(parseInt(m[1],10)||1,1,999);
-          label = ln.replace(/\s*-\s*\d+\s*$/,"").trim();
-        }
-        if(label) out.push({ label, eth });
-      }
-      return out.length ? out : [{ label:"Étape", eth:1 }];
-    }
-    function renderStatus(){
-      if(state.activeSet){
-        setStatus.textContent = `Set actif: ${state.activeSet.setName || "—"} · reste ${state.activeSet.queueTaskIds.length} tâche(s).`;
-      }else{
-        setStatus.textContent = `Aucun set actif.`;
-      }
-    }
-
-    function activateSet(){
-      const s = getSelectedSet();
-      const n = clamp(parseInt(setPatients.value,10)||1, 1, 60);
-
-      const cat = `SET · ${s.name}`;
-      const created = [];
-      const queue = [];
-
-      for(let i=1;i<=n;i++){
-        const pLabel = `Patient ${i}`;
-        for(const st of (s.steps||[])){
-          const title = `${pLabel} — ${st.label}`;
-          const eth = clamp(parseInt(st.eth,10)||1,1,999);
-          const t = {
-            id: uid(),
-            title,
-            cat,
-            ethStart: eth,
-            ethLeft: eth,
-            pinned: false,
-            createdAt: nowISO(),
-            setMeta: { setId: s.id, patient: i, step: st.label }
-          };
-          created.push(t);
-          queue.push(t.id);
-        }
-      }
-
-      // priority: insert in front
-      state.tasks = [...created, ...state.tasks];
-
-      state.activeSet = {
-        setId: s.id,
-        setName: s.name,
-        queueTaskIds: queue,
-        startedAt: nowISO()
-      };
-
-      settings.sortMode = "order"; // set forces order (but not spammed on UI)
-      recalcStartCounts();
-      state.currentId = null;
-      state.timer = { taskId:null, elapsedMs:0, running:false, startedAt:null };
-      ensureCurrent();
-
-      pushHistoryEvent({ type:"set_activated", dayISO: todayISO(), setId:s.id, setName:s.name, patients:n });
-
-      persistAll();
-      renderAll();
-      renderPanel();
-    }
-
-    function stopSet(){
-      if(state.activeSet){
-        pushHistoryEvent({ type:"set_stopped", dayISO: todayISO(), setName: state.activeSet.setName });
-      }
-      state.activeSet = null;
-      persistAll();
-      renderAll();
-      renderPanel();
-    }
-
-    btnEditSet.onclick = () => {
-      const s = getSelectedSet();
-      setName.value = s.name;
-      setSteps.value = formatStepsText(s.steps);
-      c2.style.display = (c2.style.display==="none") ? "" : "none";
-    };
-
-    btnSaveSet.onclick = () => {
-      const s = getSelectedSet();
-      s.name = (setName.value || s.name).trim() || s.name;
-      s.steps = parseStepsText(setSteps.value);
-      persistAll();
-      refreshSelect();
-      renderPanel();
-    };
-
-    btnNewSet.onclick = () => {
-      const id = "set_" + uid();
-      const s = {
-        id,
-        name: "Nouveau set",
-        type:"custom",
-        steps: [{label:"Étape", eth:1}]
-      };
-      sets.push(s);
-      persistAll();
-      refreshSelect();
-      setSelect.value = id;
-      setName.value = s.name;
-      setSteps.value = formatStepsText(s.steps);
-      c2.style.display = "";
-    };
-
-    btnDeleteSet.onclick = () => {
-      const s = getSelectedSet();
-      if(s.id==="set_hosp" || s.id==="set_cons"){
-        alert("Sets de base non supprimables.");
-        return;
-      }
-      sets = sets.filter(x=>x.id!==s.id);
-      persistAll();
-      refreshSelect();
-      renderPanel();
-    };
-
-    document.getElementById("btnActivateSet").onclick = activateSet;
-    document.getElementById("btnStopSet").onclick = stopSet;
-
-    refreshSelect();
-    renderStatus();
-  }, 0);
-
-  return wrap;
-}
-
-/* =========================
-   Kiffance: 4 catégories (5/10/15/25+)
-   ========================= */
-function buildKiffPanel(){
-  const wrap = document.createElement("div");
-
-  const c1 = mkCard("Kiffance — suggestions", `
-    <p class="help">
-      4 catégories: 5 min, 10 min, 15 min, 25+ min.
-      Rafraîchir pour tirer une suggestion.
-    </p>
-
-    <div class="row" style="margin-top:10px;">
-      <select id="kiffCat">
-        <option value="5">5 minutes</option>
-        <option value="10">10 minutes</option>
-        <option value="15">15 minutes</option>
-        <option value="25">25+ minutes</option>
-      </select>
-      <button class="btn primary" id="btnKiffRefresh">Rafraîchir</button>
-    </div>
-
-    <div class="card" style="margin-top:10px; margin-bottom:0;">
-      <h3>Suggestion</h3>
-      <p class="help" id="kiffSuggestion">—</p>
-      <div class="row" style="margin-top:10px;">
-        <button class="btn" id="btnKiffToTasks">Ajouter à la liste</button>
-        <button class="btn" id="btnKiffCopy">Copier</button>
-      </div>
-    </div>
-  `);
-
-  const c2 = mkCard("Banque (ajouter / supprimer)", `
-    <div class="row">
-      <select id="kiffCat2">
-        <option value="5">5 minutes</option>
-        <option value="10">10 minutes</option>
-        <option value="15">15 minutes</option>
-        <option value="25">25+ minutes</option>
-      </select>
-      <button class="btn" id="btnKiffShow">Voir</button>
-    </div>
-
-    <textarea id="kiffAdd" style="margin-top:10px; min-height:90px;" placeholder="Ajouter des lignes (1 idée par ligne)"></textarea>
-    <div class="row" style="margin-top:10px;">
-      <button class="btn primary" id="btnKiffAdd">Ajouter</button>
-      <button class="btn danger" id="btnKiffReset">Reset banque</button>
-    </div>
-
-    <div class="list" id="kiffList" style="margin-top:10px;"></div>
-  `);
-
-  wrap.appendChild(c1);
-  wrap.appendChild(c2);
-
-  setTimeout(() => {
-    const kiffCat = document.getElementById("kiffCat");
-    const kiffSuggestion = document.getElementById("kiffSuggestion");
-    const kiffCat2 = document.getElementById("kiffCat2");
-    const kiffList = document.getElementById("kiffList");
-
-    let currentSuggestion = "";
-
-    function pickSuggestion(cat){
-      const arr = kiffBank[String(cat)] || [];
-      if(!arr.length) return "Banque vide pour cette catégorie.";
-      return arr[Math.floor(Math.random()*arr.length)];
-    }
-
-    function refresh(){
-      const cat = kiffCat.value;
-      currentSuggestion = pickSuggestion(cat);
-      kiffSuggestion.textContent = currentSuggestion;
-    }
-
-    document.getElementById("btnKiffRefresh").onclick = refresh;
-
-    document.getElementById("btnKiffToTasks").onclick = () => {
-      if(!currentSuggestion) refresh();
-      const cat = "KIFFANCE";
-      const eth = (kiffCat.value==="5") ? 1 :
-                  (kiffCat.value==="10") ? 2 :
-                  (kiffCat.value==="15") ? 3 : 5;
-      state.tasks.push({
-        id: uid(),
-        title: currentSuggestion,
-        cat,
-        ethStart: eth,
-        ethLeft: eth,
-        pinned: false,
-        createdAt: nowISO()
-      });
-      recalcStartCounts();
-      ensureCurrent();
-      pushHistoryEvent({ type:"kiff_to_task", dayISO: todayISO(), cat:kiffCat.value });
-      persistAll();
-      renderAll();
-      renderPanel();
-    };
-
-    document.getElementById("btnKiffCopy").onclick = async () => {
-      if(!currentSuggestion) refresh();
-      try{ await navigator.clipboard.writeText(currentSuggestion); }catch(e){}
-    };
-
-    function renderBankList(cat){
-      kiffList.innerHTML = "";
-      const arr = (kiffBank[String(cat)] || []);
-      if(!arr.length){
+    function renderNotes(){
+      notesList.innerHTML = "";
+      if(!notes.length){
         const p = document.createElement("p");
-        p.className = "help";
-        p.textContent = "Banque vide.";
-        kiffList.appendChild(p);
+        p.className="help";
+        p.textContent="Aucune note.";
+        notesList.appendChild(p);
         return;
       }
-      arr.forEach((txt, idx) => {
-        const it = document.createElement("div");
-        it.className = "item";
-        const t = document.createElement("div");
-        t.className = "t";
+      for(const n of notes){
+        const row = document.createElement("div");
+        row.className="item";
+        const left = document.createElement("div");
+        left.className="t";
         const name = document.createElement("div");
-        name.className = "name";
-        name.textContent = txt;
-        t.appendChild(name);
+        name.className="name";
+        name.textContent = new Date(n.at).toLocaleString();
+        const sub = document.createElement("div");
+        sub.className="sub";
+        sub.textContent = n.text;
+        left.appendChild(name); left.appendChild(sub);
 
         const del = document.createElement("button");
-        del.className = "iconBtn";
-        del.textContent = "✕";
-        del.title = "Supprimer";
-        del.onclick = () => {
-          kiffBank[String(cat)] = kiffBank[String(cat)].filter((_,i)=>i!==idx);
+        del.className="iconBtn";
+        del.textContent="✕";
+        del.title="Supprimer";
+        del.onclick = ()=>{
+          notes = notes.filter(x=>x.id!==n.id);
           persistAll();
-          renderBankList(cat);
+          renderNotes();
         };
 
-        it.appendChild(t);
-        it.appendChild(del);
-        kiffList.appendChild(it);
-      });
+        row.appendChild(left);
+        row.appendChild(del);
+        notesList.appendChild(row);
+      }
     }
 
-    document.getElementById("btnKiffShow").onclick = () => {
-      renderBankList(kiffCat2.value);
-    };
-
-    document.getElementById("btnKiffAdd").onclick = () => {
-      const cat = kiffCat2.value;
-      const txt = (document.getElementById("kiffAdd").value || "");
-      const lines = txt.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-      if(!lines.length) return;
-      kiffBank[String(cat)] = (kiffBank[String(cat)] || []).concat(lines);
-      document.getElementById("kiffAdd").value = "";
-      persistAll();
-      renderBankList(cat);
-    };
-
-    document.getElementById("btnKiffReset").onclick = () => {
-      kiffBank = structuredClone(DEFAULT_KIFF);
-      persistAll();
-      renderBankList(kiffCat2.value);
-      refresh();
-    };
-
-    refresh();
-    renderBankList("5");
-  }, 0);
-
-  return wrap;
-}
-
-/* =========================
-   Habits: 10 boxes + report
-   ========================= */
-function buildHabitsPanel(){
-  const wrap = document.createElement("div");
-  const c1 = mkCard("Suivi des habitudes", `
-    <p class="help">
-      Une habitude = une ligne. 10 cases = progression (au choix: journée, semaine, etc.).
-      Pas de célébration à l’encodage, c’est administratif.
-    </p>
-    <div class="row" style="margin-top:10px;">
-      <input id="habitName" placeholder="Nom (ex: verres d’eau / marche / dossier X)" />
-      <button class="btn primary" id="btnAddHabit">Ajouter</button>
-    </div>
-    <div class="list" id="habitList" style="margin-top:10px;"></div>
-  `);
-
-  wrap.appendChild(c1);
-
-  setTimeout(() => {
-    document.getElementById("btnAddHabit").onclick = () => {
-      const name = (document.getElementById("habitName").value||"").trim();
-      if(!name) return;
-      habits.unshift({
-        id: uid(),
-        name,
-        dayISO: todayISO(),
-        boxes: Array.from({length:10}, ()=>false)
-      });
-      document.getElementById("habitName").value = "";
+    // =========================
+    // Habits (suivi)
+    // =========================
+    function addHabit(name, total=10){
+      const n = (name||"").trim();
+      if(!n) return;
+      const t = clamp(parseInt(total,10)||10, 1, 30);
+      habits.push({ id: uniq(), name:n, total:t, checked:0, createdAt: nowISO() });
       persistAll();
       renderPanel();
-    };
-
-    renderHabitsList();
-  }, 0);
-
-  return wrap;
-}
-
-function renderHabitsList(){
-  const list = document.getElementById("habitList");
-  if(!list) return;
-  list.innerHTML = "";
-
-  if(!habits.length){
-    const p = document.createElement("p");
-    p.className = "help";
-    p.textContent = "Aucune habitude.";
-    list.appendChild(p);
-    return;
-  }
-
-  for(const h of habits){
-    const row = document.createElement("div");
-    row.className = "item";
-
-    const left = document.createElement("div");
-    left.className = "t";
-
-    const name = document.createElement("div");
-    name.className = "name";
-    name.textContent = h.name;
-
-    const sub = document.createElement("div");
-    sub.className = "sub";
-    const done = (h.boxes||[]).filter(Boolean).length;
-    sub.textContent = `${done}/10 · ${h.dayISO}`;
-
-    left.appendChild(name);
-    left.appendChild(sub);
-
-    const boxesWrap = document.createElement("div");
-    boxesWrap.style.display = "flex";
-    boxesWrap.style.gap = "6px";
-    boxesWrap.style.alignItems = "center";
-
-    for(let i=0;i<10;i++){
-      const b = document.createElement("button");
-      b.className = "iconBtn";
-      b.style.width = "28px";
-      b.style.height = "28px";
-      b.textContent = (h.boxes && h.boxes[i]) ? "■" : "□";
-      b.title = `Case ${i+1}`;
-      b.onclick = () => {
-        h.boxes[i] = !h.boxes[i];
-        persistAll();
-        renderHabitsList();
-      };
-      boxesWrap.appendChild(b);
     }
 
-    const reset = document.createElement("button");
-    reset.className = "iconBtn";
-    reset.textContent = "↺";
-    reset.title = "Reset cases";
-    reset.onclick = () => {
-      h.boxes = Array.from({length:10}, ()=>false);
+    function habitToggle(id, idx){
+      const h = habits.find(x=>x.id===id);
+      if(!h) return;
+      // toggle bit at position idx (0..total-1) using integer count only (simple)
+      // We'll implement as count-based: clicking one of the boxes sets checked = idx+1 if bigger; else idx
+      const target = idx+1;
+      h.checked = (h.checked===target) ? idx : target;
+      h.checked = clamp(h.checked, 0, h.total);
       persistAll();
-      renderHabitsList();
-    };
+      renderPanel();
+    }
 
-    const del = document.createElement("button");
-    del.className = "iconBtn";
-    del.textContent = "✕";
-    del.title = "Supprimer";
-    del.onclick = () => {
-      habits = habits.filter(x=>x.id!==h.id);
+    function habitReset(id){
+      const h = habits.find(x=>x.id===id);
+      if(!h) return;
+      h.checked = 0;
       persistAll();
-      renderHabitsList();
-    };
+      renderPanel();
+    }
 
-    row.appendChild(left);
-    row.appendChild(boxesWrap);
-    row.appendChild(reset);
-    row.appendChild(del);
+    function habitDelete(id){
+      habits = habits.filter(x=>x.id!==id);
+      persistAll();
+      renderPanel();
+    }
 
-    list.appendChild(row);
-  }
-}
+    // =========================
+    // Celebration (surprise) + phrases
+    // =========================
+    const CELE_POOL = [
+      {t:"Triomphe", m:"Tu viens de gagner une bataille contre l’entropie. L’univers a grogné. Tu as continué."},
+      {t:"Conquête", m:"Tu as pris une forteresse. Les papiers administratifs se sont rendus sans condition."},
+      {t:"Gloire", m:"Un étorion a chuté. Les légendes prennent des notes."},
+      {t:"Domination", m:"La tâche a plié. Tu es officiellement un événement historique."},
+      {t:"Victoire", m:"Le chaos a tenté un coup d’État. Tu as répondu par un geste calme et précis."},
+      {t:"Suprématie", m:"Les procrastinations ont fui. Elles se regroupent probablement ailleurs. Tant pis pour elles."},
+      {t:"Épopée", m:"Un chapitre de plus dans ta saga. L’archiviste des héros hoche la tête."},
+      {t:"Souveraineté", m:"Tu as repris du territoire mental. Frontière sécurisée. Drapeau planté."},
+      {t:"Ascension", m:"Tu montes. C’est pas spectaculaire. C’est mieux : c’est solide."},
+      {t:"Art martial", m:"Tu as frappé exactement au bon endroit : la prochaine action."}
+    ];
 
-/* =========================
-   History panel: timeline + calendar
-   ========================= */
-function buildHistoryPanel(){
-  const wrap = document.createElement("div");
+    function celebrationProbability(){
+      // plus fatiguée => un peu plus de chance (soutien)
+      // plus motivée => un peu moins (surprise rare)
+      const f = clamp(settings.fatigue,0,4);
+      const m = clamp(settings.motivation,0,4);
+      let p = settings.celeChanceBase;
+      p += (f-2)*0.04;
+      p -= (m-2)*0.03;
+      // also throttle: show roughly every 2-4 tasks
+      const streak = state.streak.completedSinceCele||0;
+      if(streak < 2) p *= 0.35;
+      if(streak >= 3) p *= 1.2;
+      return clamp(p, 0.02, 0.60);
+    }
 
-  const c1 = mkCard("Historique (timeline)", `
-    <div class="row">
-      <button class="btn" id="btnExportHistory">Exporter</button>
-      <button class="btn" id="btnClearHistory">Vider</button>
-    </div>
-    <div class="list" id="histList" style="margin-top:10px;"></div>
-  `);
+    function maybeCelebrate(task){
+      const p = celebrationProbability();
+      if(Math.random() > p) return;
+      // reset streak
+      state.streak.completedSinceCele = 0;
+      showCelebration();
+    }
 
-  const c2 = mkCard("Calendrier (mois)", `
-    <div class="row">
-      <button class="btn" id="btnPrevMonth">←</button>
-      <div class="help" id="calTitle" style="text-align:center;"></div>
-      <button class="btn" id="btnNextMonth">→</button>
-    </div>
-    <div class="calGrid" id="calGrid"></div>
-    <p class="help" style="margin-top:10px;">
-      Chaque case affiche tâches faites / éthorions faits (approximé via ethStart).
-    </p>
-  `);
+    let celeTimer = null;
+    function showCelebration(){
+      const pick = CELE_POOL[rand(CELE_POOL.length)];
+      celeTitle.textContent = pick.t;
+      celeMsg.textContent = pick.m;
 
-  wrap.appendChild(c1);
-  wrap.appendChild(c2);
+      celeBack.style.display = "block";
+      celeModal.style.display = "block";
 
-  setTimeout(() => {
-    document.getElementById("btnExportHistory").onclick = () => downloadJSON(`eliminator-history-${todayISO()}.json`, history);
-    document.getElementById("btnClearHistory").onclick = () => {
-      if(confirm("Vider l'historique ?")){
-        history = [];
+      // auto close
+      const sec = clamp(parseInt(settings.celeAutoCloseSec,10)||10, 4, 20);
+      if(celeTimer) clearTimeout(celeTimer);
+      celeTimer = setTimeout(()=>closeCelebration(), sec*1000);
+      persistAll();
+    }
+
+    function closeCelebration(){
+      celeBack.style.display = "none";
+      celeModal.style.display = "none";
+      if(celeTimer) clearTimeout(celeTimer);
+      celeTimer = null;
+    }
+
+    // =========================
+    // Confetti (monochrome)
+    // =========================
+    let confetti = [];
+    function burstConfetti(){
+      const w = confettiCanvas.width = window.innerWidth;
+      const h = confettiCanvas.height = window.innerHeight;
+      confettiCanvas.style.display="block";
+      confetti = [];
+      const n = 120;
+      for(let i=0;i<n;i++){
+        confetti.push({
+          x: w/2 + (Math.random()-0.5)*180,
+          y: h*0.28 + (Math.random()-0.5)*60,
+          vx: (Math.random()-0.5)*6,
+          vy: -Math.random()*6 - 2,
+          g: 0.18 + Math.random()*0.10,
+          r: 2 + Math.random()*3,
+          a: 0.55 + Math.random()*0.35
+        });
+      }
+      const start = performance.now();
+      function anim(t){
+        const dt = (t-start)/1000;
+        ctx.clearRect(0,0,w,h);
+        for(const c of confetti){
+          c.vy += c.g;
+          c.x += c.vx;
+          c.y += c.vy;
+          c.a *= 0.996;
+          ctx.globalAlpha = c.a;
+          ctx.beginPath();
+          ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
+          ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--fg").trim() || "#fff";
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        if(dt < 1.8){
+          requestAnimationFrame(anim);
+        }else{
+          confettiCanvas.style.display="none";
+        }
+      }
+      requestAnimationFrame(anim);
+    }
+
+    window.addEventListener("resize", ()=>{
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    });
+
+    // =========================
+    // Inline list
+    // =========================
+    function toggleInlineList(force){
+      if(typeof force === "boolean"){
+        settings.inlineListVisible = force ? 1 : 0;
+      }else{
+        settings.inlineListVisible = settings.inlineListVisible ? 0 : 1;
+      }
+      persistAll();
+      renderAll();
+    }
+
+    function renderInlineTaskList(){
+      inlineTaskList.innerHTML = "";
+      const tasks = filteredTasks();
+      if(!tasks.length){
+        const p = document.createElement("p");
+        p.className="help";
+        p.textContent="Aucune tâche dans la sélection.";
+        inlineTaskList.appendChild(p);
+        return;
+      }
+
+      for(const t of tasks){
+        const row = document.createElement("div");
+        row.className = "item";
+
+        const left = document.createElement("div");
+        left.className = "t";
+
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = t.title;
+
+        const sub = document.createElement("div");
+        sub.className = "sub";
+        sub.textContent = `${t.cat || "INBOX"} · ${t.ethLeft}/${t.ethStart}` + (t.pinned ? " · épinglée" : "");
+
+        left.appendChild(name);
+        left.appendChild(sub);
+
+        const up = document.createElement("button");
+        up.className="iconBtn";
+        up.textContent="↑";
+        up.title="Monter";
+        up.onclick = ()=>moveTask(t.id, -1);
+
+        const down = document.createElement("button");
+        down.className="iconBtn";
+        down.textContent="↓";
+        down.title="Descendre";
+        down.onclick = ()=>moveTask(t.id, +1);
+
+        row.onclick = (ev)=>{
+          if(ev.target && ev.target.closest && ev.target.closest("button")) return;
+          setCurrent(t.id);
+        };
+
+        row.appendChild(left);
+        row.appendChild(up);
+        row.appendChild(down);
+        inlineTaskList.appendChild(row);
+      }
+    }
+
+    // =========================
+    // HUD rendering (minimal)
+    // - restantes/départ tâches
+    // - étorions restants/départ
+    // - fait
+    // - temps écoulé (tâche en cours)
+    // =========================
+    function renderHUD(){
+      computeStartCountsIfEmpty();
+      const tasksLeft = state.tasks.length;
+      const tasksStart = Math.max(state.startCounts.tasks, tasksLeft + state.done.length);
+      const ethLeft = state.tasks.reduce((a,t)=>a+(t.ethLeft||0),0);
+      const ethStart = Math.max(state.startCounts.eth, ethLeft + state.done.reduce((a,t)=>a+(t.ethStart||0),0));
+      const doneCount = state.done.length;
+
+      // timer elapsed
+      const t = state.timer;
+      let elapsed = "0:00";
+      if(t && t.taskId === state.currentId){
+        elapsed = fmtTime(t.elapsedMs||0);
+      }
+
+      hud.innerHTML = `
+        <div class="pill">${tasksLeft}/${tasksStart} tâches</div>
+        <div class="pill">${ethLeft}/${ethStart} étorions</div>
+        <div class="pill">${doneCount} fait</div>
+        <div class="pill">${elapsed}</div>
+      `;
+    }
+
+    // =========================
+    // Main rendering
+    // =========================
+    function renderMain(){
+      ensureCurrent();
+      const t = currentTask();
+
+      // title
+      currentTitle.textContent = t ? t.title : "Aucune tâche";
+
+      // big progress: inverse (bar full -> empties as you progress)
+      computeStartCountsIfEmpty();
+      const totalStartEth = Math.max(1, state.startCounts.eth || 1);
+      const ethLeft = state.tasks.reduce((a,x)=>a+(x.ethLeft||0),0);
+      const doneEth = totalStartEth - ethLeft;
+      const pct = clamp((doneEth / totalStartEth) * 100, 0, 100);
+
+      // bar shows "remaining fill": full at start -> empty at 100%
+      const remainingPct = 100 - pct;
+      taskFill.style.width = `${remainingPct}%`;
+      taskPct.textContent = `${Math.round(pct)}%`;
+
+      // eth bar for current task
+      if(!t){
+        ethFill.style.width = `0%`;
+        ethTicks.innerHTML = "";
+      }else{
+        const left = t.ethLeft||0;
+        const start = Math.max(1, t.ethStart||1);
+        const ethPct = (left/start)*100;
+        ethFill.style.width = `${ethPct}%`;
+
+        ethTicks.innerHTML = "";
+        for(let i=0;i<start;i++){
+          const dot = document.createElement("div");
+          dot.className = "tick " + ((i < left) ? "on" : "");
+          ethTicks.appendChild(dot);
+        }
+
+        btnPin.classList.toggle("pressed", !!t.pinned);
+      }
+    }
+
+    function renderAll(){
+      rolloverIfNeeded();
+      applyTheme();
+      applyFocus();
+      renderHUD();
+      renderMain();
+
+      // inline list
+      inlineListWrap.style.display = settings.inlineListVisible ? "" : "none";
+      if(settings.inlineListVisible) renderInlineTaskList();
+    }
+
+    // =========================
+    // Drawer rendering
+    // =========================
+    function openDrawer(){
+      drawerBack.style.display="block";
+      drawer.classList.add("open");
+      renderPanel();
+    }
+    function closeDrawer(){
+      drawerBack.style.display="none";
+      drawer.classList.remove("open");
+    }
+
+    function renderTabs(){
+      tabsEl.innerHTML = "";
+      for(const t of TAB_DEFS){
+        const b = document.createElement("button");
+        b.className = "tab" + (t.key===activeTab ? " active" : "");
+        b.textContent = t.label;
+        b.onclick = ()=>{ activeTab = t.key; renderTabs(); renderPanel(); };
+        tabsEl.appendChild(b);
+      }
+    }
+
+    function renderPanel(){
+      drawerView.innerHTML = "";
+      const view = document.createElement("div");
+
+      if(activeTab==="inbox"){
+        view.appendChild(viewInbox());
+      }else if(activeTab==="liste"){
+        view.appendChild(viewList());
+      }else if(activeTab==="cats"){
+        view.appendChild(viewCats());
+      }else if(activeTab==="sets"){
+        view.appendChild(viewSets());
+      }else if(activeTab==="mode"){
+        view.appendChild(viewMode());
+      }else if(activeTab==="energie"){
+        view.appendChild(viewEnergie());
+      }else if(activeTab==="params"){
+        view.appendChild(viewParams());
+      }else if(activeTab==="profiles"){
+        view.appendChild(viewProfiles());
+      }else if(activeTab==="banks"){
+        view.appendChild(viewBanks());
+      }else if(activeTab==="kiff"){
+        view.appendChild(viewKiffance());
+      }else if(activeTab==="calib"){
+        view.appendChild(viewCalib());
+      }else if(activeTab==="hist"){
+        view.appendChild(viewHist());
+      }else if(activeTab==="rapport"){
+        view.appendChild(viewRapport());
+      }else{
+        view.appendChild(section("Info","(onglet non implémenté)"));
+      }
+
+      drawerView.appendChild(view);
+    }
+
+    function section(title, inner){
+      const s = document.createElement("div");
+      s.className="section";
+      const h = document.createElement("h3");
+      h.textContent = title;
+      s.appendChild(h);
+      if(typeof inner === "string"){
+        const p = document.createElement("div");
+        p.innerHTML = inner;
+        s.appendChild(p);
+      }else{
+        s.appendChild(inner);
+      }
+      return s;
+    }
+
+    // Inbox view
+    function viewInbox(){
+      const wrap = document.createElement("div");
+
+      const s1 = document.createElement("div");
+      s1.className="section";
+      const h = document.createElement("h3");
+      h.textContent = "Importer une liste";
+      s1.appendChild(h);
+
+      const ta = document.createElement("textarea");
+      ta.rows = 8;
+      ta.placeholder =
+`CATEGORIE
+Tâche A - 3
+Tâche B 2
+AUTRE CATEGORIE
+Tâche C - 1
+Tâche D ! - 4`;
+      s1.appendChild(ta);
+
+      const row = document.createElement("div");
+      row.className="row";
+      row.style.marginTop="10px";
+
+      const b = document.createElement("button");
+      b.className="btn";
+      b.textContent="Ajouter à la liste active";
+      b.onclick = ()=>{
+        const added = parseInbox(ta.value);
+        if(!added.length) return;
+        state.tasks.push(...added);
+        // update categories selection if needed
+        const cats = new Set(state.tasks.map(t=>t.cat||"INBOX"));
+        if(!settings.activeCats || settings.activeCats.length===0){
+          settings.activeCats = ["INBOX"];
+        }else{
+          // keep existing; ensure INBOX exists
+          if(!settings.activeCats.includes("INBOX")) settings.activeCats.push("INBOX");
+        }
+        // set baseline only if empty
+        if(state.startCounts.tasks===0 && state.startCounts.eth===0){
+          state.startCounts = {
+            tasks: state.tasks.length,
+            eth: state.tasks.reduce((a,t)=>a+(t.ethStart||0),0)
+          };
+        }
+        ensureCurrent();
+        persistAll();
+        renderAll();
+      };
+
+      const b2 = document.createElement("button");
+      b2.className="btn ghost";
+      b2.textContent="Vider le champ";
+      b2.onclick = ()=>{ ta.value=""; };
+
+      row.appendChild(b);
+      row.appendChild(b2);
+      s1.appendChild(row);
+
+      const help = document.createElement("p");
+      help.className="help";
+      help.textContent = "Ligne en MAJUSCULES = catégorie. Tâche avec '- 3' ou ' 3' en fin = étorions. '!' = priorité (optionnel).";
+      s1.appendChild(help);
+
+      wrap.appendChild(s1);
+      return wrap;
+    }
+
+    // List view
+    function viewList(){
+      const wrap = document.createElement("div");
+      const s = document.createElement("div");
+      s.className="section";
+      const h = document.createElement("h3");
+      h.textContent="Liste (actions minimales)";
+      s.appendChild(h);
+
+      const lst = document.createElement("div");
+      lst.className="list";
+
+      if(!state.tasks.length){
+        const p = document.createElement("p");
+        p.className="help";
+        p.textContent="Aucune tâche.";
+        s.appendChild(p);
+      }else{
+        for(const t of state.tasks){
+          const row = document.createElement("div");
+          row.className="item";
+
+          const left = document.createElement("div");
+          left.className="t";
+          const name = document.createElement("div");
+          name.className="name";
+          name.textContent = t.title + (t.id===state.currentId ? " (en cours)" : "");
+          const sub = document.createElement("div");
+          sub.className="sub";
+          sub.textContent = `${t.cat||"INBOX"} · ${t.ethLeft}/${t.ethStart}` + (t.pinned ? " · épinglée" : "");
+          left.appendChild(name); left.appendChild(sub);
+
+          const up = document.createElement("button");
+          up.className="iconBtn";
+          up.textContent="↑";
+          up.title="Monter";
+          up.onclick = ()=>moveTask(t.id, -1);
+
+          const down = document.createElement("button");
+          down.className="iconBtn";
+          down.textContent="↓";
+          down.title="Descendre";
+          down.onclick = ()=>moveTask(t.id, +1);
+
+          const edit = document.createElement("button");
+          edit.className="iconBtn";
+          edit.textContent="✎";
+          edit.title="Éditer";
+          edit.onclick = ()=>{
+            const nt = prompt("Nouveau titre", t.title);
+            if(nt!==null) editTaskTitle(t.id, nt);
+          };
+
+          const del = document.createElement("button");
+          del.className="iconBtn";
+          del.textContent="✕";
+          del.title="Supprimer";
+          del.onclick = ()=>deleteTask(t.id);
+
+          row.onclick = (ev)=>{
+            if(ev.target && ev.target.closest && ev.target.closest("button")) return;
+            setCurrent(t.id);
+          };
+
+          row.appendChild(left);
+          row.appendChild(up);
+          row.appendChild(down);
+          row.appendChild(edit);
+          row.appendChild(del);
+          lst.appendChild(row);
+        }
+        s.appendChild(lst);
+      }
+
+      wrap.appendChild(s);
+
+      // categories filter quick
+      wrap.appendChild(viewCats(true));
+      return wrap;
+    }
+
+    // Categories filter view
+    function viewCats(embed=false){
+      const cats = Array.from(new Set(state.tasks.map(t=>t.cat||"INBOX"))).sort();
+      const box = document.createElement("div");
+      box.className = embed ? "section" : "section";
+      const h = document.createElement("h3");
+      h.textContent = embed ? "Catégories actives" : "Catégories";
+      box.appendChild(h);
+
+      if(!cats.length){
+        const p = document.createElement("p");
+        p.className="help";
+        p.textContent="Aucune catégorie (ajoute des tâches).";
+        box.appendChild(p);
+        return box;
+      }
+
+      // checkboxes
+      for(const c of cats){
+        const row = document.createElement("div");
+        row.className="row";
+        row.style.justifyContent="space-between";
+
+        const label = document.createElement("div");
+        label.textContent = c;
+
+        const cb = document.createElement("input");
+        cb.type="checkbox";
+        cb.style.width="18px";
+        cb.style.height="18px";
+        cb.checked = settings.activeCats && settings.activeCats.includes(c);
+        cb.onchange = ()=>{
+          settings.activeCats = settings.activeCats || [];
+          if(cb.checked){
+            if(!settings.activeCats.includes(c)) settings.activeCats.push(c);
+          }else{
+            settings.activeCats = settings.activeCats.filter(x=>x!==c);
+          }
+          persistAll();
+          renderAll();
+          renderPanel();
+        };
+
+        row.appendChild(label);
+        row.appendChild(cb);
+        box.appendChild(row);
+      }
+
+      const row2 = document.createElement("div");
+      row2.className="row";
+      row2.style.marginTop="10px";
+
+      const all = document.createElement("button");
+      all.className="btn";
+      all.textContent="Tout";
+      all.onclick = ()=>{
+        settings.activeCats = Array.from(new Set(state.tasks.map(t=>t.cat||"INBOX")));
+        persistAll();
+        renderAll();
+        renderPanel();
+      };
+
+      const none = document.createElement("button");
+      none.className="btn ghost";
+      none.textContent="Aucun filtre (tout)";
+      none.onclick = ()=>{
+        settings.activeCats = [];
+        persistAll();
+        renderAll();
+        renderPanel();
+      };
+
+      row2.appendChild(all);
+      row2.appendChild(none);
+      box.appendChild(row2);
+
+      return box;
+    }
+
+    // Sets view (pré-définis + générateurs)
+    function viewSets(){
+      const wrap = document.createElement("div");
+
+      // prebuilt: Hospital tour + Consult
+      const s1 = document.createElement("div");
+      s1.className="section";
+      s1.innerHTML = `
+        <h3>Sets (pré-définis)</h3>
+        <p class="help">Objectif: tâches systématiques. Tu peux générer un set et l’ajouter à la liste active (prioritaire, dans l’ordre).</p>
+      `;
+
+      const row = document.createElement("div");
+      row.className="row";
+
+      const sel = document.createElement("select");
+      sel.innerHTML = `
+        <option value="hospital">Hôpital (tour de salle)</option>
+        <option value="consult">Consultations</option>
+      `;
+
+      const nb = document.createElement("input");
+      nb.type="number";
+      nb.min="1"; nb.max="20";
+      nb.value="4";
+      nb.placeholder="Nb patients";
+
+      const add = document.createElement("button");
+      add.className="btn";
+      add.textContent="Générer + Prioriser";
+      add.onclick = ()=>{
+        const n = clamp(parseInt(nb.value,10)||4, 1, 20);
+        const type = sel.value;
+        const pack = [];
+
+        if(type==="hospital"){
+          for(let i=1;i<=n;i++){
+            const base = `Patient ${i}`;
+            pack.push(makeTask(`${base} — voir`, "HOPITAL", 1));
+            pack.push(makeTask(`${base} — note`, "HOPITAL", 1));
+            pack.push(makeTask(`${base} — traitement`, "HOPITAL", 1));
+            pack.push(makeTask(`${base} — dossier`, "HOPITAL", 1));
+          }
+        }else{
+          for(let i=1;i<=n;i++){
+            const base = `Consult ${i}`;
+            pack.push(makeTask(`${base} — accueil`, "CONSULT", 1));
+            pack.push(makeTask(`${base} — clinique`, "CONSULT", 2));
+            pack.push(makeTask(`${base} — plan`, "CONSULT", 1));
+            pack.push(makeTask(`${base} — note`, "CONSULT", 1));
+          }
+        }
+
+        // add pack at top in order + pin first
+        if(pack.length){
+          pack[0].pinned = true;
+          state.tasks = [...pack, ...state.tasks];
+          // update baseline if empty
+          if(state.startCounts.tasks===0 && state.startCounts.eth===0){
+            state.startCounts = {
+              tasks: state.tasks.length,
+              eth: state.tasks.reduce((a,t)=>a+(t.ethStart||0),0)
+            };
+          }
+          ensureCurrent();
+          persistAll();
+          renderAll();
+          renderPanel();
+        }
+      };
+
+      row.appendChild(sel);
+      row.appendChild(nb);
+      row.appendChild(add);
+      s1.appendChild(row);
+
+      wrap.appendChild(s1);
+      return wrap;
+    }
+
+    // Mode view (roulette settings etc.)
+    function viewMode(){
+      const s = document.createElement("div");
+      s.className="section";
+      s.innerHTML = `<h3>Mode</h3>`;
+
+      const row1 = document.createElement("div");
+      row1.className="row";
+
+      const sel = document.createElement("select");
+      sel.innerHTML = `
+        <option value="random">Roulette aléatoire</option>
+        <option value="ordered">Dans l’ordre</option>
+      `;
+      sel.value = settings.rouletteMode;
+      sel.onchange = ()=>{ settings.rouletteMode = sel.value; persistAll(); };
+
+      const strat = document.createElement("select");
+      strat.innerHTML = `
+        <option value="pinnedFirst">Épinglées d’abord</option>
+        <option value="alpha">Alphabetique</option>
+        <option value="chrono">Chronologique</option>
+      `;
+      strat.value = settings.orderedStrategy;
+      strat.onchange = ()=>{ settings.orderedStrategy = strat.value; persistAll(); };
+
+      row1.appendChild(sel);
+      row1.appendChild(strat);
+      s.appendChild(row1);
+
+      const help = document.createElement("p");
+      help.className="help";
+      help.textContent="Le mode 'Dans l’ordre' ignore le hasard. Utile quand tu veux une exécution systématique.";
+      s.appendChild(help);
+
+      return s;
+    }
+
+    // Energie view (fatigue/motivation affects celebration surprise)
+    function viewEnergie(){
+      const s = document.createElement("div");
+      s.className="section";
+      s.innerHTML = `<h3>Énergie</h3><p class="help">La célébration reste une surprise. Ici tu règles le comportement global.</p>`;
+
+      const row1 = document.createElement("div");
+      row1.className="row";
+
+      const fat = document.createElement("select");
+      fat.innerHTML = `
+        <option value="0">Fatigue: très basse</option>
+        <option value="1">Fatigue: basse</option>
+        <option value="2">Fatigue: moyenne</option>
+        <option value="3">Fatigue: haute</option>
+        <option value="4">Fatigue: très haute</option>
+      `;
+      fat.value = String(settings.fatigue);
+      fat.onchange = ()=>{ settings.fatigue = parseInt(fat.value,10); persistAll(); };
+
+      const mot = document.createElement("select");
+      mot.innerHTML = `
+        <option value="0">Motivation: très basse</option>
+        <option value="1">Motivation: basse</option>
+        <option value="2">Motivation: moyenne</option>
+        <option value="3">Motivation: haute</option>
+        <option value="4">Motivation: très haute</option>
+      `;
+      mot.value = String(settings.motivation);
+      mot.onchange = ()=>{ settings.motivation = parseInt(mot.value,10); persistAll(); };
+
+      row1.appendChild(fat);
+      row1.appendChild(mot);
+      s.appendChild(row1);
+
+      const row2 = document.createElement("div");
+      row2.className="row";
+      row2.style.marginTop="10px";
+
+      const auto = document.createElement("input");
+      auto.type="number";
+      auto.min="4"; auto.max="20";
+      auto.value = String(settings.celeAutoCloseSec||10);
+      auto.placeholder="Auto-close (sec)";
+      auto.onchange = ()=>{ settings.celeAutoCloseSec = clamp(parseInt(auto.value,10)||10,4,20); persistAll(); };
+
+      const chance = document.createElement("input");
+      chance.type="number";
+      chance.min="0.05"; chance.max="0.60";
+      chance.step="0.01";
+      chance.value = String(settings.celeChanceBase||0.22);
+      chance.onchange = ()=>{ settings.celeChanceBase = clamp(parseFloat(chance.value)||0.22,0.05,0.60); persistAll(); };
+
+      row2.appendChild(auto);
+      row2.appendChild(chance);
+      s.appendChild(row2);
+
+      return s;
+    }
+
+    // Params view (visual display options minimal)
+    function viewParams(){
+      const s = document.createElement("div");
+      s.className="section";
+      s.innerHTML = `<h3>Paramètres</h3>`;
+
+      const row = document.createElement("div");
+      row.className="row";
+
+      const theme = document.createElement("select");
+      theme.innerHTML = `
+        <option value="light">Thème clair</option>
+        <option value="dark">Thème sombre</option>
+      `;
+      theme.value = settings.theme;
+      theme.onchange = ()=>{ settings.theme = theme.value; applyTheme(); persistAll(); };
+
+      const focus = document.createElement("select");
+      focus.innerHTML = `
+        <option value="0">Focus: non</option>
+        <option value="1">Focus: oui</option>
+      `;
+      focus.value = String(settings.focus||0);
+      focus.onchange = ()=>{ settings.focus = parseInt(focus.value,10); applyFocus(); persistAll(); renderAll(); };
+
+      row.appendChild(theme);
+      row.appendChild(focus);
+      s.appendChild(row);
+
+      const help = document.createElement("p");
+      help.className="help";
+      help.textContent="Le mode focus masque ce qui n’est pas nécessaire, mais conserve les compteurs essentiels.";
+      s.appendChild(help);
+
+      return s;
+    }
+
+    // Profiles (placeholder, keeps door open)
+    function viewProfiles(){
+      const s = document.createElement("div");
+      s.className="section";
+      s.innerHTML = `
+        <h3>Profils</h3>
+        <p class="help">Espace prévu pour des presets complets (affichage, énergie, mode, filtres) sans surcharger l’interface. (Implémentation minimale ici.)</p>
+      `;
+      return s;
+    }
+
+    // Banks (export/import)
+    function viewBanks(){
+      const s = document.createElement("div");
+      s.className="section";
+      s.innerHTML = `<h3>Textes / Export</h3>`;
+
+      const row = document.createElement("div");
+      row.className="row";
+
+      const exp1 = document.createElement("button");
+      exp1.className="btn";
+      exp1.textContent="Exporter (JSON complet)";
+      exp1.onclick = ()=>{
+        const payload = { settings, state, notes, habits, kiffBank, exportedAt: nowISO() };
+        downloadText(`eliminator_export_${dayKey()}.json`, JSON.stringify(payload, null, 2));
+      };
+
+      const exp2 = document.createElement("button");
+      exp2.className="btn";
+      exp2.textContent="Exporter rapport (TXT)";
+      exp2.onclick = ()=>{
+        downloadText(`eliminator_rapport_${dayKey()}.txt`, buildReportText());
+      };
+
+      row.appendChild(exp1);
+      row.appendChild(exp2);
+      s.appendChild(row);
+
+      const help = document.createElement("p");
+      help.className="help";
+      help.textContent="Export utile pour récupérer: tâches faites, tâches restantes, habitudes, stats.";
+      s.appendChild(help);
+
+      return s;
+    }
+
+    // Kiffance view (4 buckets + add)
+    function viewKiffance(){
+      const wrap = document.createElement("div");
+
+      // quick pick
+      const s0 = document.createElement("div");
+      s0.className="section";
+      s0.innerHTML = `<h3>Kiffance</h3><p class="help">Banco: 4 durées. Tu peux rafraîchir une suggestion et l’ajouter à la liste active si tu veux.</p>`;
+
+      const row = document.createElement("div");
+      row.className="row";
+
+      const sel = document.createElement("select");
+      sel.innerHTML = `
+        <option value="5m">5 min</option>
+        <option value="10m">10 min</option>
+        <option value="15m">15 min</option>
+        <option value="25m+">25 min+</option>
+      `;
+      const out = document.createElement("input");
+      out.type="text";
+      out.readOnly = true;
+      out.placeholder="Suggestion…";
+
+      function refresh(){
+        const k = sel.value;
+        const arr = (kiffBank.buckets[k] || []);
+        out.value = arr.length ? arr[rand(arr.length)] : "Banque vide";
+      }
+      refresh();
+
+      sel.onchange = refresh;
+
+      const refreshBtn = document.createElement("button");
+      refreshBtn.className="btn";
+      refreshBtn.textContent="Rafraîchir";
+      refreshBtn.onclick = refresh;
+
+      const addBtn = document.createElement("button");
+      addBtn.className="btn";
+      addBtn.textContent="Ajouter en tâche";
+      addBtn.onclick = ()=>{
+        const k = sel.value;
+        const txt = (out.value||"").trim();
+        if(!txt) return;
+        const eth = (k==="5m")?1:(k==="10m")?2:(k==="15m")?3:5;
+        state.tasks.unshift(makeTask(txt, "KIFFANCE", eth));
+        ensureCurrent();
+        persistAll();
+        renderAll();
+      };
+
+      row.appendChild(sel);
+      row.appendChild(refreshBtn);
+      s0.appendChild(row);
+      s0.appendChild(out);
+
+      const row2 = document.createElement("div");
+      row2.className="row";
+      row2.style.marginTop="10px";
+      row2.appendChild(addBtn);
+      s0.appendChild(row2);
+
+      wrap.appendChild(s0);
+
+      // add to bank
+      const s1 = document.createElement("div");
+      s1.className="section";
+      s1.innerHTML = `<h3>Ajouter à la banque</h3>`;
+      const t = document.createElement("input");
+      t.placeholder="Nouvelle kiffance (texte)";
+      const rowA = document.createElement("div");
+      rowA.className="row";
+      const sel2 = document.createElement("select");
+      sel2.innerHTML = sel.innerHTML;
+
+      const add = document.createElement("button");
+      add.className="btn";
+      add.textContent="Ajouter";
+      add.onclick = ()=>{
+        const txt = (t.value||"").trim();
+        if(!txt) return;
+        const k = sel2.value;
+        kiffBank.buckets[k] = kiffBank.buckets[k] || [];
+        kiffBank.buckets[k].push(txt);
+        t.value="";
         persistAll();
         renderPanel();
+      };
+
+      rowA.appendChild(sel2);
+      rowA.appendChild(add);
+      s1.appendChild(t);
+      s1.appendChild(rowA);
+      s1.appendChild(Object.assign(document.createElement("p"), {className:"help", textContent:"La banque est sauvegardée. Pas de célébration ici (ça reste une surprise, pas une machine à confettis)."}));
+      wrap.appendChild(s1);
+
+      return wrap;
+    }
+
+    // Calib (baseline reset)
+    function viewCalib(){
+      const s = document.createElement("div");
+      s.className="section";
+      s.innerHTML = `<h3>Calibrage</h3><p class="help">Recalibre les compteurs de départ (utile si tu importes beaucoup en cours de route).</p>`;
+
+      const b = document.createElement("button");
+      b.className="btn";
+      b.textContent="Recalibrer départ (tâches + étorions)";
+      b.onclick = ()=>{
+        state.startCounts = {
+          tasks: state.tasks.length,
+          eth: state.tasks.reduce((a,t)=>a+(t.ethStart||0),0)
+        };
+        persistAll();
+        renderAll();
+      };
+
+      s.appendChild(b);
+      return s;
+    }
+
+    // Hist (daily snapshots)
+    function viewHist(){
+      const s = document.createElement("div");
+      s.className="section";
+      s.innerHTML = `<h3>Historique</h3><p class="help">Snapshots journaliers (auto). Export via “Textes”.</p>`;
+
+      const lst = document.createElement("div");
+      lst.className="list";
+
+      const combined = [...state.history, buildDailySnapshot(dayKey())].slice(-30).reverse();
+      for(const it of combined){
+        const row = document.createElement("div");
+        row.className="item";
+        const left = document.createElement("div");
+        left.className="t";
+        const name = document.createElement("div");
+        name.className="name";
+        name.textContent = it.day;
+        const sub = document.createElement("div");
+        sub.className="sub";
+        sub.textContent = `${it.totalDone} fait · ${it.ethDone} étorions · reste ${it.remainingTasks} / ${it.remainingEth}`;
+        left.appendChild(name); left.appendChild(sub);
+        row.appendChild(left);
+        lst.appendChild(row);
       }
-    };
 
-    renderHistoryList();
+      s.appendChild(lst);
+      return s;
+    }
 
-    // calendar
-    let view = new Date();
-    view.setDate(1);
+    // Rapport (includes habits)
+    function buildReportText(){
+      const today = dayKey();
+      const snap = buildDailySnapshot(today);
 
-    function renderCal(){
-      const calTitle = document.getElementById("calTitle");
-      const grid = document.getElementById("calGrid");
-      grid.innerHTML = "";
+      const remaining = state.tasks.map(t=>`- ${t.title} (${t.cat||"INBOX"} · ${t.ethLeft}/${t.ethStart})`).join("\n") || "- (aucune)";
+      const doneToday = state.done
+        .filter(t => (t.doneAt||"").startsWith(today))
+        .map(t=>`- ${t.title} (${t.cat||"INBOX"} · ${t.ethStart})`)
+        .join("\n") || "- (aucune)";
 
-      const y = view.getFullYear();
-      const m = view.getMonth();
-      calTitle.textContent = view.toLocaleString(undefined, { month:"long", year:"numeric" });
+      const hab = habits.map(h=>{
+        const boxes = `${h.checked}/${h.total}`;
+        return `- ${h.name} : ${boxes}`;
+      }).join("\n") || "- (aucune)";
 
-      const firstDay = new Date(y,m,1);
-      const startWeekday = (firstDay.getDay()+6)%7; // monday=0
-      const daysInMonth = new Date(y,m+1,0).getDate();
+      return [
+        `ELIMINATOR — Rapport du ${today}`,
+        ``,
+        `Fait (aujourd’hui):`,
+        doneToday,
+        ``,
+        `Reste (actif):`,
+        remaining,
+        ``,
+        `Habitudes:`,
+        hab,
+        ``,
+        `Stats:`,
+        `- tâches faites: ${snap.totalDone}`,
+        `- étorions faits: ${snap.ethDone}`,
+        `- tâches restantes: ${snap.remainingTasks}`,
+        `- étorions restants: ${snap.remainingEth}`,
+        ``,
+        `Notes (dernieres):`,
+        (notes.slice(0,6).map(n=>`- ${new Date(n.at).toLocaleString()} : ${n.text}`).join("\n") || "- (aucune)")
+      ].join("\n");
+    }
 
-      // map daily totals from history
-      const map = {}; // dayISO -> {tasks, eth}
-      for(const e of history){
-        if(e.type==="task_done" && e.dayISO){
-          map[e.dayISO] = map[e.dayISO] || { tasks:0, eth:0 };
-          map[e.dayISO].tasks += 1;
-          map[e.dayISO].eth += (e.ethStart||0);
+    function viewRapport(){
+      const s = document.createElement("div");
+      s.className="section";
+      s.innerHTML = `<h3>Rapport</h3><p class="help">Rapport texte exportable. Inclut habitudes + fait + reste.</p>`;
+
+      const pre = document.createElement("textarea");
+      pre.rows = 16;
+      pre.value = buildReportText();
+
+      const row = document.createElement("div");
+      row.className="row";
+      row.style.marginTop="10px";
+
+      const b = document.createElement("button");
+      b.className="btn";
+      b.textContent="Exporter en TXT";
+      b.onclick = ()=>downloadText(`eliminator_rapport_${dayKey()}.txt`, buildReportText());
+
+      row.appendChild(b);
+
+      s.appendChild(pre);
+      s.appendChild(row);
+      return s;
+    }
+
+    // =========================
+    // Habit tracker tab lives in "rapport" and "hist" snapshots already.
+    // We'll add it under "energie" or "params"? Better: under "rapport" but user asked an onglet.
+    // We'll embed it in "profiles" via quick, AND also include in "rapport".
+    // Minimal: put it in "params" view? Non: they asked separate.
+    // We'll add an additional section inside "profiles" view to keep tabs list unchanged (no new tab).
+    // =========================
+    function habitsSection(){
+      const s = document.createElement("div");
+      s.className="section";
+      s.innerHTML = `<h3>Suivi des habitudes</h3><p class="help">Chaque habitude est sur une ligne: cases + reset + supprimer. Pas de célébration ici.</p>`;
+
+      // add form
+      const row = document.createElement("div");
+      row.className="row";
+
+      const name = document.createElement("input");
+      name.placeholder="Nom d’habitude";
+
+      const total = document.createElement("input");
+      total.type="number";
+      total.min="1"; total.max="30";
+      total.value="10";
+
+      const add = document.createElement("button");
+      add.className="btn";
+      add.textContent="Ajouter";
+      add.onclick = ()=>{
+        addHabit(name.value, total.value);
+        name.value="";
+      };
+
+      row.appendChild(name);
+      row.appendChild(total);
+      row.appendChild(add);
+      s.appendChild(row);
+
+      // list
+      const lst = document.createElement("div");
+      lst.className="list";
+      lst.style.marginTop="10px";
+
+      if(!habits.length){
+        const p = document.createElement("p");
+        p.className="help";
+        p.textContent="Aucune habitude.";
+        lst.appendChild(p);
+      }else{
+        for(const h of habits){
+          const rowH = document.createElement("div");
+          rowH.className="item";
+
+          const left = document.createElement("div");
+          left.className="t";
+          const nm = document.createElement("div");
+          nm.className="name";
+          nm.textContent = h.name;
+          left.appendChild(nm);
+
+          // boxes
+          const boxes = document.createElement("div");
+          boxes.style.display="flex";
+          boxes.style.gap="6px";
+          boxes.style.flexWrap="nowrap";
+          boxes.style.alignItems="center";
+
+          for(let i=0;i<h.total;i++){
+            const b = document.createElement("div");
+            b.className = "tick " + (i < (h.checked||0) ? "on" : "");
+            b.style.width="14px";
+            b.style.height="8px";
+            b.style.cursor="pointer";
+            b.onclick = ()=>habitToggle(h.id, i);
+            boxes.appendChild(b);
+          }
+
+          const reset = document.createElement("button");
+          reset.className="iconBtn";
+          reset.textContent="↺";
+          reset.title="Reset";
+          reset.onclick = ()=>habitReset(h.id);
+
+          const del = document.createElement("button");
+          del.className="iconBtn";
+          del.textContent="✕";
+          del.title="Supprimer";
+          del.onclick = ()=>habitDelete(h.id);
+
+          rowH.appendChild(left);
+          rowH.appendChild(boxes);
+          rowH.appendChild(reset);
+          rowH.appendChild(del);
+
+          lst.appendChild(rowH);
         }
       }
 
-      // leading blanks
-      for(let i=0;i<startWeekday;i++){
-        const c = document.createElement("div");
-        c.className = "calCell";
-        c.style.opacity = "0.45";
-        grid.appendChild(c);
-      }
-
-      for(let d=1; d<=daysInMonth; d++){
-        const iso = `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-        const c = document.createElement("div");
-        c.className = "calCell";
-
-        const dd = document.createElement("div");
-        dd.className = "d";
-        dd.textContent = String(d);
-
-        const val = map[iso];
-        const kk = document.createElement("div");
-        kk.className = "k";
-        kk.textContent = val ? `${val.tasks} / ${val.eth}` : "—";
-
-        c.appendChild(dd);
-        c.appendChild(kk);
-        grid.appendChild(c);
-      }
+      s.appendChild(lst);
+      return s;
     }
 
-    document.getElementById("btnPrevMonth").onclick = () => { view.setMonth(view.getMonth()-1); renderCal(); };
-    document.getElementById("btnNextMonth").onclick = () => { view.setMonth(view.getMonth()+1); renderCal(); };
-
-    renderCal();
-  }, 0);
-
-  return wrap;
-}
-
-function renderHistoryList(){
-  const list = document.getElementById("histList");
-  if(!list) return;
-  list.innerHTML = "";
-
-  const items = history.slice(0, 60);
-  if(!items.length){
-    const p = document.createElement("p");
-    p.className = "help";
-    p.textContent = "Aucun historique.";
-    list.appendChild(p);
-    return;
-  }
-
-  for(const e of items){
-    const row = document.createElement("div");
-    row.className = "item";
-
-    const left = document.createElement("div");
-    left.className = "t";
-
-    const name = document.createElement("div");
-    name.className = "name";
-    name.textContent = `${new Date(e.ts).toLocaleString()} — ${e.type}`;
-
-    const sub = document.createElement("div");
-    sub.className = "sub";
-    if(e.type==="task_done"){
-      sub.textContent = `${e.title} · ${e.cat||""} · eth:${e.ethStart||0}`;
-    }else if(e.type==="import"){
-      sub.textContent = `Import: ${e.count} tâches`;
-    }else if(e.type==="set_activated"){
-      sub.textContent = `Set: ${e.setName} · patients:${e.patients}`;
-    }else{
-      sub.textContent = JSON.stringify(e).slice(0,140);
+    // Patch profiles view to include habits section
+    const _viewProfiles = viewProfiles;
+    function viewProfiles(){
+      const wrap = document.createElement("div");
+      wrap.appendChild(_viewProfiles());
+      wrap.appendChild(habitsSection());
+      return wrap;
     }
 
-    left.appendChild(name);
-    left.appendChild(sub);
-    row.appendChild(left);
-    list.appendChild(row);
-  }
-}
+    // =========================
+    // Wire events
+    // =========================
+    btnMenu.onclick = openDrawer;
+    btnCloseDrawer.onclick = closeDrawer;
+    drawerBack.onclick = closeDrawer;
 
-/* =========================
-   Rapport panel
-   ========================= */
-function buildReportPanel(){
-  const wrap = document.createElement("div");
-
-  const c1 = mkCard("Rapport", `
-    <p class="help">
-      Rapport journalier / hebdo / mensuel (basique mais utile).
-      Exporte en JSON (pour tes traitements ultérieurs).
-    </p>
-
-    <div class="row" style="margin-top:10px;">
-      <select id="repRange">
-        <option value="day">Aujourd'hui</option>
-        <option value="week">7 jours</option>
-        <option value="month">30 jours</option>
-      </select>
-      <button class="btn primary" id="btnMakeReport">Générer</button>
-    </div>
-
-    <div class="row" style="margin-top:10px;">
-      <button class="btn" id="btnExportReport">Exporter</button>
-      <button class="btn" id="btnCopyReport">Copier</button>
-    </div>
-
-    <textarea id="reportOut" style="margin-top:10px; min-height:220px;" readonly></textarea>
-  `);
-
-  wrap.appendChild(c1);
-
-  setTimeout(() => {
-    const repRange = document.getElementById("repRange");
-    const out = document.getElementById("reportOut");
-
-    let lastReport = null;
-
-    function rangeDays(){
-      const v = repRange.value;
-      if(v==="day") return 1;
-      if(v==="week") return 7;
-      return 30;
-    }
-
-    function makeReport(){
-      const days = rangeDays();
-      const cutoff = Date.now() - days*24*3600*1000;
-
-      const ev = history.filter(e => new Date(e.ts).getTime() >= cutoff);
-
-      const doneEv = ev.filter(e => e.type==="task_done");
-      const doneTasks = doneEv.length;
-      const doneEth = doneEv.reduce((a,b)=>a+(b.ethStart||0),0);
-
-      // remaining snapshot (current state)
-      const remainTasks = state.tasks.length;
-      const remainEth = sumEth(state.tasks);
-
-      // habits snapshot
-      const habitLines = habits.slice(0,50).map(h=>{
-        const done = (h.boxes||[]).filter(Boolean).length;
-        return { name:h.name, done, total:10, dayISO:h.dayISO };
-      });
-
-      lastReport = {
-        generatedAt: nowISO(),
-        rangeDays: days,
-        doneTasks,
-        doneEth,
-        remaining: { tasks: remainTasks, eth: remainEth },
-        doneExamples: doneEv.slice(0,20),
-        habits: habitLines,
-        activeSet: state.activeSet
-      };
-
-      out.value = JSON.stringify(lastReport, null, 2);
-    }
-
-    document.getElementById("btnMakeReport").onclick = makeReport;
-
-    document.getElementById("btnExportReport").onclick = () => {
-      if(!lastReport) makeReport();
-      downloadJSON(`eliminator-report-${todayISO()}.json`, lastReport);
+    btnTheme.onclick = ()=>{
+      settings.theme = (settings.theme==="light") ? "dark" : "light";
+      persistAll();
+      renderAll();
+      renderPanel();
     };
 
-    document.getElementById("btnCopyReport").onclick = async () => {
-      if(!lastReport) makeReport();
-      try{ await navigator.clipboard.writeText(out.value); }catch(e){}
-    };
-
-    makeReport();
-  }, 0);
-
-  return wrap;
-}
-
-/* =========================
-   Params panel
-   ========================= */
-function buildParamsPanel(){
-  const wrap = document.createElement("div");
-
-  const c1 = mkCard("Affichage & comportement", `
-    <div class="row">
-      <select id="celebrationMode">
-        <option value="surprise">Célébrations: surprise</option>
-        <option value="frequent">Célébrations: fréquentes</option>
-        <option value="off">Célébrations: off</option>
-      </select>
-      <select id="motivation">
-        <option value="high">Motivation: haute</option>
-        <option value="normal">Motivation: normale</option>
-        <option value="low">Motivation: basse</option>
-      </select>
-    </div>
-
-    <div class="row" style="margin-top:10px;">
-      <select id="fatigue">
-        <option value="low">Fatigue: faible</option>
-        <option value="medium">Fatigue: moyenne</option>
-        <option value="high">Fatigue: élevée</option>
-      </select>
-      <select id="celebrateHide">
-        <option value="6000">Popup: 6s</option>
-        <option value="9000">Popup: 9s</option>
-        <option value="12000">Popup: 12s</option>
-      </select>
-    </div>
-
-    <div class="row" style="margin-top:10px;">
-      <input id="ethMin" type="number" min="1" max="60" placeholder="Minutes par éthorion (5)" />
-      <button class="btn" id="btnApplyEth">Appliquer</button>
-    </div>
-
-    <p class="help" style="margin-top:10px;">
-      Par défaut: thème clair, interface épurée. Le “mode focus” masque au maximum sans perdre le HUD en haut.
-    </p>
-  `);
-
-  wrap.appendChild(c1);
-
-  setTimeout(() => {
-    const celebrationMode = document.getElementById("celebrationMode");
-    const motivation = document.getElementById("motivation");
-    const fatigue = document.getElementById("fatigue");
-    const celebrateHide = document.getElementById("celebrateHide");
-    const ethMin = document.getElementById("ethMin");
-
-    celebrationMode.value = settings.celebrationMode || "surprise";
-    motivation.value = settings.motivation || "normal";
-    fatigue.value = settings.fatigue || "medium";
-    celebrateHide.value = String(settings.celebrationAutoHideMs || 9000);
-    ethMin.value = String(settings.ethMinutesPer || 5);
-
-    celebrationMode.onchange = () => { settings.celebrationMode = celebrationMode.value; persistAll(); };
-    motivation.onchange = () => { settings.motivation = motivation.value; persistAll(); };
-    fatigue.onchange = () => { settings.fatigue = fatigue.value; persistAll(); };
-    celebrateHide.onchange = () => { settings.celebrationAutoHideMs = parseInt(celebrateHide.value,10)||9000; persistAll(); };
-
-    document.getElementById("btnApplyEth").onclick = () => {
-      settings.ethMinutesPer = clamp(parseInt(ethMin.value,10)||5, 1, 60);
+    btnFocus.onclick = ()=>{
+      settings.focus = settings.focus ? 0 : 1;
       persistAll();
       renderAll();
     };
-  }, 0);
 
-  return wrap;
-}
+    btnInlineList.onclick = ()=>toggleInlineList();
+    btnInlineListHide.onclick = ()=>toggleInlineList(false);
 
-/* =========================
-   Export helper
-   ========================= */
-function downloadJSON(filename, obj){
-  const blob = new Blob([JSON.stringify(obj,null,2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
+    btnReset.onclick = ()=>{
+      // reset tasks only (notes/habits stay)
+      state.tasks = [];
+      state.done = [];
+      state.currentId = null;
+      state.startCounts = { tasks:0, eth:0 };
+      state.timer = { taskId:null, elapsedMs:0, running:false, startedAt:0 };
+      state.streak = { completedSinceCele: 0 };
+      persistAll();
+      renderAll();
+      renderPanel();
+    };
 
-/* =========================
-   Wire actions
-   ========================= */
-btnRoulette.onclick = () => {
-  wheel.classList.remove("spin");
-  // reflow for animation restart
-  void wheel.offsetWidth;
-  wheel.classList.add("spin");
-  roulette();
-  ensureCurrent();
-  persistAll();
-  renderAll();
-};
+    btnRoulette.onclick = ()=>{
+      const picked = pickRoulette();
+      if(!picked) return;
+      btnRoulette.classList.remove("spin");
+      void btnRoulette.offsetWidth;
+      btnRoulette.classList.add("spin");
+      setCurrent(picked.id);
+    };
 
-btnSmash.onclick = () => {
-  smashOne();
-};
+    btnDegomme.onclick = degommeOneEth;
 
-function renderAll(){
-  applyTheme();
-  applyFocus();
-  renderHUD();
-  renderMain();
-  // refresh list panel if open
-  if(activeTab==="liste"){
-    setTimeout(() => renderTaskList(), 0);
-  }
-  if(activeTab==="habits"){
-    setTimeout(() => renderHabitsList(), 0);
-  }
-}
+    btnNotes.onclick = openNotes;
+    btnCloseNotes.onclick = closeNotes;
+    notesBack.onclick = closeNotes;
 
-/* =========================
-   Init
-   ========================= */
-function boot(){
-  applyTheme();
-  applyFocus();
+    btnAddNote.onclick = addNote;
+    btnClearNotes.onclick = ()=>{
+      if(confirm("Vider toutes les notes ?")){
+        notes = [];
+        persistAll();
+        renderNotes();
+      }
+    };
 
-  renderTabs();
-  renderPanel();
+    btnPin.onclick = pinToggle;
+    btnDown.onclick = pushDownCurrent;
+    btnDel.onclick = ()=>{ const t=currentTask(); if(t) deleteTask(t.id); };
+    btnDone.onclick = ()=>{ const t=currentTask(); if(t) markDone(t.id); };
 
-  // baseline counts if missing
-  if(!state.startCounts || !state.startCounts.tasks){
-    recalcStartCounts();
-  }
+    btnEdit.onclick = ()=>{
+      const t = currentTask();
+      if(!t) return;
+      const nt = prompt("Nouveau titre", t.title);
+      if(nt!==null) editTaskTitle(t.id, nt);
+    };
 
-  ensureCurrent();
-  renderAll();
-  startTicker();
-}
-boot();
+    btnCloseCele.onclick = closeCelebration;
+    celeBack.onclick = closeCelebration;
 
-</script>
+    // =========================
+    // Timer loop
+    // =========================
+    setInterval(()=>{
+      tickTimer();
+      // only update HUD/timer frequently (cheap)
+      renderHUD();
+      persistAll();
+    }, 1000);
+
+    // =========================
+    // Boot
+    // =========================
+    function boot(){
+      // migrate theme value
+      if(settings.theme!=="light" && settings.theme!=="dark") settings.theme="light";
+
+      // default active cats
+      if(!settings.activeCats || !Array.isArray(settings.activeCats)) settings.activeCats=["INBOX"];
+
+      renderTabs();
+      renderAll();
+      renderPanel();
+    }
+
+    boot();
+  </script>
 </body>
 </html>
